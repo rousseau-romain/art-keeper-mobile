@@ -8,15 +8,27 @@
     "scheme": "artkeeper",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.artkeeper.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ArtKeeper uses the camera to photograph street art you submit.",
+        "NSPhotoLibraryUsageDescription": "ArtKeeper lets you pick photos of street art from your library.",
+        "NSLocationWhenInUseUsageDescription": "ArtKeeper uses your location to pin pieces on the map and find art near you."
+      }
     },
     "android": {
+      "package": "com.artkeeper.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -34,7 +46,9 @@
             "imageWidth": 76
           }
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,

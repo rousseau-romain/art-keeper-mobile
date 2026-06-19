@@ -1,33 +1,31 @@
 # Art Keeper Mobile — Agent Guide
 
-## Expo HAS CHANGED
+Guidance lives one-topic-per-file in `.claude/rules/`. Core conventions are
+`@`-imported (always in context). Situational rules are **not** imported — they're
+listed below with a "read when" trigger; open the file with the Read tool when the
+trigger matches, to keep context lean.
 
-Read the exact versioned docs at <https://docs.expo.dev/versions/v56.0.0/> before writing any code.
+## Always-on conventions
 
-## Expo MCP Server
+@.claude/rules/data-fetching.md
+@.claude/rules/api-types-openapi.md
+@.claude/rules/openapi-fetch-middleware.md
+@.claude/rules/i18n-translation.md
+@.claude/rules/styling-stylesheet.md
+@.claude/rules/file-naming.md
 
-This project uses the Expo MCP Server (`https://mcp.expo.dev/mcp`) for documentation,
-dependency management, builds/workflows, and local simulator automation.
+## Read on demand
 
-- Prefer Expo MCP tools over guessing: `read_documentation` / `search_documentation`
-  for SDK questions, `add_library` to install packages (uses compatible versions).
-- `expo-mcp` is installed as a dev dependency to enable **local capabilities**.
+Open these when the trigger applies (they are intentionally not imported):
 
-### Local capabilities (screenshots, tap, view inspection)
+- **`.claude/rules/expo-workflow.md`** — before writing any Expo/SDK code, running
+  the dev server, or using simulator automation. Versioned docs (v56), Expo MCP
+  tools, `bun start:mcp`, bun-not-npm.
+- **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
+  sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
+  verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.
+- **`.claude/rules/ios-dev-client-launch-115.md`** — when `bun ios` fails at the
+  launch step with `LSApplicationWorkspaceErrorDomain` error 115.
 
-Local tools (`automation_take_screenshot`, `automation_tap`, `automation_find_view`,
-`collect_app_logs`, `open_devtools`, `expo_router_sitemap`) require a local dev server
-started with the MCP flag:
-
-```sh
-bun expo whoami || bun expo login
-bun start:mcp   # = EXPO_UNSTABLE_MCP_SERVER=1 expo start
-```
-
-- This project uses **bun** — use `bun expo ...`, not npm/yarn/pnpm.
-- Whenever the dev server starts or stops, **reconnect/restart the Expo MCP
-  connection** (`/mcp`) so refreshed capabilities are picked up.
-- iOS local automation is **simulator-only** and **macOS-only**; have a simulator
-  running (press `i` in the dev server) before using automation tools.
-- Use these to verify UI changes: write the code, screenshot the simulator to
-  confirm it renders, tap to test interactions, and fix issues found.
+To add guidance: drop a file in `.claude/rules/`, then either `@`-import it above
+(always-on convention) or add a "read when" line here (situational rule).

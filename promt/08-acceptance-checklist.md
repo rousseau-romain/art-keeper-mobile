@@ -1,0 +1,11 @@
+## 8. Acceptance checklist
+- [ ] Three skins (sketch / gritty / gallery) × light/dark × 5 accents, switchable from a Settings screen; defaults gritty + dark; tokens persist.
+- [ ] All three font families load and map to display/body/mono roles per skin (incl. gritty uppercase, gallery serif).
+- [ ] Auth via Better Auth: sign-in / create-account / Google, bearer token captured from `set-auth-token` and persisted; session hydrated on launch via `/auth/get-session`; sign-out clears it.
+- [ ] Browse reads `GET /artworks/` with server-side tag/title/artist + geographic (polygon or lat/lng/radius) filters and cursor pagination; map pins + filters + search + Map/Grid toggle + draggable sheet + preview card + FAB.
+- [ ] Artwork detail from `GET /artworks/:id`: real image, like/unlike (optimistic), share, flag → `POST /reports`, context map, nearby, more-by-artist; optional edit-history from `/history`.
+- [ ] Artist profile from `GET /artists/:id`: follow/unfollow (optimistic), follower count, social links, derived piece count + territory/cities from the artist's artworks.
+- [ ] Submit wizard: real camera/library + GPS pin + reverse-geocode/Places, artist autocomplete (`/artists/`), tags, review/edit, pledge gate → `POST /artworks/` (multipart); success shows pending; my-pending = `?verified=false`.
+- [ ] Admin (admin-only tab): change-proposal diff queues (`/artworks/changes`, `/artists/changes`) with current-vs-`changes` tinting + approve/reject; reports queue (`/reports`) resolve/dismiss; verification via `/verify`.
+- [ ] Errors surfaced from API `message` bodies; admin routes hidden for non-admins; loading/empty/offline states use the placeholder component.
+- [ ] Runs on iOS and Android via Expo Go / dev build with no console errors.

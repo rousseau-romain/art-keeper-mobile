@@ -1,0 +1,55 @@
+import type { Resources } from "./en.constant";
+
+// French dictionary. Typed as `Resources` so it must stay in sync with `en.ts`.
+export const fr: Resources = {
+  common: {
+    or: "ou",
+    retry: "Réessayer",
+  },
+  auth: {
+    tagline: "Une carte vivante du street art.",
+    hero: "Cataloguez les murs avant qu'ils disparaissent.",
+    signIn: "Se connecter",
+    createAccount: "Créer un compte",
+    nameLabel: "Nom",
+    namePlaceholder: "Votre nom",
+    emailLabel: "E-mail",
+    passwordLabel: "Mot de passe",
+    continueWithGoogle: "Continuer avec Google",
+    forgotPassword: "mot de passe oublié ?",
+    switchToSignIn: "se connecter",
+    switchToCreate: "créer un compte",
+    footerHaveAccount: "Déjà un compte ? Connectez-vous",
+    footerNewHere: "Nouveau ici ? Créez un compte",
+    verifyTitle: "Vérifiez votre boîte mail",
+    verifyBackToSignIn: "Retour à la connexion",
+    verifyResend: "Renvoyer le lien",
+    verifyBefore: "Nous avons envoyé un lien de vérification à ",
+    verifyAfter: ". Ouvrez-le pour activer votre compte, puis connectez-vous.",
+    genericError: "Une erreur est survenue. Réessayez.",
+    verifySentToast: "E-mail de vérification envoyé",
+    resendFailed: "Échec de l'envoi. Réessayez.",
+    googleUnavailable: "Connexion Google indisponible",
+    googleFailed: "Échec de la connexion Google.",
+    resetSoon: "Réinitialisation du mot de passe bientôt disponible",
+  },
+  browse: {
+    title: "Explorer",
+    location: "Paris 11e",
+    pieceCount_one: "{{count}} œuvre",
+    pieceCount_other: "{{count}} œuvres",
+    statusUpdating: "mise à jour",
+    statusStale: "obsolète",
+    statusLive: "à jour",
+    loading: "Chargement du mur…",
+    loadError: "Impossible de charger les œuvres.",
+    empty:
+      "Aucune œuvre ici pour l'instant.\nSoyez le premier à cataloguer ce mur.",
+    signOut: "Se déconnecter",
+    like: "J'aime",
+    unlike: "Je n'aime plus",
+  },
+  a11y: {
+    verified: "vérifié",
+  },
+};

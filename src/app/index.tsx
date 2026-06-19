@@ -1,17 +1,14 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Redirect } from "expo-router";
 
+import { useAuth } from "@/lib/auth/AuthProvider";
+
+/** Session gate: route to the app when authenticated, else to Login. */
 export default function Index() {
+  const { status } = useAuth();
+  if (status === "loading") return null; // splash still showing
   return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
+    <Redirect
+      href={status === "authenticated" ? "/(tabs)/browse" : "/(auth)/login"}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
