@@ -7,6 +7,7 @@
     "@expo-google-fonts/hanken-grotesk": "^0.4.3",
     "@expo-google-fonts/space-mono": "^0.4.2",
     "@expo/ui": "~56.0.18",
+    "@hey-api/client-fetch": "^0.13.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@tanstack/react-query": "^5.101.0",
     "expo": "~56.0.12",
@@ -28,7 +29,6 @@
     "expo-web-browser": "~56.0.5",
     "i18next": "^26.3.1",
     "lucide-react-native": "^1.20.0",
-    "openapi-fetch": "^0.17.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-i18next": "^17.0.8",
@@ -43,9 +43,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
+    "@hey-api/openapi-ts": "^0.98.2",
     "@types/react": "~19.2.2",
     "expo-mcp": "~0.2.1",
-    "openapi-typescript": "^7.13.0",
     "reactotron-react-native": "^5.2.0",
     "reactotron-react-query": "^2.0.2",
     "typescript": "~6.0.3"
@@ -59,7 +59,7 @@
     "lint": "biome lint .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "gen:api": "openapi-typescript http://localhost:3000/openapi/json -o src/lib/api/schema.d.ts"
+    "gen:api": "openapi-ts"
   },
   "private": true,
   "packageManager": "bun@1.3.14"

@@ -9,10 +9,15 @@ trigger matches, to keep context lean.
 
 @.claude/rules/data-fetching.md
 @.claude/rules/api-types-openapi.md
-@.claude/rules/openapi-fetch-middleware.md
+@.claude/rules/heyapi-client-interceptors.md
 @.claude/rules/i18n-translation.md
 @.claude/rules/styling-stylesheet.md
 @.claude/rules/file-naming.md
+@.claude/rules/types-not-interface.md
+@.claude/rules/export-const-functions.md
+@.claude/rules/component-module-structure.md
+@.claude/rules/control-flow-switch.md
+@.claude/rules/design-scale.md
 
 ## Read on demand
 

@@ -9,6 +9,7 @@
       "!ios",
       "!node_modules",
       "!assets",
+      "!src/lib/api/generated",
       "!**/*.d.ts"
     ]
   },

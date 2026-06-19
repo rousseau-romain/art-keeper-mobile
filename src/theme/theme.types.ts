@@ -1,7 +1,5 @@
-import type { TextStyle, ViewStyle } from "react-native";
-
 /** Semantic color tokens — never hard-code a color in a component. */
-export interface ColorTokens {
+export type ColorTokens = {
   bg: string;
   surface: string;
   surface2: string;
@@ -17,21 +15,10 @@ export interface ColorTokens {
   diffAdd: string;
   diffDelBg: string;
   diffDel: string;
-}
-
-/** Shape & display-type personality. */
-export interface ShapeTokens {
-  radius: number;
-  radiusLg: number;
-  borderWeight: number;
-  shadow: ViewStyle;
-  displayWeight: TextStyle["fontWeight"];
-  displaySpacing: number;
-  displayTransform: TextStyle["textTransform"];
-}
+};
 
 /** The app's single resolved theme, handed to components via useTheme(). */
-export interface Theme extends ColorTokens, ShapeTokens {}
+export type Theme = ColorTokens;
 
 export type FontRole = "display" | "body" | "mono";
 export type Fonts = Record<FontRole, string>;

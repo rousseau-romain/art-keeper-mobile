@@ -33,26 +33,26 @@ async function removeStore(): Promise<void> {
 }
 
 /** Load the token from persistent storage into the in-memory mirror (call on launch). */
-export async function hydrateToken(): Promise<string | null> {
+export const hydrateToken = async (): Promise<string | null> => {
   try {
     cached = await readStore();
   } catch {
     cached = null;
   }
   return cached;
-}
+};
 
 /** Synchronous read for header injection. */
-export function getToken(): string | null {
+export const getToken = (): string | null => {
   return cached;
-}
+};
 
-export async function setToken(token: string): Promise<void> {
+export const setToken = async (token: string): Promise<void> => {
   cached = token;
   await writeStore(token);
-}
+};
 
-export async function clearToken(): Promise<void> {
+export const clearToken = async (): Promise<void> => {
   cached = null;
   await removeStore();
-}
+};

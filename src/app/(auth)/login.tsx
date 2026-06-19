@@ -13,11 +13,10 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { Btn, useToast } from "@/components";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { FONT_SIZE, SPACING, useBreakpoint, useTheme } from "@/theme";
+import { Button, useToast } from "@/shared/ui";
+import { FONT_SIZE, RADIUS, SPACING, useBreakpoint, useTheme } from "@/theme";
 
 type Mode = "sign-in" | "create";
 
@@ -77,7 +76,9 @@ export default function LoginScreen() {
       // non-ApiError case the UI flattens into "Something went wrong".
       if (e instanceof ApiError) {
         console.warn(
-          `[login] ApiError status=${e.status} code=${e.code ?? "-"} message=${e.message}`,
+          `[login] ApiError status=${e.status} code=${e.code ?? "-"} message=${
+            e.message
+          }`,
         );
       } else {
         console.error("[login] unexpected error", e);
@@ -138,14 +139,10 @@ export default function LoginScreen() {
   const formCore = (
     <>
       <View
-        style={{
-          flexDirection: "row",
-          backgroundColor: t.surface2,
-          borderRadius: t.radius,
-          borderWidth: t.borderWeight,
-          borderColor: t.hair,
-          padding: SPACING.xs,
-        }}
+        style={[
+          styles.toggle,
+          { backgroundColor: t.surface2, borderColor: t.hair },
+        ]}
       >
         <Segment
           label={tr("auth.signIn")}
@@ -186,17 +183,16 @@ export default function LoginScreen() {
 
       {error ? (
         <Text
-          style={{
-            fontFamily: fonts.body,
-            fontSize: FONT_SIZE.md,
-            color: t.diffDel,
-          }}
+          style={[
+            styles.errorText,
+            { fontFamily: fonts.body, color: t.diffDel },
+          ]}
         >
           {error}
         </Text>
       ) : null}
 
-      <Btn
+      <Button
         label={isCreate ? tr("auth.createAccount") : tr("auth.signIn")}
         variant="primary"
         block
@@ -207,16 +203,12 @@ export default function LoginScreen() {
 
       {/* Divider */}
       <View style={styles.divider}>
-        <View
-          style={{ flex: 1, height: t.borderWeight, backgroundColor: t.hair }}
-        />
+        <View style={[styles.dividerLine, { backgroundColor: t.hair }]} />
         <Text style={mono(FONT_SIZE.xs)}>{tr("common.or")}</Text>
-        <View
-          style={{ flex: 1, height: t.borderWeight, backgroundColor: t.hair }}
-        />
+        <View style={[styles.dividerLine, { backgroundColor: t.hair }]} />
       </View>
 
-      <Btn
+      <Button
         label={tr("auth.continueWithGoogle")}
         variant="ghost"
         block
@@ -231,16 +223,10 @@ export default function LoginScreen() {
   const verifyCore = (
     <View style={styles.verify}>
       <View
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: t.radius,
-          backgroundColor: t.surface2,
-          borderWidth: t.borderWeight,
-          borderColor: t.hair,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        style={[
+          styles.verifyIcon,
+          { backgroundColor: t.surface2, borderColor: t.hair },
+        ]}
       >
         <MailCheck size={24} color={t.accent} strokeWidth={1.8} />
       </View>
@@ -248,14 +234,16 @@ export default function LoginScreen() {
         {tr("auth.verifyTitle")}
       </Text>
       <Text
-        style={[body(FONT_SIZE.base), { color: t.inkSoft, lineHeight: 21 }]}
+        style={[body(FONT_SIZE.base), styles.verifyText, { color: t.inkSoft }]}
       >
         {tr("auth.verifyBefore")}
-        <Text style={{ color: t.ink, fontWeight: "600" }}>{verifyEmail}</Text>
+        <Text style={[styles.verifyEmail, { color: t.ink }]}>
+          {verifyEmail}
+        </Text>
         {tr("auth.verifyAfter")}
       </Text>
       <View style={styles.spacer} />
-      <Btn
+      <Button
         label={tr("auth.verifyBackToSignIn")}
         variant="primary"
         block
@@ -266,7 +254,7 @@ export default function LoginScreen() {
           setPassword("");
         }}
       />
-      <Btn
+      <Button
         label={tr("auth.verifyResend")}
         variant="ghost"
         block
@@ -282,20 +270,14 @@ export default function LoginScreen() {
       style={[
         { backgroundColor: t.surface2 },
         wide
-          ? {
-              flex: 1,
-              padding: SPACING.xxxl,
-              justifyContent: "flex-end",
-              borderRightWidth: t.borderWeight,
-              borderRightColor: t.line,
-            }
-          : {
-              paddingTop: insets.top + SPACING.xxxl,
-              paddingBottom: SPACING.xxl,
-              paddingHorizontal: SPACING.xl,
-              borderBottomWidth: t.borderWeight,
-              borderBottomColor: t.line,
-            },
+          ? [styles.heroWide, { borderRightColor: t.line }]
+          : [
+              styles.heroNarrow,
+              {
+                paddingTop: insets.top + SPACING.xxxl,
+                borderBottomColor: t.line,
+              },
+            ],
       ]}
     >
       <View style={styles.heroBrandWrap}>{brand}</View>
@@ -303,8 +285,9 @@ export default function LoginScreen() {
       <Text
         style={[
           display(wide ? FONT_SIZE.display : FONT_SIZE.xxl),
-          { color: t.ink, marginTop: SPACING.lg },
+          styles.heroHeading,
           wide ? styles.heroHeadingWide : styles.heroHeadingNarrow,
+          { color: t.ink },
         ]}
       >
         {tr("auth.hero")}
@@ -392,19 +375,14 @@ function Segment({
       onPress={onPress}
       style={[
         styles.segment,
-        {
-          borderRadius: t.radius,
-          backgroundColor: active ? t.accent : "transparent",
-        },
+        { backgroundColor: active ? t.accent : "transparent" },
       ]}
     >
       <Text
-        style={{
-          fontFamily: fonts.body,
-          fontWeight: "600",
-          fontSize: FONT_SIZE.md,
-          color: active ? t.accentInk : t.inkSoft,
-        }}
+        style={[
+          styles.segmentLabel,
+          { fontFamily: fonts.body, color: active ? t.accentInk : t.inkSoft },
+        ]}
       >
         {label}
       </Text>
@@ -420,37 +398,65 @@ function Field({
   return (
     <View style={styles.field}>
       <Text
-        style={[
-          mono(FONT_SIZE.xs),
-          { color: t.inkMute, textTransform: "uppercase" },
-        ]}
+        style={[mono(FONT_SIZE.xs), styles.fieldLabel, { color: t.inkMute }]}
       >
         {label}
       </Text>
       <TextInput
         {...input}
         placeholderTextColor={t.inkMute}
-        style={{
-          fontFamily: fonts.body,
-          fontSize: FONT_SIZE.base,
-          color: t.ink,
-          backgroundColor: t.surface,
-          borderWidth: t.borderWeight,
-          borderColor: t.hair,
-          borderRadius: t.radius,
-          paddingHorizontal: SPACING.lg,
-          paddingVertical: SPACING.md,
-        }}
+        style={[
+          styles.input,
+          {
+            fontFamily: fonts.body,
+            color: t.ink,
+            backgroundColor: t.surface,
+            borderColor: t.hair,
+          },
+        ]}
       />
     </View>
   );
 }
 
-// Static, theme-independent layout only. Theme-colored styles stay inline above.
+// Static, theme-independent layout only. useTheme/dynamic values stay inline above.
 const styles = StyleSheet.create({
   flex1: { flex: 1 },
   row: { flexDirection: "row" },
   col: { flexDirection: "column" },
+  errorText: { fontSize: FONT_SIZE.md },
+  dividerLine: { flex: 1, height: 1.5 },
+  verifyIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  verifyText: { lineHeight: 21 },
+  verifyEmail: { fontWeight: "600" },
+  heroWide: {
+    flex: 1,
+    padding: SPACING.xxxl,
+    justifyContent: "flex-end",
+    borderRightWidth: 1.5,
+  },
+  heroNarrow: {
+    paddingBottom: SPACING.xxl,
+    paddingHorizontal: SPACING.xl,
+    borderBottomWidth: 1.5,
+  },
+  heroHeading: { marginTop: SPACING.lg },
+  input: {
+    fontSize: FONT_SIZE.base,
+    borderWidth: 1.5,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+  },
+  fieldLabel: { textTransform: "uppercase" },
+  segmentLabel: { fontWeight: "600", fontSize: FONT_SIZE.md },
   scrollContentWide: {
     flexGrow: 1,
     justifyContent: "center",
@@ -482,6 +488,17 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
   },
   footerCol: { alignItems: "center", gap: SPACING.md, marginTop: SPACING.sm },
-  segment: { flex: 1, paddingVertical: SPACING.sm, alignItems: "center" },
+  toggle: {
+    flexDirection: "row",
+    borderWidth: 1.5,
+    borderRadius: RADIUS.sm,
+    padding: SPACING.xs,
+  },
+  segment: {
+    flex: 1,
+    paddingVertical: SPACING.sm,
+    alignItems: "center",
+    borderRadius: RADIUS.sm,
+  },
   field: { gap: SPACING.sm },
 });

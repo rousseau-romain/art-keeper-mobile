@@ -1,6 +1,7 @@
 import { Redirect, Tabs } from "expo-router";
 import { Map as MapIcon } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
+import { StyleSheet } from "react-native";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { FONT_SIZE, useTheme } from "@/theme";
@@ -21,12 +22,11 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: t.accent,
         tabBarInactiveTintColor: t.inkMute,
-        tabBarStyle: {
-          backgroundColor: t.surface,
-          borderTopColor: t.hair,
-          borderTopWidth: t.borderWeight,
-        },
-        tabBarLabelStyle: { fontFamily: fonts.mono, fontSize: FONT_SIZE.xs },
+        tabBarStyle: [
+          styles.tabBar,
+          { backgroundColor: t.surface, borderTopColor: t.hair },
+        ],
+        tabBarLabelStyle: [styles.tabLabel, { fontFamily: fonts.mono }],
       }}
     >
       <Tabs.Screen
@@ -41,3 +41,8 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: { borderTopWidth: 1.5 },
+  tabLabel: { fontSize: FONT_SIZE.xs },
+});

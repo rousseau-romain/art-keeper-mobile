@@ -10,17 +10,17 @@ import {
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FONT_SIZE, SPACING, useTheme } from "@/theme";
+import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
 
-interface ToastContextValue {
+type ToastContextValue = {
   show: (message: string) => void;
-}
+};
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const DURATION = 2200;
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [message, setMessage] = useState<string | null>(null);
   const opacity = useMemo(() => new Animated.Value(0), []);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -58,7 +58,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {message ? <ToastView message={message} opacity={opacity} /> : null}
     </ToastContext.Provider>
   );
-}
+};
 
 function ToastView({
   message,
@@ -80,23 +80,13 @@ function ToastView({
       ]}
     >
       <View
-        style={{
-          backgroundColor: t.surface2,
-          borderColor: t.line,
-          borderWidth: t.borderWeight,
-          borderRadius: t.radius,
-          paddingHorizontal: SPACING.lg,
-          paddingVertical: SPACING.md,
-          maxWidth: "86%",
-          ...t.shadow,
-        }}
+        style={[
+          styles.bubble,
+          { backgroundColor: t.surface2, borderColor: t.line },
+        ]}
       >
         <Text
-          style={{
-            fontFamily: fonts.body,
-            fontSize: FONT_SIZE.base,
-            color: t.ink,
-          }}
+          style={[styles.message, { fontFamily: fonts.body, color: t.ink }]}
         >
           {message}
         </Text>
@@ -107,10 +97,18 @@ function ToastView({
 
 const styles = StyleSheet.create({
   overlay: { justifyContent: "flex-end", alignItems: "center" },
+  bubble: {
+    borderWidth: 1.5,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    maxWidth: "86%",
+  },
+  message: { fontSize: FONT_SIZE.base },
 });
 
-export function useToast() {
+export const useToast = () => {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error("useToast must be used within ToastProvider");
   return ctx;
-}
+};

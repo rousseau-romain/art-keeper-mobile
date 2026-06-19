@@ -1,23 +1,23 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
-import { FONT_SIZE, SPACING, useTheme } from "@/theme";
+import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
 
 type TagState = "active" | "muted" | "solid";
 
-interface TagProps {
+type TagProps = {
   label: string;
   /** Display style prepends `#` (tags have no `#` on the wire). */
   hash?: boolean;
   state?: TagState;
   onPress?: () => void;
-}
+};
 
-export function Tag({
+export const Tag = ({
   label,
   hash = true,
   state = "muted",
   onPress,
-}: TagProps) {
+}: TagProps) => {
   const { t, fonts } = useTheme();
 
   const bg =
@@ -37,8 +37,6 @@ export function Tag({
         {
           fontFamily: fonts.mono,
           color: fg,
-          borderRadius: t.radius,
-          borderWidth: t.borderWeight,
           borderColor,
           backgroundColor: bg,
         },
@@ -59,7 +57,7 @@ export function Tag({
       {content}
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tag: {
@@ -67,5 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
     overflow: "hidden",
+    borderWidth: 1.5,
+    borderRadius: RADIUS.sm,
   },
 });

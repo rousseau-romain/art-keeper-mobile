@@ -7,7 +7,7 @@ import { useWindowDimensions } from "react-native";
 export const WIDE_BREAKPOINT = 860;
 
 /** Semantic responsive flags derived from the current window width. */
-export function useBreakpoint() {
+export const useBreakpoint = () => {
   const { width } = useWindowDimensions();
   return { width, wide: width >= WIDE_BREAKPOINT };
-}
+};

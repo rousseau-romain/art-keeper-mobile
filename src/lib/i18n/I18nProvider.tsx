@@ -15,13 +15,13 @@ import i18n, {
   SUPPORTED_LANGUAGES,
 } from "./index";
 
-interface LocaleContextValue {
+type LocaleContextValue = {
   /** Active language (BCP-47 base, e.g. "en"). */
   language: Language;
   setLanguage: (lng: Language) => void;
   /** Cycle to the next supported language (used by the header switcher). */
   toggleLanguage: () => void;
-}
+};
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
@@ -32,7 +32,7 @@ function normalize(lng: string): Language {
     : "en";
 }
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguageState] = useState<Language>(
     normalize(i18n.language),
   );
@@ -71,10 +71,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
     </I18nextProvider>
   );
-}
+};
 
-export function useLocale() {
+export const useLocale = () => {
   const ctx = useContext(LocaleContext);
   if (!ctx) throw new Error("useLocale must be used within I18nProvider");
   return ctx;
-}
+};

@@ -28,8 +28,9 @@ never the kind itself (no `types.types.ts`).
 
 ## Exempt
 
-- **`.d.ts`** ambient or generated declaration files keep their name
-  (`schema.d.ts`, `i18next.d.ts`) — they're not regular modules.
+- **`.d.ts`** ambient declaration files keep their name (`i18next.d.ts`) —
+  they're not regular modules. Likewise, generated files keep the generator's
+  own naming (the `*.gen.ts` files in `src/lib/api/generated/`).
 - A file that legitimately holds **mixed** runtime logic (a component module, a
   provider, an API domain module) keeps a plain descriptive name; these suffixes
   are only for files that are *exclusively* enums, types, or constants.

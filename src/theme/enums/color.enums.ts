@@ -1,4 +1,3 @@
-import { RADIUS } from "./scale.enums";
 import type { Theme } from "./theme.types";
 
 /**
@@ -23,13 +22,4 @@ export const THEME: Theme = {
   diffAdd: "#5fd07f",
   diffDelBg: "#2a1614",
   diffDel: "#ff6a4d",
-
-  // Shape & display-type.
-  radius: RADIUS.sm,
-  radiusLg: RADIUS.md,
-  borderWeight: 1.5,
-  shadow: {}, // gritty has no shadow
-  displayWeight: "800",
-  displaySpacing: 0.5,
-  displayTransform: "uppercase",
 };

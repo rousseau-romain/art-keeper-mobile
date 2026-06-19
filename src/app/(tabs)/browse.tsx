@@ -12,8 +12,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { Btn, Tag } from "@/components";
 import {
   type Artwork,
   useArtworks,
@@ -22,7 +20,8 @@ import {
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLocale } from "@/lib/i18n/I18nProvider";
-import { FONT_SIZE, SPACING, useTheme } from "@/theme";
+import { Button, Tag } from "@/shared/ui";
+import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
 
 export default function BrowseScreen() {
   const { t, display, body, mono } = useTheme();
@@ -80,7 +79,6 @@ export default function BrowseScreen() {
           paddingTop: insets.top + SPACING.xl,
           backgroundColor: t.bg,
           borderBottomColor: t.hair,
-          borderBottomWidth: t.borderWeight,
         },
       ]}
     >
@@ -96,7 +94,8 @@ export default function BrowseScreen() {
             <Text
               style={[
                 mono(FONT_SIZE.sm),
-                { color: t.inkMute, textTransform: "uppercase" },
+                styles.langLabel,
+                { color: t.inkMute },
               ]}
             >
               {language}
@@ -158,12 +157,13 @@ export default function BrowseScreen() {
             style={[
               body(FONT_SIZE.base),
               styles.centerText,
-              { color: t.inkSoft, marginVertical: SPACING.md },
+              styles.errorText,
+              { color: t.inkSoft },
             ]}
           >
             {error instanceof ApiError ? error.message : tr("browse.loadError")}
           </Text>
-          <Btn
+          <Button
             label={tr("common.retry")}
             variant="primary"
             onPress={() => refetch()}
@@ -208,7 +208,8 @@ export default function BrowseScreen() {
               style={[
                 body(FONT_SIZE.base),
                 styles.centerText,
-                { color: t.inkSoft, marginTop: SPACING.md },
+                styles.emptyText,
+                { color: t.inkSoft },
               ]}
             >
               {tr("browse.empty")}
@@ -237,13 +238,7 @@ function ArtworkCard({
 
   return (
     <View
-      style={{
-        backgroundColor: t.surface,
-        borderRadius: t.radius,
-        borderWidth: t.borderWeight,
-        borderColor: t.hair,
-        overflow: "hidden",
-      }}
+      style={[styles.card, { backgroundColor: t.surface, borderColor: t.hair }]}
     >
       <Image
         source={{ uri: artwork.imageUrl }}
@@ -330,14 +325,16 @@ function Centered({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Static, theme-independent layout only. Theme-colored styles stay inline above.
+// Static, theme-independent layout only. useTheme/dynamic values stay inline above.
 const styles = StyleSheet.create({
   flex1: { flex: 1 },
   header: {
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.md,
     gap: SPACING.xs,
+    borderBottomWidth: 1.5,
   },
+  langLabel: { textTransform: "uppercase" },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -358,7 +355,10 @@ const styles = StyleSheet.create({
   },
   centerNote: { marginTop: SPACING.md },
   centerText: { textAlign: "center" },
+  errorText: { marginVertical: SPACING.md },
+  emptyText: { marginTop: SPACING.md },
   footerSpinner: { marginVertical: SPACING.md },
+  card: { borderRadius: RADIUS.sm, borderWidth: 1.5, overflow: "hidden" },
   cardImage: { width: "100%", height: 180 },
   cardBody: { padding: SPACING.lg, gap: SPACING.md },
   cardTitleRow: {

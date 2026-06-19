@@ -2,82 +2,62 @@ import type { LucideIcon } from "lucide-react-native";
 import {
   ActivityIndicator,
   Pressable,
+  type PressableProps,
   StyleSheet,
   Text,
   View,
-  type ViewStyle,
 } from "react-native";
 
-import { FONT_SIZE, SPACING, useTheme } from "@/theme";
+import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
+import { type Variant, useGetButtonsColors } from "./hooks/useGetButtonsColors";
 
-type Variant = "primary" | "ghost" | "default";
 type Size = "sm" | "normal";
 
-interface BtnProps {
+// Wraps a Pressable and forwards the rest of its props to it.
+type ButtonProps = PressableProps & {
   label: string;
-  onPress?: () => void;
   variant?: Variant;
   size?: Size;
   icon?: LucideIcon;
   block?: boolean;
   liked?: boolean;
-  disabled?: boolean;
   loading?: boolean;
-  style?: ViewStyle;
-}
+};
 
-export function Btn({
+export const Button = ({
   label,
-  onPress,
   variant = "default",
   size = "normal",
   icon: Icon,
   block,
   liked,
-  disabled,
   loading,
+  disabled,
   style,
-}: BtnProps) {
+  ...rest
+}: ButtonProps) => {
   const { t, fonts } = useTheme();
+  const { bg, fg } = useGetButtonsColors(variant, liked);
   const sm = size === "sm";
-
-  const bg =
-    variant === "primary"
-      ? liked
-        ? t.accentSoft
-        : t.accent
-      : variant === "ghost"
-        ? "transparent"
-        : t.surface2;
-  const fg =
-    variant === "primary"
-      ? liked
-        ? t.accent
-        : t.accentInk
-      : liked
-        ? t.accent
-        : t.ink;
 
   return (
     <Pressable
-      onPress={onPress}
-      disabled={disabled || loading}
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={6}
-      style={({ pressed }) => [
+      {...rest}
+      disabled={disabled || loading}
+      style={(state) => [
         styles.base,
         {
           minHeight: sm ? 36 : 48,
           paddingHorizontal: sm ? SPACING.md : SPACING.lg,
-          borderRadius: t.radius,
-          borderWidth: variant === "ghost" ? t.borderWeight : 0,
           borderColor: variant === "ghost" ? t.line : "transparent",
           backgroundColor: bg,
           alignSelf: block ? "stretch" : "flex-start",
-          opacity: disabled ? 0.5 : pressed ? 0.85 : 1,
+          opacity: disabled ? 0.5 : state.pressed ? 0.85 : 1,
         },
-        style,
+        typeof style === "function" ? style(state) : style,
       ]}
     >
       {loading ? (
@@ -88,13 +68,14 @@ export function Btn({
             <Icon size={sm ? 16 : 18} color={fg} strokeWidth={1.8} />
           ) : null}
           <Text
-            style={{
-              fontFamily: fonts.body,
-              fontSize: sm ? FONT_SIZE.md : FONT_SIZE.base,
-              fontWeight: "600",
-              color: fg,
-              letterSpacing: 0.2,
-            }}
+            style={[
+              styles.label,
+              {
+                fontFamily: fonts.body,
+                fontSize: sm ? FONT_SIZE.md : FONT_SIZE.base,
+                color: fg,
+              },
+            ]}
           >
             {label}
           </Text>
@@ -102,15 +83,18 @@ export function Btn({
       )}
     </Pressable>
   );
-}
+};
 
-// Static, theme-independent layout only. Theme-colored styles stay inline above.
+// Static, theme-independent layout only. useTheme/dynamic values stay inline above.
 const styles = StyleSheet.create({
   base: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: SPACING.sm,
+    borderWidth: 1.5,
+    borderRadius: RADIUS.sm,
   },
+  label: { fontWeight: "600", letterSpacing: 0.2 },
   row: { flexDirection: "row", alignItems: "center", gap: SPACING.sm },
 });

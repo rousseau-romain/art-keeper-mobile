@@ -14,12 +14,12 @@ export const LOCALE_STORAGE_KEY = "artkeeper:locale:v1";
 const FALLBACK: Language = "en";
 
 /** The device's preferred language if we support it, else the fallback. */
-export function deviceLanguage(): Language {
+export const deviceLanguage = (): Language => {
   const code = Localization.getLocales()[0]?.languageCode;
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(code ?? "")
     ? (code as Language)
     : FALLBACK;
-}
+};
 
 // Init synchronously with bundled resources and the device locale. A persisted
 // manual override (read from AsyncStorage) is applied later by `I18nProvider`.

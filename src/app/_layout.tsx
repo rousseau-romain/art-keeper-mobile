@@ -3,19 +3,25 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ToastProvider } from "@/components";
+import { ToastProvider } from "@/shared/ui";
+// Side-effect import: configures the generated API client (base URL +
+// auth/Origin/Accept-Language/error interceptors) before any request runs.
+import "@/lib/api/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { queryClient } from "@/lib/query";
 import { useAppFonts, useTheme } from "@/theme";
 
-if (__DEV__) {
+if (__DEV__ && Platform.OS !== "web") {
   // Conditional require (not a static import) so Reactotron and its deps are
-  // never pulled into a production bundle.
+  // never pulled into a production bundle. Skipped on web: reactotron-react-native
+  // deep-imports react-native internals (getDevServer, NativeExceptionsManager,
+  // LogBox…) that have no react-native-web equivalent, so loading it on web throws
+  // "__fbBatchedBridgeConfig is not set". Reactotron is a native-only debugger.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require("@/lib/reactotron");
 }

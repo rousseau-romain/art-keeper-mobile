@@ -12,7 +12,6 @@ import {
 
 import {
   getSession,
-  SESSION_KEY,
   type SessionResponse,
   sendVerificationEmail,
   signInEmail,
@@ -21,7 +20,11 @@ import {
   signUpEmail,
   type User,
 } from "../api/auth";
+import { getSessionQueryKey } from "../api/generated/@tanstack/react-query.gen";
 import { clearToken, getToken, hydrateToken, setToken } from "./token-store";
+
+/** Generated TanStack Query key for GET /auth/get-session. */
+const SESSION_KEY = getSessionQueryKey();
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -35,7 +38,7 @@ export type GoogleSignInOutcome = "success" | "cancelled" | "unavailable";
  */
 export type SignUpOutcome = "authenticated" | "needs-verification";
 
-interface AuthContextValue {
+type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
   isAdmin: boolean;
@@ -54,11 +57,11 @@ interface AuthContextValue {
   resendPending: boolean;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
-}
+};
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const qc = useQueryClient();
 
   // The bearer token must be in the in-memory mirror before the session query
@@ -280,10 +283,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
-}
+};

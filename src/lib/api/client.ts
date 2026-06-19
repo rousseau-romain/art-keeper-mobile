@@ -1,8 +1,7 @@
-import createFetchClient, { type Middleware } from "openapi-fetch";
 import { Platform } from "react-native";
 import { getToken, setToken } from "../auth/token-store";
 import i18n, { deviceLanguage } from "../i18n";
-import type { paths } from "./schema";
+import { client } from "./generated/client.gen";
 
 const RAW_API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
 
@@ -59,7 +58,7 @@ export type QueryValue =
   | (string | number)[];
 export type Query = Record<string, QueryValue>;
 
-export interface RequestOptions {
+export type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   /** JSON body (ignored when `form` is set). */
   body?: unknown;
@@ -70,7 +69,7 @@ export interface RequestOptions {
   auth?: boolean;
   /** Expose response headers to the caller (e.g. to read set-auth-token). */
   onResponse?: (res: Response) => void;
-}
+};
 
 function buildQuery(query?: Query): string {
   if (!query) return "";
@@ -94,10 +93,10 @@ function acceptLanguage(): string {
 }
 
 /** Low-level request. Returns parsed JSON (or undefined for 204). */
-export async function apiRequest<T = unknown>(
+export const apiRequest = async <T = unknown>(
   path: string,
   opts: RequestOptions = {},
-): Promise<T> {
+): Promise<T> => {
   const { method = "GET", body, form, query, auth = true, onResponse } = opts;
 
   const headers: Record<string, string> = {
@@ -135,7 +134,7 @@ export async function apiRequest<T = unknown>(
 
   if (!res.ok) throw toApiError(res.status, data);
   return data as T;
-}
+};
 
 function safeJson(text: string): unknown {
   try {
@@ -146,50 +145,47 @@ function safeJson(text: string): unknown {
 }
 
 /** Paginated envelope used by list endpoints. */
-export interface Paginated<T> {
+export type Paginated<T> = {
   data: T[];
   nextCursor: string | null;
-}
-
-// --- Typed OpenAPI client -------------------------------------------------
-// Same behaviour as `apiRequest` (bearer token, native Origin, Accept-Language,
-// token capture, ApiError), but driven by the generated `schema.d.ts` so every
-// path/param/response is typed. `apiRequest` stays for anything not in the spec.
-
-const authMiddleware: Middleware = {
-  onRequest({ request }) {
-    const token = getToken();
-    if (token) request.headers.set("Authorization", `Bearer ${token}`);
-    // Browsers set (and forbid overriding) Origin themselves; only native needs it.
-    if (Platform.OS !== "web") request.headers.set("Origin", AUTH_ORIGIN);
-    request.headers.set("Accept-Language", acceptLanguage());
-    return request;
-  },
-  async onResponse({ response }) {
-    // Better Auth returns the bearer token in this header on sign-in (native).
-    const issued = response.headers.get("set-auth-token");
-    if (issued) await setToken(issued);
-    // Throw here (outside openapi-fetch's try/catch) so the call rejects with an
-    // ApiError that React Query surfaces as the error state.
-    if (!response.ok) {
-      const body = await response
-        .clone()
-        .json()
-        .catch(() => undefined);
-      throw toApiError(response.status, body);
-    }
-    // Return nothing: we never replace the response, only read a header off it.
-    // openapi-fetch treats a truthy return as a replacement and requires it to
-    // be `instanceof Response` — which fails in the RN/Hermes runtime (the fetch
-    // polyfill's Response isn't recognized), so returning `response` here threw
-    // "onResponse: must return new Response()" on every successful 2xx call.
-    return undefined;
-  },
 };
 
-/** Typed fetch client. Use `fetchClient.GET("/path", …)` for imperative calls. */
-export const fetchClient = createFetchClient<paths>({
-  baseUrl: API_BASE_URL,
-  credentials: "include",
+// --- Generated client configuration ---------------------------------------
+// The generated SDK + TanStack Query helpers (src/lib/api/generated) all run
+// through this single `@hey-api/client-fetch` instance. We configure it once at
+// module load and register interceptors that reproduce the same behaviour as
+// `apiRequest`: inject the bearer token, native Origin, and Accept-Language,
+// capture the `set-auth-token` header, and throw `ApiError` on non-2xx.
+//
+// Importing this module is what wires the client, so it must load before any
+// request — `src/app/_layout.tsx` imports it for that side effect.
+
+client.setConfig({ baseUrl: API_BASE_URL, credentials: "include" });
+
+// Request interceptor: must return the (possibly-modified) Request.
+client.interceptors.request.use((request) => {
+  const token = getToken();
+  if (token) request.headers.set("Authorization", `Bearer ${token}`);
+  // Browsers set (and forbid overriding) Origin themselves; only native needs it.
+  if (Platform.OS !== "web") request.headers.set("Origin", AUTH_ORIGIN);
+  request.headers.set("Accept-Language", acceptLanguage());
+  return request;
 });
-fetchClient.use(authMiddleware);
+
+// Response interceptor: must return the Response (or throw). Unlike openapi-fetch,
+// hey-api has no `instanceof Response` replacement check, so returning the same
+// response is safe under Hermes. We throw `ApiError` here so the call rejects
+// with it before the client's own (untyped) error handling runs.
+client.interceptors.response.use(async (response) => {
+  // Better Auth returns the bearer token in this header on sign-in (native).
+  const issued = response.headers.get("set-auth-token");
+  if (issued) await setToken(issued);
+  if (!response.ok) {
+    const body = await response
+      .clone()
+      .json()
+      .catch(() => undefined);
+    throw toApiError(response.status, body);
+  }
+  return response;
+});
