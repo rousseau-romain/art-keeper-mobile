@@ -1,15 +1,12 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, type PressableProps, StyleSheet } from "react-native";
+import { Text } from "@/shared/ui/text/Text";
+import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { type TagState, useGetTagColors } from "./hooks/useGetTagColors";
 
-import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
-
-type TagState = "active" | "muted" | "solid";
-
-type TagProps = {
+export type TagProps = PressableProps & {
   label: string;
-  /** Display style prepends `#` (tags have no `#` on the wire). */
   hash?: boolean;
   state?: TagState;
-  onPress?: () => void;
 };
 
 export const Tag = ({
@@ -17,30 +14,15 @@ export const Tag = ({
   hash = true,
   state = "muted",
   onPress,
+  ...rest
 }: TagProps) => {
-  const { t, fonts } = useTheme();
-
-  const bg =
-    state === "solid"
-      ? t.accent
-      : state === "active"
-        ? t.accentSoft
-        : t.surface2;
-  const fg =
-    state === "solid" ? t.accentInk : state === "active" ? t.accent : t.inkSoft;
-  const borderColor = state === "active" ? t.accent : t.hair;
+  const { bg, fg, borderColor } = useGetTagColors(state);
 
   const content = (
     <Text
-      style={[
-        styles.tag,
-        {
-          fontFamily: fonts.mono,
-          color: fg,
-          borderColor,
-          backgroundColor: bg,
-        },
-      ]}
+      font="mono"
+      size="sm"
+      style={[styles.tag, { color: fg, borderColor, backgroundColor: bg }]}
     >
       {hash ? `#${label}` : label}
     </Text>
@@ -53,6 +35,7 @@ export const Tag = ({
       hitSlop={6}
       accessibilityRole="button"
       accessibilityLabel={label}
+      {...rest}
     >
       {content}
     </Pressable>
@@ -61,11 +44,10 @@ export const Tag = ({
 
 const styles = StyleSheet.create({
   tag: {
-    fontSize: FONT_SIZE.sm,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
+    paddingHorizontal: SpacingEnum.md,
+    paddingVertical: SpacingEnum.xs,
     overflow: "hidden",
     borderWidth: 1.5,
-    borderRadius: RADIUS.sm,
+    borderRadius: RadiusEnum.sm,
   },
 });

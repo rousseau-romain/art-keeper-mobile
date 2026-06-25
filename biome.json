@@ -21,10 +21,43 @@
   "linter": {
     "enabled": true,
     "domains": { "react": "recommended" },
-    "rules": { "preset": "recommended" }
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "react-native": {
+                "importNames": ["Text"],
+                "message": "Import the themed `Text` from \"@/shared/ui\" instead of \"react-native\"."
+              }
+            },
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the \"@/\" path alias instead of a parent-relative \"../\" import."
+              }
+            ]
+          }
+        }
+      }
+    }
   },
   "assist": {
     "enabled": true,
     "actions": { "source": { "organizeImports": "on" } }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/shared/ui/text/Text.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    }
+  ]
 }

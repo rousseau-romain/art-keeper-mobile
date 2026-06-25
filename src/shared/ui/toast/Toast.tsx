@@ -7,28 +7,36 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
+import { Icon } from "@/shared/ui/icon/Icon";
+import { Text } from "@/shared/ui/text/Text";
+import {
+  type ToastVariant,
+  useToastColors,
+} from "@/shared/ui/toast/hooks/useToastColors";
+import { ColorEnum } from "@/theme/enums/color.enums";
+import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 
 type ToastContextValue = {
-  show: (message: string) => void;
+  show: (message: string, variant?: ToastVariant) => void;
 };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const DURATION = 2200;
 
+type ToastState = { message: string; variant: ToastVariant };
+
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
-  const [message, setMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const opacity = useMemo(() => new Animated.Value(0), []);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = useCallback(
-    (msg: string) => {
+    (message: string, variant: ToastVariant = "info") => {
       if (timer.current) clearTimeout(timer.current);
-      setMessage(msg);
+      setToast({ message, variant });
       Animated.timing(opacity, {
         toValue: 1,
         duration: 160,
@@ -39,57 +47,62 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
           toValue: 0,
           duration: 220,
           useNativeDriver: true,
-        }).start(() => setMessage(null));
+        }).start(() => setToast(null));
       }, DURATION);
     },
-    [opacity],
+    [opacity]
   );
 
   useEffect(
     () => () => {
       if (timer.current) clearTimeout(timer.current);
     },
-    [],
+    []
   );
 
   return (
     <ToastContext.Provider value={{ show }}>
       {children}
-      {message ? <ToastView message={message} opacity={opacity} /> : null}
+      {toast && (
+        <ToastView
+          message={toast.message}
+          variant={toast.variant}
+          opacity={opacity}
+        />
+      )}
     </ToastContext.Provider>
   );
 };
 
 function ToastView({
   message,
+  variant,
   opacity,
 }: {
   message: string;
+  variant: ToastVariant;
   opacity: Animated.Value;
 }) {
-  const { t, fonts } = useTheme();
   const insets = useSafeAreaInsets();
+  const { bg, accent, icon } = useToastColors(variant);
   return (
     <Animated.View
       pointerEvents="none"
       style={[
         StyleSheet.absoluteFill,
         styles.overlay,
-        { paddingBottom: insets.bottom + SPACING.xl },
+        { paddingBottom: insets.bottom + SpacingEnum.xl },
         { opacity },
       ]}
     >
       <View
         style={[
           styles.bubble,
-          { backgroundColor: t.surface2, borderColor: t.line },
+          { backgroundColor: ColorEnum[bg], borderColor: ColorEnum[accent] },
         ]}
       >
-        <Text
-          style={[styles.message, { fontFamily: fonts.body, color: t.ink }]}
-        >
-          {message}
-        </Text>
+        <Icon name={icon} size="sm" color={accent} />
+        <Text style={styles.message}>{message}</Text>
       </View>
     </Animated.View>
   );
@@ -98,13 +111,16 @@ function ToastView({
 const styles = StyleSheet.create({
   overlay: { justifyContent: "flex-end", alignItems: "center" },
   bubble: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SpacingEnum.sm,
     borderWidth: 1.5,
-    borderRadius: RADIUS.sm,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
+    borderRadius: RadiusEnum.sm,
+    paddingHorizontal: SpacingEnum.lg,
+    paddingVertical: SpacingEnum.md,
     maxWidth: "86%",
   },
-  message: { fontSize: FONT_SIZE.base },
+  message: { flexShrink: 1 },
 });
 
 export const useToast = () => {

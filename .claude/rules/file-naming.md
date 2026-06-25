@@ -5,9 +5,9 @@ names that kind, so the file's role is obvious from the import path:
 
 | Content | File name | Example |
 | --- | --- | --- |
-| Enums (incl. `as const` "enum" objects + their derived key types) | `{name}.enums.ts` | `scale.enums.ts` (`SPACING`, `RADIUS`, `FONT_SIZE`) |
-| Types / interfaces only | `{name}.types.ts` | `theme.types.ts` (`Theme`, `ColorTokens`, …) |
-| Constant values only | `{name}.constant.ts` | `theme.constant.ts` (`THEME`), `fonts.constant.ts` (`FONT_MAP`, `FONTS`) |
+| Enums (incl. `as const` "enum" objects + their derived key types) | `{name}.enums.ts` | `scale.enums.ts` (`SpacingEnum`, `RadiusEnum`, `FontSizeEnum`) |
+| Types / interfaces only | `{name}.types.ts` | `theme.types.ts` (`FontRole`, `Fonts`, …) |
+| Constant values only | `{name}.constant.ts` | `fonts.constant.ts` (`FONT_MAP`, `FONTS`) |
 
 `{name}` is the domain/module the file belongs to (`theme`, `scale`, `fonts`) —
 never the kind itself (no `types.types.ts`).
@@ -22,9 +22,10 @@ never the kind itself (no `types.types.ts`).
   an enum or constant (`keyof typeof`, `typeof en`) lives in that `.enums.ts` /
   `.constant.ts` file, not a separate `.types.ts` — e.g. `Resources = typeof en`
   in `locales/en.constant.ts`.
-- **Barrel exports** (`index.ts`) and intra-folder relative imports use the full
-  suffixed name; external code should import from the folder barrel (`@/theme`)
-  so renames stay internal.
+- **Intra-folder relative imports** use the full suffixed name (`./scale.enums`).
+  External code imports each symbol straight from its module via the deep `@/`
+  path (`@/theme/enums/scale.enums`) — there are no `index.ts` barrels (see
+  [import-path-alias](import-path-alias.md)).
 
 ## Exempt
 

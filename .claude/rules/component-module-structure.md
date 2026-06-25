@@ -2,15 +2,16 @@
 
 A component is **always** a folder — never a bare file directly under
 `src/shared/ui/` or `src/components/`. The folder is named after the component in
-lowercase/kebab-case; the component file inside keeps its PascalCase name.
+lowercase/kebab-case; the component file inside keeps its PascalCase name. Its
+file holds **only that one component** — see
+[one-component-per-file](one-component-per-file.md).
 
 ```
 src/shared/ui/
-  index.ts                      # barrel — re-exports every component
   button/
     Button.tsx                  # the component
     hooks/
-      useGetButtonsColors.ts    # component-specific hooks colocate here
+      useButtonColors.ts    # component-specific hooks colocate here
   tag/
     Tag.tsx
   check/
@@ -28,10 +29,11 @@ Rules:
 - **Leaf hooks own their shared types.** A colocated hook that defines a type the
   component also needs (e.g. `Variant`) exports it, and the component imports it
   from the hook — keeps the dependency one-directional (hook never imports the
-  component). See `button/hooks/useGetButtonsColors.ts`.
-- **The folder barrel** is the single `src/shared/ui/index.ts`, which re-exports
-  from `./{folder}/{Component}`. External code imports from `@/shared/ui`, never
-  a deep path.
+  component). See `button/hooks/useButtonColors.ts`.
+- **No barrel file.** There is no `src/shared/ui/index.ts` re-export. External
+  code imports each component straight from its own module via the deep `@/` path
+  (`import { Text } from "@/shared/ui/text/Text"`), never an aggregated barrel
+  (see [import-path-alias](import-path-alias.md)).
 - **Placement** (`src/shared/ui/` for reusable primitives vs `src/components/`
   for feature components) and the rest of the component conventions live in the
   `create-component` skill.

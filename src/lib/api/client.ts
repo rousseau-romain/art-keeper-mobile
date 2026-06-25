@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
-import { getToken, setToken } from "../auth/token-store";
-import i18n, { deviceLanguage } from "../i18n";
+import { getToken, setToken } from "@/lib/auth/token-store";
+import i18n, { deviceLanguage } from "@/lib/i18n";
 import { client } from "./generated/client.gen";
 
 const RAW_API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";

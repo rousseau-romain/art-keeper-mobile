@@ -19,8 +19,8 @@ import {
   signOutRequest,
   signUpEmail,
   type User,
-} from "../api/auth";
-import { getSessionQueryKey } from "../api/generated/@tanstack/react-query.gen";
+} from "@/lib/api/auth";
+import { getSessionQueryKey } from "@/lib/api/generated/@tanstack/react-query.gen";
 import { clearToken, getToken, hydrateToken, setToken } from "./token-store";
 
 /** Generated TanStack Query key for GET /auth/get-session. */

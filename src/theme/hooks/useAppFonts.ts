@@ -1,6 +1,6 @@
 import { useFonts } from "expo-font";
 
-import { FONT_MAP } from "../fonts.constant";
+import { FONT_MAP } from "@/theme/fonts.constant";
 
 /** Loads every font family. Returns [loaded, error]. */
 export const useAppFonts = () => {

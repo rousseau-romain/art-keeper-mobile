@@ -11,13 +11,20 @@ trigger matches, to keep context lean.
 @.claude/rules/api-types-openapi.md
 @.claude/rules/heyapi-client-interceptors.md
 @.claude/rules/i18n-translation.md
+@.claude/rules/forms-react-hook-form.md
 @.claude/rules/styling-stylesheet.md
 @.claude/rules/file-naming.md
+@.claude/rules/import-path-alias.md
 @.claude/rules/types-not-interface.md
+@.claude/rules/enums-as-const.md
 @.claude/rules/export-const-functions.md
 @.claude/rules/component-module-structure.md
+@.claude/rules/one-component-per-file.md
+@.claude/rules/app-route-page-screens.md
 @.claude/rules/control-flow-switch.md
 @.claude/rules/design-scale.md
+@.claude/rules/router-navigation-paths.md
+@.claude/rules/serena-code-navigation.md
 
 ## Read on demand
 

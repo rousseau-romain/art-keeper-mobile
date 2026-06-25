@@ -6,7 +6,7 @@ helpers — is declared as a `const` arrow:
 ```ts
 // Yes
 export const Button = (props: ButtonProps) => { ... };
-export const useTheme = (): ThemeApi => API;
+export const body = (size: number = FontSizeEnum.base): TextStyle => ({ ... });
 export const getToken = (): string | null => mirror;
 export const apiRequest = async <T = unknown>(path: string): Promise<T> => { ... };
 

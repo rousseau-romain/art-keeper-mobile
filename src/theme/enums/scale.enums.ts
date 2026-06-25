@@ -1,14 +1,13 @@
 /**
  * Design scales — the allowed steps for spacing, corner radius, and font size.
  * Use these named steps instead of raw magic numbers in styles, e.g.
- * `padding: SPACING.lg`, `borderRadius: RADIUS.md`, `mono(FONT_SIZE.sm)`.
+ * `padding: SpacingEnum.lg`, `borderRadius: RadiusEnum.md`, `mono(FontSizeEnum.sm)`.
  *
  * Modeled as `as const` objects (not TS `enum`) so the values stay plain numbers
  * usable directly in RN styles, and the keys are inferred as a literal union.
  */
 
-/** 4pt-based spacing steps (padding / margin / gap). */
-export const SPACING = {
+export const SpacingEnum = {
   none: 0,
   xs: 4,
   sm: 8,
@@ -19,8 +18,9 @@ export const SPACING = {
   xxxl: 48,
 } as const;
 
-/** Corner radius steps. `full` pills/circles via a large value. */
-export const RADIUS = {
+export type SpacingEnumType = keyof typeof SpacingEnum;
+
+export const RadiusEnum = {
   none: 0,
   sm: 2,
   md: 3,
@@ -29,8 +29,9 @@ export const RADIUS = {
   full: 9999,
 } as const;
 
-/** Font-size steps (point sizes passed to display/body/mono). */
-export const FONT_SIZE = {
+export type RadiusEnumType = keyof typeof RadiusEnum;
+
+export const FontSizeEnum = {
   xs: 11,
   sm: 12,
   md: 13,
@@ -41,6 +42,23 @@ export const FONT_SIZE = {
   display: 52,
 } as const;
 
-export type Spacing = keyof typeof SPACING;
-export type Radius = keyof typeof RADIUS;
-export type FontSize = keyof typeof FONT_SIZE;
+export type FontSizeEnumType = keyof typeof FontSizeEnum;
+
+export const IconSizeEnum = {
+  xs: 16,
+  sm: 18,
+  md: 20,
+  lg: 24,
+  xl: 28,
+  xxl: 32,
+  xxxl: 36,
+} as const;
+
+export type IconSizeEnumType = keyof typeof IconSizeEnum;
+
+export const ControlHeightEnum = {
+  sm: 36,
+  md: 48,
+} as const;
+
+export type ControlHeightEnumType = keyof typeof ControlHeightEnum;

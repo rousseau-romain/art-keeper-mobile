@@ -8,7 +8,10 @@ export const fr: Resources = {
   },
   auth: {
     tagline: "Une carte vivante du street art.",
-    hero: "Cataloguez les murs avant qu'ils disparaissent.",
+    title: {
+      hero: "Cataloguez les murs avant qu'ils disparaissent.",
+      verify: "Vérifiez votre boîte mail",
+    },
     signIn: "Se connecter",
     createAccount: "Créer un compte",
     nameLabel: "Nom",
@@ -21,7 +24,6 @@ export const fr: Resources = {
     switchToCreate: "créer un compte",
     footerHaveAccount: "Déjà un compte ? Connectez-vous",
     footerNewHere: "Nouveau ici ? Créez un compte",
-    verifyTitle: "Vérifiez votre boîte mail",
     verifyBackToSignIn: "Retour à la connexion",
     verifyResend: "Renvoyer le lien",
     verifyBefore: "Nous avons envoyé un lien de vérification à ",
@@ -32,9 +34,21 @@ export const fr: Resources = {
     googleUnavailable: "Connexion Google indisponible",
     googleFailed: "Échec de la connexion Google.",
     resetSoon: "Réinitialisation du mot de passe bientôt disponible",
+    errors: {
+      nameRequired: "Saisissez votre nom",
+      emailRequired: "Saisissez votre e-mail",
+      emailInvalid: "Saisissez un e-mail valide",
+      passwordRequired: "Saisissez votre mot de passe",
+    },
   },
-  browse: {
-    title: "Explorer",
+  artwork: {
+    tab: "Œuvres",
+    title: {
+      index: "Explorer",
+      detail: "Œuvre",
+      edit: "Modifier l'œuvre",
+      new: "Nouvelle œuvre",
+    },
     location: "Paris 11e",
     pieceCount_one: "{{count}} œuvre",
     pieceCount_other: "{{count}} œuvres",
@@ -48,8 +62,13 @@ export const fr: Resources = {
     signOut: "Se déconnecter",
     like: "J'aime",
     unlike: "Je n'aime plus",
+    notFound: "Œuvre introuvable.",
+    edit: "Modifier",
+    editComingSoon: "La modification n'est pas encore disponible.",
+    createComingSoon: "La création n'est pas encore disponible.",
   },
   a11y: {
     verified: "vérifié",
+    language: "Langue : {{language}}",
   },
 };

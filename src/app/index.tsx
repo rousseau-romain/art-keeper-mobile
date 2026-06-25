@@ -7,8 +7,6 @@ export default function Index() {
   const { status } = useAuth();
   if (status === "loading") return null; // splash still showing
   return (
-    <Redirect
-      href={status === "authenticated" ? "/(tabs)/browse" : "/(auth)/login"}
-    />
+    <Redirect href={status === "authenticated" ? "/artworks" : "/login"} />
   );
 }

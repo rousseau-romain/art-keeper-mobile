@@ -27,4 +27,4 @@ const bg =
 - A **single-level** ternary is fine (`liked ? a : b`) — the rule targets
   *nesting* / chaining, not all ternaries.
 - Always include a `default` case so the union stays exhaustive.
-- Reference: `src/shared/ui/button/hooks/useGetButtonsColors.ts`.
+- Reference: `src/shared/ui/button/hooks/useButtonColors.ts`.

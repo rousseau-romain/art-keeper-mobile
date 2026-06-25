@@ -33,6 +33,22 @@ const { t } = useTranslation();
    a11y labels under `a11y`.
 
 Conventions:
+- **Screen / panel titles** of a namespace are grouped under one nested `title`
+  object keyed by the screen (or panel) — **never** flat `*Title` keys. For a CRUD
+  domain that's the four screen names; for `auth` it's the panel names:
+
+  ```ts
+  artwork: {
+    title: { index: "Browse", detail: "Artwork", edit: "Edit artwork", new: "New artwork" },
+  },
+  auth: {
+    title: { hero: "Catalog the walls…", verify: "Check your inbox" },
+  },
+  ```
+
+  So `t("artwork.title.detail")` / `t("auth.title.verify")` — not `detailTitle` /
+  `verifyTitle`. The keys mirror the CRUD screen set
+  ([app-route-page-screens](app-route-page-screens.md)).
 - **Pluralization**: use i18next suffixes — `pieceCount_one` / `pieceCount_other`
   — and call `t("browse.pieceCount", { count })`.
 - **Interpolation**: `{{count}}` / `{{email}}`. When the UI needs to style part of

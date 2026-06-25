@@ -7,7 +7,10 @@ export const en = {
   },
   auth: {
     tagline: "A living map of street art.",
-    hero: "Catalog the walls before they're gone.",
+    title: {
+      hero: "Catalog the walls before they're gone.",
+      verify: "Check your inbox",
+    },
     signIn: "Sign in",
     createAccount: "Create account",
     nameLabel: "Name",
@@ -21,7 +24,6 @@ export const en = {
     footerHaveAccount: "Have an account? Sign in",
     footerNewHere: "New here? Create an account",
     // Verify-email panel
-    verifyTitle: "Check your inbox",
     verifyBackToSignIn: "Back to sign in",
     verifyResend: "Resend link",
     // Interpolated; the email is wrapped in its own emphasized <Text> in the UI,
@@ -35,9 +37,22 @@ export const en = {
     googleUnavailable: "Google sign-in unavailable",
     googleFailed: "Google sign-in failed.",
     resetSoon: "Password reset coming soon",
+    // Form validation messages
+    errors: {
+      nameRequired: "Enter your name",
+      emailRequired: "Enter your email",
+      emailInvalid: "Enter a valid email",
+      passwordRequired: "Enter your password",
+    },
   },
-  browse: {
-    title: "Browse",
+  artwork: {
+    tab: "Artworks",
+    title: {
+      index: "Browse",
+      detail: "Artwork",
+      edit: "Edit artwork",
+      new: "New artwork",
+    },
     location: "Paris 11e",
     pieceCount_one: "{{count}} piece",
     pieceCount_other: "{{count}} pieces",
@@ -50,9 +65,14 @@ export const en = {
     signOut: "Sign out",
     like: "Like",
     unlike: "Unlike",
+    notFound: "Artwork not found.",
+    edit: "Edit",
+    editComingSoon: "Editing isn't available yet.",
+    createComingSoon: "Creating isn't available yet.",
   },
   a11y: {
     verified: "verified",
+    language: "Language: {{language}}",
   },
 };
 

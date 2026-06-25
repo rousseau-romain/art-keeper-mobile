@@ -7,14 +7,15 @@ import { Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ToastProvider } from "@/shared/ui";
+import { ToastProvider } from "@/shared/ui/toast/Toast";
 // Side-effect import: configures the generated API client (base URL +
 // auth/Origin/Accept-Language/error interceptors) before any request runs.
 import "@/lib/api/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { queryClient } from "@/lib/query";
-import { useAppFonts, useTheme } from "@/theme";
+import { ColorEnum } from "@/theme/enums/color.enums";
+import { useAppFonts } from "@/theme/hooks/useAppFonts";
 
 if (__DEV__ && Platform.OS !== "web") {
   // Conditional require (not a static import) so Reactotron and its deps are
@@ -49,7 +50,6 @@ export default function RootLayout() {
 function RootNavigator() {
   const [fontsLoaded, fontError] = useAppFonts();
   const { status } = useAuth();
-  const { t } = useTheme();
 
   const ready = (fontsLoaded || !!fontError) && status !== "loading";
 
@@ -57,17 +57,15 @@ function RootNavigator() {
     if (ready) SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
 
-  if (!ready)
-    return <View style={[staticStyles.fill, { backgroundColor: t.bg }]} />;
+  if (!ready) return <View style={staticStyles.screen} />;
 
   return (
-    <View style={[staticStyles.fill, { backgroundColor: t.bg }]}>
-      {/* The single theme is dark, so status-bar content is always light. */}
-      <StatusBar style="light" />
+    <View style={staticStyles.screen}>
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: t.bg },
+          contentStyle: staticStyles.bg,
           animation: "fade",
         }}
       >
@@ -79,4 +77,8 @@ function RootNavigator() {
   );
 }
 
-const staticStyles = StyleSheet.create({ fill: { flex: 1 } });
+const staticStyles = StyleSheet.create({
+  fill: { flex: 1 },
+  screen: { flex: 1, backgroundColor: ColorEnum.bg },
+  bg: { backgroundColor: ColorEnum.bg },
+});

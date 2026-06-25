@@ -1,100 +1,104 @@
-import type { LucideIcon } from "lucide-react-native";
 import {
   ActivityIndicator,
   Pressable,
   type PressableProps,
+  type StyleProp,
   StyleSheet,
-  Text,
   View,
+  type ViewStyle,
 } from "react-native";
-
-import { FONT_SIZE, RADIUS, SPACING, useTheme } from "@/theme";
-import { type Variant, useGetButtonsColors } from "./hooks/useGetButtonsColors";
+import { Icon, type IconProps } from "@/shared/ui/icon/Icon";
+import { Text } from "@/shared/ui/text/Text";
+import {
+  ControlHeightEnum,
+  RadiusEnum,
+  SpacingEnum,
+} from "@/theme/enums/scale.enums";
+import { type ButtonVariant, useButtonColors } from "./hooks/useButtonColors";
 
 type Size = "sm" | "normal";
 
-// Wraps a Pressable and forwards the rest of its props to it.
-type ButtonProps = PressableProps & {
+export type ButtonProps = Omit<PressableProps, "style"> & {
   label: string;
-  variant?: Variant;
+  variant?: ButtonVariant;
   size?: Size;
-  icon?: LucideIcon;
+  iconBefore?: IconProps;
+  iconAfter?: IconProps;
   block?: boolean;
-  liked?: boolean;
   loading?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const Button = ({
   label,
   variant = "default",
   size = "normal",
-  icon: Icon,
+  iconBefore,
+  iconAfter,
   block,
-  liked,
   loading,
   disabled,
   style,
   ...rest
 }: ButtonProps) => {
-  const { t, fonts } = useTheme();
-  const { bg, fg } = useGetButtonsColors(variant, liked);
+  const { bg, fg, border } = useButtonColors(variant);
   const sm = size === "sm";
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      hitSlop={6}
       {...rest}
       disabled={disabled || loading}
       style={(state) => [
         styles.base,
         {
-          minHeight: sm ? 36 : 48,
-          paddingHorizontal: sm ? SPACING.md : SPACING.lg,
-          borderColor: variant === "ghost" ? t.line : "transparent",
+          minHeight: sm ? ControlHeightEnum.sm : ControlHeightEnum.md,
+          paddingHorizontal: sm ? SpacingEnum.md : SpacingEnum.lg,
+          borderColor: border,
           backgroundColor: bg,
           alignSelf: block ? "stretch" : "flex-start",
           opacity: disabled ? 0.5 : state.pressed ? 0.85 : 1,
         },
-        typeof style === "function" ? style(state) : style,
+        style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={fg} size="small" />
-      ) : (
-        <View style={styles.row}>
-          {Icon ? (
-            <Icon size={sm ? 16 : 18} color={fg} strokeWidth={1.8} />
-          ) : null}
-          <Text
-            style={[
-              styles.label,
-              {
-                fontFamily: fonts.body,
-                fontSize: sm ? FONT_SIZE.md : FONT_SIZE.base,
-                color: fg,
-              },
-            ]}
-          >
-            {label}
-          </Text>
-        </View>
-      )}
+      {loading && <ActivityIndicator color={fg} size="small" />}
+
+      <View style={styles.row}>
+        {iconBefore && (
+          <Icon
+            size={sm ? "xs" : "sm"}
+            color={"bg"}
+            strokeWidth={1.8}
+            {...iconBefore}
+          />
+        )}
+        <Text size={sm ? "md" : "base"} style={[styles.label, { color: fg }]}>
+          {label}
+        </Text>
+        {iconAfter && (
+          <Icon
+            size={sm ? "xs" : "sm"}
+            color={"bg"}
+            strokeWidth={1.8}
+            {...iconAfter}
+          />
+        )}
+      </View>
     </Pressable>
   );
 };
 
-// Static, theme-independent layout only. useTheme/dynamic values stay inline above.
 const styles = StyleSheet.create({
   base: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: SPACING.sm,
+    gap: SpacingEnum.sm,
     borderWidth: 1.5,
-    borderRadius: RADIUS.sm,
+    borderRadius: RadiusEnum.sm,
   },
   label: { fontWeight: "600", letterSpacing: 0.2 },
-  row: { flexDirection: "row", alignItems: "center", gap: SPACING.sm },
+  row: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
 });
