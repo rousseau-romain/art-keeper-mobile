@@ -11,7 +11,6 @@ import {
   getArtworksInfiniteOptions,
   getArtworksInfiniteQueryKey,
 } from "./generated/@tanstack/react-query.gen";
-import { formDataBodySerializer } from "./generated/core/bodySerializer.gen";
 import {
   deleteArtworksByIdLike,
   postArtworks,
@@ -21,6 +20,7 @@ import type {
   Artwork,
   ArtworkPage,
   GetArtworksData,
+  PostArtworksData,
 } from "./generated/types.gen";
 
 export type { Artwork, ArtworkPage };
@@ -130,28 +130,34 @@ export const useCreateArtwork = () => {
   return useMutation({
     mutationFn: async (input: CreateArtworkInput): Promise<Artwork> => {
       const raw = await uriToBlob(input.image.uri);
-      // Append a plain Blob, NOT a File: winter's FormData.append stamps a
-      // filename onto the part via `value.name = …`, which throws on a File
-      // (its `name` is a getter-only prototype prop) but is harmless on a Blob.
       // Guarantee an `image/*` content-type even if the Blob came back untyped —
       // the backend validates `image` as `t.File({ type: "image/*" })`, and the
-      // content-type is what carries that through (the part filename is "blob").
+      // content-type is what carries that through.
       const image = raw.type
         ? raw
         : new Blob([raw], { type: input.image.type });
 
+      // Build the multipart body by hand instead of `formDataBodySerializer`:
+      // that serializer appends the image via the 2-arg `FormData.append(key,
+      // value)`, and Expo's "winter" fetch does NOT stamp a filename onto a bare
+      // Blob. A multipart part with no `filename` is parsed by the backend as a
+      // text field, so `t.File` rejects it ("image must be a string"). Passing
+      // the filename as the 3rd `append` arg forces a real file part — a File
+      // value can't be used instead because winter crashes setting its readonly
+      // `.name`. Numbers go through `String()` (the backend reads them as
+      // `t.Numeric`), and `tags` is a single JSON-encoded field, not repeated.
+      const form = new FormData();
+      form.append("title", input.title);
+      form.append("latitude", String(input.latitude));
+      form.append("longitude", String(input.longitude));
+      if (input.description) form.append("description", input.description);
+      if (input.tags.length) form.append("tags", JSON.stringify(input.tags));
+      if (input.artistId) form.append("artistId", input.artistId);
+      form.append("image", image, input.image.name);
+
       const { data } = await postArtworks({
-        body: {
-          title: input.title,
-          latitude: input.latitude,
-          longitude: input.longitude,
-          description: input.description,
-          // The backend wants `tags` as a JSON-encoded string, not repeated parts.
-          tags: input.tags.length ? JSON.stringify(input.tags) : undefined,
-          artistId: input.artistId,
-          image,
-        },
-        ...formDataBodySerializer,
+        body: form as unknown as PostArtworksData["body"],
+        bodySerializer: (body) => body,
         headers: { "Content-Type": null },
       });
       return data as Artwork;
