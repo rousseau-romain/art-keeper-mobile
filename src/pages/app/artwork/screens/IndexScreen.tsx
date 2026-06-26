@@ -105,15 +105,15 @@ export const IndexScreen = () => {
             backgroundRefetching
               ? ColorEnum.accent
               : isStale
-                ? ColorEnum.inkMute
-                : ColorEnum.diffAdd
+              ? ColorEnum.inkMute
+              : ColorEnum.diffAdd
           }
           label={
             backgroundRefetching
               ? tr("artwork.statusUpdating")
               : isStale
-                ? tr("artwork.statusStale")
-                : tr("artwork.statusLive")
+              ? tr("artwork.statusStale")
+              : tr("artwork.statusLive")
           }
         />
       </View>
@@ -168,6 +168,7 @@ export const IndexScreen = () => {
       <FlatList
         data={artworks}
         keyExtractor={(item) => item.id}
+        // style={styles.list}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: insets.bottom + SpacingEnum.xl },
@@ -238,6 +239,7 @@ const styles = StyleSheet.create({
     gap: SpacingEnum.lg,
   },
   metaRow: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+  list: { flex: 1 },
   listContent: { padding: SpacingEnum.lg, gap: SpacingEnum.lg, flexGrow: 1 },
   centerNote: { marginTop: SpacingEnum.md },
   centerText: { textAlign: "center" },

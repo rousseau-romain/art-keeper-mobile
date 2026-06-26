@@ -28,7 +28,10 @@ export default function ArtworksLayout() {
         name="[id]/edit"
         options={{ title: tr("artwork.title.edit") }}
       />
-      <Stack.Screen name="new" options={{ title: tr("artwork.title.new") }} />
+      <Stack.Screen
+        name="new"
+        options={{ headerShown: false, title: tr("artwork.title.new") }}
+      />
     </Stack>
   );
 }

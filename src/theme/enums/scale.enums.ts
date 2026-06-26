@@ -59,6 +59,7 @@ export type IconSizeEnumType = keyof typeof IconSizeEnum;
 export const ControlHeightEnum = {
   sm: 36,
   md: 48,
+  lg: 56,
 } as const;
 
 export type ControlHeightEnumType = keyof typeof ControlHeightEnum;

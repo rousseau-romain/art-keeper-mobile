@@ -48,7 +48,10 @@
         }
       ],
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      "expo-image-picker",
+      "expo-location",
+      "react-native-maps"
     ],
     "experiments": {
       "typedRoutes": true,

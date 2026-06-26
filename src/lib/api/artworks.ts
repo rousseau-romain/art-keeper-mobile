@@ -11,8 +11,10 @@ import {
   getArtworksInfiniteOptions,
   getArtworksInfiniteQueryKey,
 } from "./generated/@tanstack/react-query.gen";
+import { formDataBodySerializer } from "./generated/core/bodySerializer.gen";
 import {
   deleteArtworksByIdLike,
+  postArtworks,
   postArtworksByIdLike,
 } from "./generated/sdk.gen";
 import type {
@@ -75,6 +77,92 @@ export const useArtworks = (filters: ArtworkFilters = {}) => {
   return { ...query, artworks };
 };
 
+/** What the new-artwork flow collects before it can submit. */
+export type CreateArtworkInput = {
+  title: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+  tags: string[];
+  artistId?: string;
+  image: { uri: string; name: string; type: string };
+};
+
+/**
+ * Read a picked image URI into a real `Blob` for multipart upload. The app's
+ * global `fetch` is Expo's "winter" fetch, whose FormData serializer only
+ * understands a `string` or a `Blob` — it rejects React Native's
+ * `{ uri, name, type }` file convention with "Unsupported FormDataPart
+ * implementation" — and its URLSession-based fetch can't read a `file://` URI
+ * directly either. An `XMLHttpRequest` with `responseType: "blob"` reads both
+ * the native `file://` URI and the web `blob:` URL, yielding a Blob we can
+ * append.
+ */
+const uriToBlob = (uri: string): Promise<Blob> =>
+  new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob";
+    xhr.onload = () => resolve(xhr.response as Blob);
+    xhr.onerror = () => reject(new Error("Failed to read the selected image"));
+    xhr.open("GET", uri, true);
+    xhr.send(null);
+  });
+
+/**
+ * Create an artwork via multipart/form-data through the generated `postArtworks`
+ * SDK (so the bearer token, Origin, Accept-Language, and ApiError handling from
+ * the client interceptors all apply). The SDK hardcodes a JSON content-type and
+ * the client defaults to JSON serialization, so for this one upload we override:
+ *
+ * - `...formDataBodySerializer` builds a `FormData` from the body object instead
+ *   of `JSON.stringify`-ing it (`image: Blob | File` lands as a real file part);
+ * - `Content-Type: null` drops the SDK's `application/json` header so the
+ *   `Request` constructor computes the multipart boundary itself.
+ *
+ * The picked photo is still read into a real `File` first (see `uriToBlob`):
+ * winter fetch rejects RN's `{ uri, name, type }` convention regardless of which
+ * request path we use. On success the browse list is invalidated so the new
+ * piece shows up.
+ */
+export const useCreateArtwork = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateArtworkInput): Promise<Artwork> => {
+      const raw = await uriToBlob(input.image.uri);
+      // Append a plain Blob, NOT a File: winter's FormData.append stamps a
+      // filename onto the part via `value.name = …`, which throws on a File
+      // (its `name` is a getter-only prototype prop) but is harmless on a Blob.
+      // Guarantee an `image/*` content-type even if the Blob came back untyped —
+      // the backend validates `image` as `t.File({ type: "image/*" })`, and the
+      // content-type is what carries that through (the part filename is "blob").
+      const image = raw.type
+        ? raw
+        : new Blob([raw], { type: input.image.type });
+
+      const { data } = await postArtworks({
+        body: {
+          title: input.title,
+          latitude: input.latitude,
+          longitude: input.longitude,
+          description: input.description,
+          // The backend wants `tags` as a JSON-encoded string, not repeated parts.
+          tags: input.tags.length ? JSON.stringify(input.tags) : undefined,
+          artistId: input.artistId,
+          image,
+        },
+        ...formDataBodySerializer,
+        headers: { "Content-Type": null },
+      });
+      return data as Artwork;
+    },
+
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: getArtworksInfiniteQueryKey() });
+    },
+  });
+};
+
 /** A single artwork by id. */
 export const useArtwork = (id: string) => {
   return useQuery({
@@ -119,10 +207,10 @@ export const useToggleArtworkLike = () => {
             pages: old.pages.map((page) => ({
               ...page,
               data: page.data.map((a) =>
-                a.id === id ? withLike(a, liked) : a,
+                a.id === id ? withLike(a, liked) : a
               ),
             })),
-          },
+          }
       );
 
       return { previousDetail, previousLists };
@@ -132,7 +220,7 @@ export const useToggleArtworkLike = () => {
       if (ctx?.previousDetail) {
         qc.setQueryData(
           getArtworksByIdQueryKey({ path: { id } }),
-          ctx.previousDetail,
+          ctx.previousDetail
         );
       }
       ctx?.previousLists?.forEach(([key, data]) => {

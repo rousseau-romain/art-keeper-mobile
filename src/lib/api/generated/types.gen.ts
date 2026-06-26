@@ -1122,6 +1122,18 @@ export type GetArtistsData = {
     query?: {
         cursor?: string;
         limit?: number;
+        /**
+         * Case-insensitive substring match on name. Repeat for OR.
+         */
+        name?: Array<string>;
+        /**
+         * Case-insensitive exact tag match. Repeat to require all (AND).
+         */
+        tag?: Array<string>;
+        /**
+         * Comma-separated sort keys; a leading '-' means descending (e.g. `verified,name`). Allowed: name, createdAt, verified. Default: createdAt desc.
+         */
+        sort?: string;
     };
     url: '/artists/';
 };

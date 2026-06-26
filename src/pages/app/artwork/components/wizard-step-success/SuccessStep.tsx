@@ -1,0 +1,101 @@
+import { type Href, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { Button } from "@/shared/ui/button/Button";
+import { Icon } from "@/shared/ui/icon/Icon";
+import { Text } from "@/shared/ui/text/Text";
+import { ColorEnum } from "@/theme/enums/color.enums";
+import {
+  ControlHeightEnum,
+  RadiusEnum,
+  SpacingEnum,
+} from "@/theme/enums/scale.enums";
+
+export type SuccessStepProps = {
+  artworkId?: string;
+  onAnother: () => void;
+};
+
+/** Step 5 — the post-submit confirmation panel. */
+export const SuccessStep = ({ artworkId, onAnother }: SuccessStepProps) => {
+  const { t: tr } = useTranslation();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View
+      style={[styles.success, { paddingTop: insets.top + SpacingEnum.xxxl }]}
+    >
+      <View style={styles.icon}>
+        <Icon name="Check" size="xxl" color="accentInk" strokeWidth={2.4} />
+      </View>
+
+      <Text font="display" size="xxl" style={styles.title}>
+        {tr("artwork.new.success.title")}
+      </Text>
+      <Text font="body" size="base" color="inkSoft" style={styles.body}>
+        {tr("artwork.new.success.body")}
+      </Text>
+
+      <View style={styles.statusPill}>
+        <Text font="mono" size="xs" color="inkMute">
+          {tr("artwork.new.success.status")}
+        </Text>
+      </View>
+
+      <View style={styles.actions}>
+        {artworkId && (
+          <Button
+            label={tr("artwork.new.success.track")}
+            block
+            onPress={() => router.push(`/artworks/${artworkId}` as Href)}
+          />
+        )}
+        <Button
+          label={tr("artwork.new.success.another")}
+          variant="primary"
+          block
+          onPress={onAnother}
+        />
+        <Pressable
+          onPress={() => router.replace("/artworks")}
+          hitSlop={8}
+          style={styles.backLink}
+        >
+          <Text font="mono" size="sm" color="accent">
+            {tr("artwork.new.success.backToBrowse")}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  success: {
+    flex: 1,
+    alignItems: "center",
+    gap: SpacingEnum.lg,
+    paddingHorizontal: SpacingEnum.xl,
+  },
+  icon: {
+    width: ControlHeightEnum.md,
+    height: ControlHeightEnum.md,
+    borderRadius: RadiusEnum.full,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: ColorEnum.accent,
+  },
+  title: { textTransform: "uppercase" },
+  body: { textAlign: "center" },
+  statusPill: {
+    paddingHorizontal: SpacingEnum.md,
+    paddingVertical: SpacingEnum.xs,
+    borderRadius: RadiusEnum.sm,
+    backgroundColor: ColorEnum.surface2,
+  },
+  actions: { alignSelf: "stretch", gap: SpacingEnum.md, alignItems: "center" },
+  backLink: { paddingVertical: SpacingEnum.sm },
+});

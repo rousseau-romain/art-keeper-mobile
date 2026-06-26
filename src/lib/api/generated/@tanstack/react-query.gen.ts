@@ -627,7 +627,7 @@ export const getArtistsQueryKey = (options?: Options<GetArtistsData>) => createQ
 /**
  * List artists
  *
- * Return artists, newest first. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
+ * Return artists. Search with `name` (substring) and `tag` (exact); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
  */
 export const getArtistsOptions = (options?: Options<GetArtistsData>) => queryOptions<GetArtistsResponse, DefaultError, GetArtistsResponse, ReturnType<typeof getArtistsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -647,7 +647,7 @@ export const getArtistsInfiniteQueryKey = (options?: Options<GetArtistsData>): Q
 /**
  * List artists
  *
- * Return artists, newest first. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
+ * Return artists. Search with `name` (substring) and `tag` (exact); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
  */
 export const getArtistsInfiniteOptions = (options?: Options<GetArtistsData>) => infiniteQueryOptions<GetArtistsResponse, DefaultError, InfiniteData<GetArtistsResponse>, QueryKey<Options<GetArtistsData>>, string | Pick<QueryKey<Options<GetArtistsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore

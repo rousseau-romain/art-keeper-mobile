@@ -1,16 +1,18 @@
-import { Redirect, Tabs } from "expo-router";
-import { Map as MapIcon } from "lucide-react-native";
+import { Redirect, Tabs, useRouter } from "expo-router";
+import { Map as MapIcon, Plus as PlusIcon } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ColorEnum } from "@/theme/enums/color.enums";
-import { FontSizeEnum } from "@/theme/enums/scale.enums";
+import { ControlHeightEnum, FontSizeEnum } from "@/theme/enums/scale.enums";
 import { FONTS } from "@/theme/fonts.constant";
 
 export default function TabsLayout() {
   const { t: tr } = useTranslation();
   const { status } = useAuth();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // Auth guard: a sign-out (or expired/invalidated session) flips status to
   // "unauthenticated" while the user is deep in the tab stack — bounce them
@@ -23,7 +25,10 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: ColorEnum.accent,
         tabBarInactiveTintColor: ColorEnum.inkMute,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          styles.tabBar,
+          { height: ControlHeightEnum.lg + insets.bottom, paddingBottom: insets.bottom },
+        ],
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -34,6 +39,23 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <MapIcon size={size} color={color} strokeWidth={1.8} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="create-artwork"
+        options={{
+          title: tr("artwork.createTab"),
+          tabBarIcon: ({ color, size }) => (
+            <PlusIcon size={size} color={color} strokeWidth={1.8} />
+          ),
+        }}
+        listeners={{
+          // Don't navigate to the placeholder screen — push the full-screen
+          // add-artwork wizard onto the artworks stack instead.
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/artworks/new");
+          },
         }}
       />
     </Tabs>

@@ -24,7 +24,10 @@ export type SessionResponse = { session: Session; user: User };
 
 /** Current session, or `null` when unauthenticated (server returns 200 + null). */
 export const getSession = async (): Promise<SessionResponse | null> => {
-  const { data } = await getSessionSdk();
+  // Opt out of the client's default `throwOnError`: an unauthenticated
+  // get-session should resolve to `null` (the signed-out state the gate reads),
+  // not reject.
+  const { data } = await getSessionSdk({ throwOnError: false });
   return (data as SessionResponse | null) ?? null;
 };
 

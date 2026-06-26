@@ -189,7 +189,7 @@ export const postArtistsByIdChanges = <ThrowOnError extends boolean = false>(opt
 /**
  * List artists
  *
- * Return artists, newest first. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
+ * Return artists. Search with `name` (substring) and `tag` (exact); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
  */
 export const getArtists = <ThrowOnError extends boolean = false>(options?: Options<GetArtistsData, ThrowOnError>): RequestResult<GetArtistsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetArtistsResponses, unknown, ThrowOnError>({ url: '/artists/', ...options });
 

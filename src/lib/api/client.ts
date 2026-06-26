@@ -160,7 +160,18 @@ export type Paginated<T> = {
 // Importing this module is what wires the client, so it must load before any
 // request — `src/app/_layout.tsx` imports it for that side effect.
 
-client.setConfig({ baseUrl: API_BASE_URL, credentials: "include" });
+// `throwOnError: true` makes every SDK call reject on non-2xx rather than
+// resolving to `{ data: undefined, error }`. Without it, the `ApiError` thrown
+// by the response interceptor below is caught by the client and surfaced only
+// on `error` — so callers that read just `{ data }` swallow failures silently
+// (the cause of the "sign-in does nothing on EMAIL_NOT_VERIFIED" bug). The
+// generated TanStack hooks already pass this per-call; making it the default
+// covers the hand-written wrappers in `auth.ts` too.
+client.setConfig({
+  baseUrl: API_BASE_URL,
+  credentials: "include",
+  throwOnError: true,
+});
 
 // Request interceptor: must return the (possibly-modified) Request.
 client.interceptors.request.use((request) => {
