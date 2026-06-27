@@ -167,8 +167,10 @@ A small family that composes upward, each its own component file
   (the RN import is aliased so the export can own the name). It holds **all** the
   static input styling and takes an `invalid?: boolean` that drives only the
   border color (the one prop-state-driven value, kept inline per
-  [styling-stylesheet](styling-stylesheet.md)). `InputProps = RNTextInputProps &
-  { invalid?: boolean; debounce?: number }`.
+  [styling-stylesheet](styling-stylesheet.md)). It also forwards a `ref` to the
+  underlying `RNTextInput` so a previous field can `.focus()` it (see
+  [Keyboard handling](#keyboard-handling)). `InputProps = RNTextInputProps &
+  { invalid?: boolean; debounce?: number; ref?: Ref<RNTextInput> }`.
 - **`TextInput` (`input/TextInput.tsx`)** — the labelled field: composes `Input`,
   adding the uppercase mono label above and the error message below. It maps its
   `error?: string` to `<Input invalid={!!error} />`. `TextInputProps = InputProps
@@ -202,3 +204,70 @@ the visible text) but `onChangeText` fires only after the delay; `0` (the
 default) is a pure passthrough with no behavior change. Use it for an input whose
 change is expensive — a search/filter query, or an RHF field with async
 validation — not for ordinary form fields, which stay un-debounced.
+
+## Keyboard handling
+
+A form screen must stay usable while the soft keyboard is up — the focused field
+and the submit/footer must never sit under the keyboard.
+
+### Wrap the screen in `KeyboardAvoidingView`
+
+The **screen** (not the `{Name}Form`) wraps its scroll + footer in a
+`KeyboardAvoidingView`, exactly as `src/pages/app/auth/screens/LoginScreen.tsx`
+and `src/pages/app/artwork/screens/DetailsStepScreen.tsx` do:
+
+```tsx
+<KeyboardAvoidingView
+  style={styles.screen} // flex: 1 + bg
+  behavior={Platform.OS === "ios" ? "padding" : undefined}
+>
+  <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+    {/* fields */}
+  </ScrollView>
+  <WizardFooter … /> {/* in-flow footer — padding lifts it above the keyboard */}
+</KeyboardAvoidingView>
+```
+
+- `behavior="padding"` on **iOS**, `undefined` on **Android** (the OS soft-input
+  resize handles it) — never a constant `"padding"` for both.
+- The inner `ScrollView` keeps `keyboardShouldPersistTaps="handled"` so a tap
+  registers while the keyboard is open instead of just dismissing it.
+- The `KeyboardAvoidingView` is the flex root (`flex: 1`); don't also nest a
+  `flex: 1` `<View>` inside it just to hold the same style.
+- No `keyboardVerticalOffset` is needed even with a custom screen header (the
+  content begins below it); add one only if testing shows the field still tucked
+  under the keyboard.
+
+### Return-key navigation — `returnKeyType="next"` + forwarded `ref`
+
+Chain single-line fields so the keyboard's **Next** key moves to the following
+input without dismissing the keyboard. Hold a `ref` to the *next* field and point
+the current field's `onSubmitEditing` at it:
+
+```tsx
+const artistRef = useRef<RNTextInput>(null); // import { type TextInput as RNTextInput }
+
+// title field — advance to the artist field on "next"
+<TextInput
+  …
+  returnKeyType="next"
+  submitBehavior="submit"               // keep the keyboard up (don't blur)
+  onSubmitEditing={() => artistRef.current?.focus()}
+/>
+
+// next field receives the ref (Input/TextInput forward it to RNTextInput)
+<ArtistAutocomplete ref={artistRef} … />
+```
+
+- `submitBehavior="submit"` keeps the keyboard open across the focus hop (the
+  old `blurOnSubmit={false}`); use `returnKeyType="done"` on the last single-line
+  field. A **multiline** field (a note) is the natural terminus — Return inserts
+  a newline there, so don't chain past it.
+- The `ref` is a normal prop in React 19 — **no `forwardRef`**. A composed input
+  that wraps the family (e.g. `ArtistAutocomplete`) re-declares `ref?:
+  Ref<RNTextInput>` on its props and passes it straight to its inner `TextInput`,
+  keeping the forward chain `Input → TextInput → composed input`. Such a wrapper
+  also re-exposes `onSubmitEditing` so the chain can continue *through* it to the
+  next field.
+- Reference: `src/pages/app/artwork/form/ArtworkForm.tsx` (title → artist → note,
+  the note being the multiline terminus).

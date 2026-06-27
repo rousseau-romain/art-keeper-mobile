@@ -135,6 +135,13 @@ export const fr: Resources = {
       },
     },
   },
+  dev: {
+    tab: "Dev",
+    haptics: {
+      title: "Haptique",
+      subtitle: "Touchez pour déclencher chaque effet.",
+    },
+  },
   a11y: {
     verified: "vérifié",
     language: "Langue : {{language}}",

@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
-import type { WizardStep } from "@/pages/app/artwork/hooks/useArtworkWizard";
 import { Checkbox } from "@/shared/ui/checkbox/Checkbox";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -14,8 +13,11 @@ import {
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
 
+/** The step routes a "Edit" jump can target (the rights step has no edit). */
+export type ReviewEditTarget = "location" | "details";
+
 export type ReviewStepProps = {
-  onEdit: (step: WizardStep) => void;
+  onEdit: (target: ReviewEditTarget) => void;
 };
 
 /** Step 4 — summary with per-section edit jumps + the rights confirmation. */
@@ -36,25 +38,25 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
     key: string;
     label: string;
     value: string;
-    step: WizardStep;
+    target: ReviewEditTarget;
   }[] = [
     {
       key: "where",
       label: tr("artwork.new.review.where"),
       value: address || "—",
-      step: 2,
+      target: "location",
     },
     {
       key: "tags",
       label: tr("artwork.new.review.tags"),
       value: tags.length ? tags.map((t) => `#${t}`).join(" ") : "—",
-      step: 3,
+      target: "details",
     },
     {
       key: "note",
       label: tr("artwork.new.review.note"),
       value: note || "—",
-      step: 3,
+      target: "details",
     },
   ];
 
@@ -93,7 +95,7 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
             <Text font="body" size="sm" color="inkSoft" style={styles.rowValue}>
               {row.value}
             </Text>
-            <Pressable onPress={() => onEdit(row.step)} hitSlop={6}>
+            <Pressable onPress={() => onEdit(row.target)} hitSlop={6}>
               <Text font="mono" size="sm" color="accent">
                 {tr("artwork.new.review.edit")}
               </Text>

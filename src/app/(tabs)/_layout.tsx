@@ -1,5 +1,9 @@
 import { Redirect, Tabs, useRouter } from "expo-router";
-import { Map as MapIcon, Plus as PlusIcon } from "lucide-react-native";
+import {
+  Map as MapIcon,
+  Plus as PlusIcon,
+  Vibrate as VibrateIcon,
+} from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -56,6 +60,18 @@ export default function TabsLayout() {
             e.preventDefault();
             router.push("/artworks/new");
           },
+        }}
+      />
+      <Tabs.Screen
+        name="dev"
+        options={{
+          // Dev-only tooling — `href: null` hides the tab (and its route) from
+          // production builds, leaving it reachable only in development.
+          href: __DEV__ ? undefined : null,
+          title: tr("dev.tab"),
+          tabBarIcon: ({ color, size }) => (
+            <VibrateIcon size={size} color={color} strokeWidth={1.8} />
+          ),
         }}
       />
     </Tabs>

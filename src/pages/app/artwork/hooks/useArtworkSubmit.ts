@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -6,10 +5,12 @@ import { type Artwork, useCreateArtwork } from "@/lib/api/artworks";
 import { ApiError } from "@/lib/api/client";
 import { clearArtworkDraft } from "@/pages/app/artwork/draft-store";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
+import { useHaptics } from "@/shared/hooks/useHaptics";
 import { useToast } from "@/shared/ui/toast/Toast";
 
 type UseArtworkSubmitParams = {
   methods: UseFormReturn<ArtworkValues>;
+  onCreated: (artwork: Artwork) => void;
 };
 
 /** Guess a multipart filename + mime from the picked photo's uri. */
@@ -23,14 +24,17 @@ const fileFromUri = (uri: string) => {
 
 /**
  * Owns the wizard submit: validates the collected values, runs the multipart
- * create mutation, surfaces failures as a toast, and exposes the `created`
- * artwork that flips the screen to the success panel.
+ * create mutation, surfaces failures as a toast, and hands the created artwork
+ * to `onCreated` (which routes to the success step).
  */
-export const useArtworkSubmit = ({ methods }: UseArtworkSubmitParams) => {
+export const useArtworkSubmit = ({
+  methods,
+  onCreated,
+}: UseArtworkSubmitParams) => {
   const { t: tr } = useTranslation();
   const { show } = useToast();
+  const haptic = useHaptics();
   const { mutateAsync, isPending } = useCreateArtwork();
-  const [created, setCreated] = useState<Artwork | null>(null);
 
   const onSubmit = methods.handleSubmit(async (values) => {
     const cover = values.photo;
@@ -58,7 +62,8 @@ export const useArtworkSubmit = ({ methods }: UseArtworkSubmitParams) => {
         image: fileFromUri(cover.uri),
       });
       await clearArtworkDraft();
-      setCreated(artwork);
+      haptic("success");
+      onCreated(artwork);
     } catch (e) {
       show(
         e instanceof ApiError ? e.message : tr("auth.genericError"),
@@ -67,10 +72,5 @@ export const useArtworkSubmit = ({ methods }: UseArtworkSubmitParams) => {
     }
   });
 
-  return {
-    onSubmit,
-    submitting: isPending,
-    created,
-    clearCreated: () => setCreated(null),
-  };
+  return { onSubmit, submitting: isPending };
 };

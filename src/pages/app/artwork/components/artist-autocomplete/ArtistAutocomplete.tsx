@@ -1,6 +1,12 @@
+import type { Ref } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  type TextInput as RNTextInput,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import type { ArtistListItem } from "@/lib/api/artists";
 import { ApiError } from "@/lib/api/client";
@@ -16,6 +22,10 @@ import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 export type ArtistAutocompleteProps = {
   label: string;
   placeholder: string;
+  /** Forwarded to the inner input so a previous field can `.focus()` it. */
+  ref?: Ref<RNTextInput>;
+  /** Return-key handler — chain the keyboard's "next" to the following field. */
+  onSubmitEditing?: () => void;
 };
 
 /**
@@ -25,8 +35,10 @@ export type ArtistAutocompleteProps = {
  * new artist is selected.
  */
 export const ArtistAutocomplete = ({
+  ref,
   label,
   placeholder,
+  onSubmitEditing,
 }: ArtistAutocompleteProps) => {
   const { t: tr } = useTranslation();
   const { show } = useToast();
@@ -70,6 +82,7 @@ export const ArtistAutocomplete = ({
   return (
     <View style={styles.field}>
       <TextInput
+        ref={ref}
         label={label}
         placeholder={placeholder}
         value={query}
@@ -77,6 +90,9 @@ export const ArtistAutocomplete = ({
         debounce={200}
         autoCapitalize="none"
         autoCorrect={false}
+        returnKeyType="next"
+        submitBehavior="submit"
+        onSubmitEditing={onSubmitEditing}
       />
       {showDropdown && (
         <View style={styles.dropdown}>

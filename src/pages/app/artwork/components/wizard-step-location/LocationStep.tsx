@@ -10,6 +10,7 @@ import MapView, {
 
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useDeviceLocation } from "@/pages/app/artwork/hooks/useDeviceLocation";
+import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
@@ -25,6 +26,7 @@ export const LocationStep = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
   const { setPin, useMyLocation, locating } = useDeviceLocation();
+  const haptic = useHaptics();
   const mapRef = useRef<MapView>(null);
 
   // useWatch (not the watch() fn) so the React Compiler can't memoize the live
@@ -41,16 +43,24 @@ export const LocationStep = () => {
     }
   }, [latitude, longitude]);
 
+  // Buzz on every manual pin change (tap, POI tap, marker drag) — not the
+  // automatic moves (EXIF auto-pin, "use my location"), which go through setPin
+  // directly without a haptic.
+  const placePin = (lat: number, lng: number) => {
+    haptic("light");
+    setPin(lat, lng);
+  };
+
   const onMapPress = (e: MapPressEvent) => {
     const { latitude: lat, longitude: lng } = e.nativeEvent.coordinate;
-    setPin(lat, lng);
+    placePin(lat, lng);
   };
 
   // Tapping a labelled place fires onPoiClick, not onPress — handle it too so a
   // tap on a POI still drops the pin instead of doing nothing.
   const onPoiClick = (e: PoiClickEvent) => {
     const { latitude: lat, longitude: lng } = e.nativeEvent.coordinate;
-    setPin(lat, lng);
+    placePin(lat, lng);
   };
 
   return (
@@ -84,7 +94,7 @@ export const LocationStep = () => {
               coordinate={{ latitude, longitude }}
               pinColor={ColorEnum.accent}
               onDragEnd={(e) =>
-                setPin(
+                placePin(
                   e.nativeEvent.coordinate.latitude,
                   e.nativeEvent.coordinate.longitude,
                 )

@@ -1,6 +1,11 @@
+import { useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import {
+  type TextInput as RNTextInput,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { ArtistAutocomplete } from "@/pages/app/artwork/components/artist-autocomplete/ArtistAutocomplete";
 import { TagPicker } from "@/pages/app/artwork/components/tag-picker/TagPicker";
@@ -28,6 +33,8 @@ export type ArtworkValues = {
 export const ArtworkForm = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
+  const artistRef = useRef<RNTextInput>(null);
+  const noteRef = useRef<RNTextInput>(null);
 
   return (
     <View style={styles.form}>
@@ -43,13 +50,18 @@ export const ArtworkForm = () => {
             onChangeText={field.onChange}
             onBlur={field.onBlur}
             error={fieldState.error?.message}
+            returnKeyType="next"
+            submitBehavior="submit"
+            onSubmitEditing={() => artistRef.current?.focus()}
           />
         )}
       />
 
       <ArtistAutocomplete
+        ref={artistRef}
         label={tr("artwork.new.details.artistLabel")}
         placeholder={tr("artwork.new.details.artistPlaceholder")}
+        onSubmitEditing={() => noteRef.current?.focus()}
       />
 
       <Controller
@@ -70,6 +82,7 @@ export const ArtworkForm = () => {
         name="note"
         render={({ field }) => (
           <TextInput
+            ref={noteRef}
             label={tr("artwork.new.details.noteLabel")}
             placeholder={tr("artwork.new.details.notePlaceholder")}
             value={field.value}

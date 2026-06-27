@@ -138,6 +138,13 @@ export const en = {
       },
     },
   },
+  dev: {
+    tab: "Dev",
+    haptics: {
+      title: "Haptics",
+      subtitle: "Tap to fire each effect.",
+    },
+  },
   a11y: {
     verified: "verified",
     language: "Language: {{language}}",

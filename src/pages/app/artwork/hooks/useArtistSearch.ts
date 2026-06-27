@@ -20,7 +20,7 @@ export const useArtistSearch = () => {
 
   const { artists, isLoading } = useArtists(
     { name: normalized ? [normalized] : undefined, sort: "-verified,name" },
-    { enabled: normalized.length > 0 }
+    { enabled: normalized.length > 0 },
   );
 
   const matches = useMemo<ArtistListItem[]>(() => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type Ref, useEffect, useRef, useState } from "react";
 import {
   TextInput as RNTextInput,
   type TextInputProps as RNTextInputProps,
@@ -21,9 +21,12 @@ export type InputProps = RNTextInputProps & {
    * default) passes value/onChangeText straight through, unchanged.
    */
   debounce?: number;
+  /** Forwarded to the underlying `RNTextInput` — lets callers `.focus()` it. */
+  ref?: Ref<RNTextInput>;
 };
 
 export const Input = ({
+  ref,
   invalid,
   debounce = 0,
   value,
@@ -50,6 +53,7 @@ export const Input = ({
 
   return (
     <RNTextInput
+      ref={ref}
       {...input}
       value={debounced ? text : value}
       onChangeText={debounced ? handleChange : onChangeText}

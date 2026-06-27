@@ -38,6 +38,9 @@ Open these when the trigger applies (they are intentionally not imported):
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.
 - **`.claude/rules/ios-dev-client-launch-115.md`** — when `bun ios` fails at the
   launch step with `LSApplicationWorkspaceErrorDomain` error 115.
+- **`.claude/rules/haptics.md`** — when adding or changing haptic feedback. All
+  feedback goes through the `useHaptics` hook (`src/shared/hooks/useHaptics.ts`);
+  never import `expo-haptics` directly at a call site.
 
 To add guidance: drop a file in `.claude/rules/`, then either `@`-import it above
 (always-on convention) or add a "read when" line here (situational rule).

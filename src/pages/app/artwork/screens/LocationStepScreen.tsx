@@ -1,0 +1,39 @@
+import { type Href, useRouter } from "expo-router";
+import { useFormContext, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
+import { LocationStep } from "@/pages/app/artwork/components/wizard-step-location/LocationStep";
+import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
+import { ColorEnum } from "@/theme/enums/color.enums";
+import { SpacingEnum } from "@/theme/enums/scale.enums";
+
+/** Step 2 — confirm the pin. The map can't sit in a ScrollView (gesture conflict). */
+export const LocationStepScreen = () => {
+  const { t: tr } = useTranslation();
+  const router = useRouter();
+  const { control } = useFormContext<ArtworkValues>();
+  const latitude = useWatch({ control, name: "latitude" });
+  const longitude = useWatch({ control, name: "longitude" });
+  const hasPin = latitude != null && longitude != null;
+
+  return (
+    <View style={styles.screen}>
+      <View style={styles.mapBody}>
+        <LocationStep />
+      </View>
+
+      <WizardFooter
+        label={tr("artwork.new.next")}
+        disabled={!hasPin}
+        showArrow
+        onPress={() => router.push("/artworks/new/details" as Href)}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: ColorEnum.bg },
+  mapBody: { flex: 1, padding: SpacingEnum.xl },
+});

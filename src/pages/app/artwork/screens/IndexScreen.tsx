@@ -15,6 +15,7 @@ import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLocale } from "@/lib/i18n/I18nProvider";
 import { ArtworkCard } from "@/pages/app/artwork/components/artwork-card/ArtworkCard";
+import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
 import { Icon } from "@/shared/ui/icon/Icon";
@@ -29,6 +30,7 @@ export const IndexScreen = () => {
   const insets = useSafeAreaInsets();
   const { signOut } = useAuth();
   const router = useRouter();
+  const haptic = useHaptics();
 
   const {
     artworks,
@@ -51,12 +53,13 @@ export const IndexScreen = () => {
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
     setManualRefreshing(true);
+    haptic("medium");
     try {
       await refetch();
     } finally {
       setManualRefreshing(false);
     }
-  }, [refetch]);
+  }, [refetch, haptic]);
 
   const onEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();

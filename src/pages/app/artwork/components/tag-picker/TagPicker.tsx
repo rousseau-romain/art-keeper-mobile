@@ -16,7 +16,8 @@ export type TagPickerProps = {
 const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
 
 /** Normalize a typed tag: trim, lowercase, drop a leading "#". */
-const normalizeTag = (raw: string) => raw.trim().toLowerCase().replace(/^#+/, "");
+const normalizeTag = (raw: string) =>
+  raw.trim().toLowerCase().replace(/^#+/, "");
 
 /**
  * Tag selector for the Details step: the preset quick-pick chips plus any
@@ -54,7 +55,12 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
           />
         ))}
         {customTags.map((tag) => (
-          <Tag key={tag} label={tag} state="active" onPress={() => toggle(tag)} />
+          <Tag
+            key={tag}
+            label={tag}
+            state="active"
+            onPress={() => toggle(tag)}
+          />
         ))}
       </View>
       <Input
