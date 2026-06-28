@@ -18,9 +18,9 @@ export const ReviewStepScreen = () => {
     methods,
     onCreated: (artwork) =>
       router.replace({
-        pathname: "/artworks/new/success",
+        pathname: "/create-artwork/success",
         params: { id: artwork.id },
-      } as Href),
+      }),
   });
 
   return (
@@ -32,7 +32,7 @@ export const ReviewStepScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <ReviewStep
-          onEdit={(target) => router.push(`/artworks/new/${target}` as Href)}
+          onEdit={(target) => router.push(`/create-artwork/${target}` as Href)}
         />
       </ScrollView>
 

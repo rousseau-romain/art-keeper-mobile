@@ -1,11 +1,11 @@
-import { Redirect, Tabs, useRouter } from "expo-router";
+import { Redirect, Tabs, useRouter, useSegments } from "expo-router";
 import {
   Map as MapIcon,
   Plus as PlusIcon,
   Vibrate as VibrateIcon,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -31,7 +31,10 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: ColorEnum.inkMute,
         tabBarStyle: [
           styles.tabBar,
-          { height: ControlHeightEnum.lg + insets.bottom, paddingBottom: insets.bottom },
+          Platform.OS === "web" && {
+            height: ControlHeightEnum.lg + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
         ],
         tabBarLabelStyle: styles.tabLabel,
       }}
@@ -52,14 +55,6 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <PlusIcon size={size} color={color} strokeWidth={1.8} />
           ),
-        }}
-        listeners={{
-          // Don't navigate to the placeholder screen — push the full-screen
-          // add-artwork wizard onto the artworks stack instead.
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/artworks/new");
-          },
         }}
       />
       <Tabs.Screen

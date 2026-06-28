@@ -1,4 +1,4 @@
-import { type Href, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import {
   ArtworkForm,
   type ArtworkValues,
 } from "@/pages/app/artwork/form/ArtworkForm";
+import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -28,6 +29,7 @@ export const DetailsStepScreen = () => {
   const { control, trigger } = useFormContext<ArtworkValues>();
   const artistId = useWatch({ control, name: "artistId" });
   const warnedNoArtist = useRef(false);
+  const headerHeight = useHeaderHeight();
 
   // Only advance once the title validates. The first attempt without an artist
   // warns (once) instead of advancing, so the user gets a chance to credit one;
@@ -39,13 +41,14 @@ export const DetailsStepScreen = () => {
       show(tr("artwork.new.errors.noArtist"), "warning");
       return;
     }
-    router.push("/artworks/new/review" as Href);
+    router.push("/create-artwork/review");
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.screen}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={headerHeight}
     >
       <ScrollView
         style={styles.scrollView}

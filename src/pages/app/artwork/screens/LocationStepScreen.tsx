@@ -1,4 +1,4 @@
-import { type Href, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -27,7 +27,7 @@ export const LocationStepScreen = () => {
         label={tr("artwork.new.next")}
         disabled={!hasPin}
         showArrow
-        onPress={() => router.push("/artworks/new/details" as Href)}
+        onPress={() => router.push("/create-artwork/details")}
       />
     </View>
   );

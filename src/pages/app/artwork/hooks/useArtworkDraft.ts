@@ -29,6 +29,24 @@ export const EMPTY_ARTWORK_DRAFT: ArtworkValues = {
 const SAVE_DEBOUNCE_MS = 500;
 
 /**
+ * A pristine wizard — untouched, or just reset back to the defaults. We never
+ * persist one: there's nothing to restore, and (crucially) it stops a
+ * `reset(EMPTY_ARTWORK_DRAFT)` from re-saving an empty draft right after the
+ * draft was cleared on submit/discard, which would resurrect the storage key.
+ */
+const isPristineDraft = (v: ArtworkValues): boolean =>
+  !v.photo &&
+  v.latitude == null &&
+  v.longitude == null &&
+  !v.address &&
+  !v.title &&
+  !v.artistId &&
+  !v.artistHandle &&
+  v.tags.length === 0 &&
+  !v.note &&
+  !v.rightsConfirmed;
+
+/**
  * Persists the in-progress wizard so the user doesn't lose their work if the app
  * is closed or the web tab reloads: restores a saved draft on mount (exposing a
  * `restored` flag for the banner) and debounce-saves on every field change.
@@ -49,6 +67,9 @@ export const useArtworkDraft = ({ methods }: UseArtworkDraftParams) => {
   // Save on change — debounced so rapid typing writes once it settles.
   useEffect(() => {
     const sub = methods.watch((values) => {
+      // Don't persist an empty wizard — and don't let a reset re-create the
+      // draft we just cleared (see isPristineDraft).
+      if (isPristineDraft(values as ArtworkValues)) return;
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => {
         saveArtworkDraft(values as ArtworkValues);

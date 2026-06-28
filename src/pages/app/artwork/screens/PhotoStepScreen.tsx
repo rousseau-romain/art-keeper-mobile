@@ -1,4 +1,4 @@
-import { type Href, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -36,7 +36,7 @@ export const PhotoStepScreen = () => {
         label={tr("artwork.new.next")}
         disabled={photo == null}
         showArrow
-        onPress={() => router.push("/artworks/new/location" as Href)}
+        onPress={() => router.push("/create-artwork/location")}
       />
     </View>
   );

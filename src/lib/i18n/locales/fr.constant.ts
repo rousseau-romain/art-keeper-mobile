@@ -74,6 +74,13 @@ export const fr: Resources = {
       reviewCta: "Vérifier",
       submitCta: "Soumettre pour examen",
       stepOf: "{{step}}/{{total}}",
+      title: {
+        index: "Photo",
+        location: "Lieu",
+        details: "Détails",
+        review: "Vérifier",
+        success: "Soumis !",
+      },
       draft: {
         restored: "Brouillon restauré",
         discard: "Effacer",

@@ -78,6 +78,14 @@ export const en = {
       reviewCta: "Review",
       submitCta: "Submit for review",
       stepOf: "{{step}}/{{total}}",
+      // Per-step header titles, keyed by the wizard route name.
+      title: {
+        index: "Photo",
+        location: "Location",
+        details: "Details",
+        review: "Review",
+        success: "Submitted!",
+      },
       draft: {
         restored: "Draft restored",
         discard: "Discard",

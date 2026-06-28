@@ -43,3 +43,4 @@ example
 /android
 .serena/.gitignore
 .serena/project.yml
+.tokensave
