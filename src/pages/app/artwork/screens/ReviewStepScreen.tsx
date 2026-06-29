@@ -6,6 +6,7 @@ import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/Wizar
 import { ReviewStep } from "@/pages/app/artwork/components/wizard-step-review/ReviewStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useArtworkSubmit } from "@/pages/app/artwork/hooks/useArtworkSubmit";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -19,12 +20,13 @@ export const ReviewStepScreen = () => {
     onCreated: (artwork) =>
       router.replace({
         pathname: "/create-artwork/success",
-        params: { id: artwork.id },
+        params: { slug: artwork.slug },
       }),
   });
 
   return (
     <View style={styles.screen}>
+      <Seo title={tr("artwork.new.title.review")} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scroll}

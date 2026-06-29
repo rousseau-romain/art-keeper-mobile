@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,6 +6,7 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,18 +19,32 @@ import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { StatusDot } from "@/shared/ui/status-dot/StatusDot";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
+// Minimum card width that decides how many columns fit on a wide screen
+// (Fold unfolded ≈ 2, tablet landscape ≈ 3, phone = 1).
+const MIN_CARD_WIDTH = 360;
+
 export const IndexScreen = () => {
   const { t: tr } = useTranslation();
   const { language, toggleLanguage } = useLocale();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { signOut } = useAuth();
-  const router = useRouter();
   const haptic = useHaptics();
+
+  // Responsive grid: derive a column count from the window width, then size
+  // each cell to an explicit pixel width so a lone card on an odd last row
+  // keeps its width instead of stretching across the row. Computed against the
+  // same padding/gap as `listContent` so the row fills edge-to-edge.
+  const numColumns = Math.max(1, Math.floor(width / MIN_CARD_WIDTH));
+  const itemWidth =
+    (width - SpacingEnum.lg * 2 - SpacingEnum.lg * (numColumns - 1)) /
+    numColumns;
 
   const {
     artworks,
@@ -74,6 +88,7 @@ export const IndexScreen = () => {
 
   const header = (
     <View style={[styles.header, { paddingTop: insets.top + SpacingEnum.xl }]}>
+      <Seo title={tr("artwork.title.index")} />
       <View style={styles.headerRow}>
         <Text font="display" size="xxl" style={styles.title}>
           {tr("artwork.title.index")}
@@ -171,7 +186,11 @@ export const IndexScreen = () => {
       <FlatList
         data={artworks}
         keyExtractor={(item) => item.id}
-        // style={styles.list}
+        // numColumns is fixed at mount, so the list must remount when the
+        // column count changes (fold/unfold, rotate) — hence the key.
+        key={`grid-${numColumns}`}
+        numColumns={numColumns}
+        columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: insets.bottom + SpacingEnum.xl },
@@ -186,10 +205,9 @@ export const IndexScreen = () => {
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
-          <ArtworkCard
-            artwork={item}
-            onPress={() => router.push(`/artworks/${item.id}`)}
-          />
+          <View style={{ width: itemWidth }}>
+            <ArtworkCard artwork={item} href={`/artworks/${item.slug}`} />
+          </View>
         )}
         // --- Empty: loaded successfully but no rows ---
         ListEmptyComponent={
@@ -244,6 +262,7 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
   list: { flex: 1 },
   listContent: { padding: SpacingEnum.lg, gap: SpacingEnum.lg, flexGrow: 1 },
+  columnWrapper: { gap: SpacingEnum.lg },
   centerNote: { marginTop: SpacingEnum.md },
   centerText: { textAlign: "center" },
   errorText: { marginVertical: SpacingEnum.md },

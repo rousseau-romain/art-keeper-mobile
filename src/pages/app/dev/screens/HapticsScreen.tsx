@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HAPTIC_NAMES, useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -24,6 +25,7 @@ export const HapticsScreen = () => {
         },
       ]}
     >
+      <Seo title={tr("dev.haptics.title")} />
       <Text font="display" size="xxl" style={styles.title}>
         {tr("dev.haptics.title")}
       </Text>

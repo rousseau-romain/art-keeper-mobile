@@ -54,6 +54,9 @@ export const en = {
       edit: "Edit artwork",
       new: "New artwork",
     },
+    meta: {
+      descriptionFallback: "Discover {{title}} on ArtKeeper.",
+    },
     location: "Paris 11e",
     pieceCount_one: "{{count}} piece",
     pieceCount_other: "{{count}} pieces",

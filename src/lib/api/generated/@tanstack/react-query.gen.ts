@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { adminListUserSessions, adminUpdateUser, banUser, changeEmail, changePassword, createUser, deleteArtistsById, deleteArtistsByIdFollow, deleteArtworksById, deleteArtworksByIdLike, deleteReportsById, deleteUser, getArtists, getArtistsById, getArtistsByIdHistory, getArtistsChanges, getArtistsChangesMine, getArtworks, getArtworksById, getArtworksByIdHistory, getArtworksChanges, getArtworksChangesMine, getAuthAccountInfo, getAuthCallbackById, getAuthDeleteUserCallback, getAuthError, getAuthOk, getAuthVerifyEmail, getHealth, getPlacesAutocomplete, getPlacesDetails, getReports, getReportsById, getReportsMine, getSession, getSessionPost, getUser, impersonateUser, linkSocialAccount, listUserAccounts, listUsers, listUserSessions, type Options, patchArtistsByIdChangesByChangeId, patchArtistsByIdVerify, patchArtworksByIdChangesByChangeId, patchArtworksByIdVerify, patchReportsById, postArtists, postArtistsByIdChanges, postArtistsByIdFollow, postArtworks, postArtworksByIdChanges, postArtworksByIdLike, postAuthAdminHasPermission, postAuthAdminStopImpersonating, postAuthCallbackById, postAuthGetAccessToken, postAuthRefreshToken, postAuthRevokeOtherSessions, postAuthRevokeSession, postAuthRevokeSessions, postAuthUnlinkAccount, postReports, removeUser, requestPasswordReset, resetPassword, resetPasswordCallback, revokeUserSession, revokeUserSessions, sendVerificationEmail, setUserPassword, setUserRole, signInEmail, signOut, signUpWithEmailAndPassword, socialSignIn, unbanUser, updateSession, updateUser, verifyPassword } from '../sdk.gen';
-import type { AdminListUserSessionsData, AdminListUserSessionsError, AdminListUserSessionsResponse, AdminUpdateUserData, AdminUpdateUserError, AdminUpdateUserResponse, BanUserData, BanUserError, BanUserResponse, ChangeEmailData, ChangeEmailError, ChangeEmailResponse, ChangePasswordData, ChangePasswordError, ChangePasswordResponse, CreateUserData, CreateUserError, CreateUserResponse, DeleteArtistsByIdData, DeleteArtistsByIdError, DeleteArtistsByIdFollowData, DeleteArtistsByIdFollowError, DeleteArtistsByIdFollowResponse, DeleteArtistsByIdResponse, DeleteArtworksByIdData, DeleteArtworksByIdError, DeleteArtworksByIdLikeData, DeleteArtworksByIdLikeError, DeleteArtworksByIdLikeResponse, DeleteArtworksByIdResponse, DeleteReportsByIdData, DeleteReportsByIdError, DeleteReportsByIdResponse, DeleteUserData, DeleteUserError, DeleteUserResponse, GetArtistsByIdData, GetArtistsByIdError, GetArtistsByIdHistoryData, GetArtistsByIdHistoryError, GetArtistsByIdHistoryResponse, GetArtistsByIdResponse, GetArtistsChangesData, GetArtistsChangesError, GetArtistsChangesMineData, GetArtistsChangesMineError, GetArtistsChangesMineResponse, GetArtistsChangesResponse, GetArtistsData, GetArtistsResponse, GetArtworksByIdData, GetArtworksByIdError, GetArtworksByIdHistoryData, GetArtworksByIdHistoryError, GetArtworksByIdHistoryResponse, GetArtworksByIdResponse, GetArtworksChangesData, GetArtworksChangesError, GetArtworksChangesMineData, GetArtworksChangesMineError, GetArtworksChangesMineResponse, GetArtworksChangesResponse, GetArtworksData, GetArtworksError, GetArtworksResponse, GetAuthAccountInfoData, GetAuthAccountInfoError, GetAuthAccountInfoResponse, GetAuthCallbackByIdData, GetAuthCallbackByIdError, GetAuthDeleteUserCallbackData, GetAuthDeleteUserCallbackError, GetAuthDeleteUserCallbackResponse, GetAuthErrorData, GetAuthErrorError, GetAuthErrorResponse, GetAuthOkData, GetAuthOkError, GetAuthOkResponse, GetAuthVerifyEmailData, GetAuthVerifyEmailError, GetAuthVerifyEmailResponse, GetHealthData, GetHealthResponse, GetPlacesAutocompleteData, GetPlacesAutocompleteError, GetPlacesAutocompleteResponse, GetPlacesDetailsData, GetPlacesDetailsError, GetPlacesDetailsResponse, GetReportsByIdData, GetReportsByIdError, GetReportsByIdResponse, GetReportsData, GetReportsError, GetReportsMineData, GetReportsMineError, GetReportsMineResponse, GetReportsResponse, GetSessionData, GetSessionError, GetSessionPostData, GetSessionPostError, GetUserData, GetUserError, GetUserResponse, ImpersonateUserData, ImpersonateUserError, ImpersonateUserResponse, LinkSocialAccountData, LinkSocialAccountError, LinkSocialAccountResponse, ListUserAccountsData, ListUserAccountsError, ListUserAccountsResponse, ListUsersData, ListUsersError, ListUserSessionsData, ListUserSessionsError, ListUserSessionsResponse, ListUsersResponse, PatchArtistsByIdChangesByChangeIdData, PatchArtistsByIdChangesByChangeIdError, PatchArtistsByIdChangesByChangeIdResponse, PatchArtistsByIdVerifyData, PatchArtistsByIdVerifyError, PatchArtistsByIdVerifyResponse, PatchArtworksByIdChangesByChangeIdData, PatchArtworksByIdChangesByChangeIdError, PatchArtworksByIdChangesByChangeIdResponse, PatchArtworksByIdVerifyData, PatchArtworksByIdVerifyError, PatchArtworksByIdVerifyResponse, PatchReportsByIdData, PatchReportsByIdError, PatchReportsByIdResponse, PostArtistsByIdChangesData, PostArtistsByIdChangesError, PostArtistsByIdChangesResponse, PostArtistsByIdFollowData, PostArtistsByIdFollowError, PostArtistsByIdFollowResponse, PostArtistsData, PostArtistsError, PostArtistsResponse, PostArtworksByIdChangesData, PostArtworksByIdChangesError, PostArtworksByIdChangesResponse, PostArtworksByIdLikeData, PostArtworksByIdLikeError, PostArtworksByIdLikeResponse, PostArtworksData, PostArtworksError, PostArtworksResponse, PostAuthAdminHasPermissionData, PostAuthAdminHasPermissionError, PostAuthAdminHasPermissionResponse, PostAuthAdminStopImpersonatingData, PostAuthAdminStopImpersonatingError, PostAuthCallbackByIdData, PostAuthCallbackByIdError, PostAuthGetAccessTokenData, PostAuthGetAccessTokenError, PostAuthGetAccessTokenResponse, PostAuthRefreshTokenData, PostAuthRefreshTokenError, PostAuthRefreshTokenResponse, PostAuthRevokeOtherSessionsData, PostAuthRevokeOtherSessionsError, PostAuthRevokeOtherSessionsResponse, PostAuthRevokeSessionData, PostAuthRevokeSessionError, PostAuthRevokeSessionResponse, PostAuthRevokeSessionsData, PostAuthRevokeSessionsError, PostAuthRevokeSessionsResponse, PostAuthUnlinkAccountData, PostAuthUnlinkAccountError, PostAuthUnlinkAccountResponse, PostReportsData, PostReportsError, PostReportsResponse, RemoveUserData, RemoveUserError, RemoveUserResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordCallbackData, ResetPasswordCallbackError, ResetPasswordCallbackResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, RevokeUserSessionData, RevokeUserSessionError, RevokeUserSessionResponse, RevokeUserSessionsData, RevokeUserSessionsError, RevokeUserSessionsResponse, SendVerificationEmailData, SendVerificationEmailError, SendVerificationEmailResponse, SetUserPasswordData, SetUserPasswordError, SetUserPasswordResponse, SetUserRoleData, SetUserRoleError, SetUserRoleResponse, SignInEmailData, SignInEmailError, SignInEmailResponse, SignOutData, SignOutError, SignOutResponse, SignUpWithEmailAndPasswordData, SignUpWithEmailAndPasswordError, SignUpWithEmailAndPasswordResponse, SocialSignInData, SocialSignInError, SocialSignInResponse, UnbanUserData, UnbanUserError, UnbanUserResponse, UpdateSessionData, UpdateSessionError, UpdateSessionResponse, UpdateUserData, UpdateUserError, UpdateUserResponse, VerifyPasswordData, VerifyPasswordError, VerifyPasswordResponse } from '../types.gen';
+import { adminListUserSessions, adminUpdateUser, banUser, changeEmail, changePassword, createUser, deleteArtistsById, deleteArtistsByIdFollow, deleteArtworksById, deleteArtworksByIdLike, deleteReportsById, deleteUser, getArtists, getArtistsById, getArtistsByIdHistory, getArtistsChanges, getArtistsChangesMine, getArtistsSlugBySlug, getArtworks, getArtworksById, getArtworksByIdHistory, getArtworksChanges, getArtworksChangesMine, getArtworksSlugBySlug, getAuthAccountInfo, getAuthCallbackById, getAuthDeleteUserCallback, getAuthError, getAuthOk, getAuthVerifyEmail, getHealth, getPlacesAutocomplete, getPlacesDetails, getReports, getReportsById, getReportsMine, getSession, getSessionPost, getTags, getUser, impersonateUser, linkSocialAccount, listUserAccounts, listUsers, listUserSessions, type Options, patchArtistsByIdChangesByChangeId, patchArtistsByIdVerify, patchArtworksByIdChangesByChangeId, patchArtworksByIdVerify, patchReportsById, postArtists, postArtistsByIdChanges, postArtistsByIdFollow, postArtworks, postArtworksByIdChanges, postArtworksByIdLike, postAuthAdminHasPermission, postAuthAdminStopImpersonating, postAuthCallbackById, postAuthGetAccessToken, postAuthRefreshToken, postAuthRevokeOtherSessions, postAuthRevokeSession, postAuthRevokeSessions, postAuthUnlinkAccount, postReports, removeUser, requestPasswordReset, resetPassword, resetPasswordCallback, revokeUserSession, revokeUserSessions, sendVerificationEmail, setUserPassword, setUserRole, signInEmail, signOut, signUpWithEmailAndPassword, socialSignIn, unbanUser, updateSession, updateUser, verifyPassword } from '../sdk.gen';
+import type { AdminListUserSessionsData, AdminListUserSessionsError, AdminListUserSessionsResponse, AdminUpdateUserData, AdminUpdateUserError, AdminUpdateUserResponse, BanUserData, BanUserError, BanUserResponse, ChangeEmailData, ChangeEmailError, ChangeEmailResponse, ChangePasswordData, ChangePasswordError, ChangePasswordResponse, CreateUserData, CreateUserError, CreateUserResponse, DeleteArtistsByIdData, DeleteArtistsByIdError, DeleteArtistsByIdFollowData, DeleteArtistsByIdFollowError, DeleteArtistsByIdFollowResponse, DeleteArtistsByIdResponse, DeleteArtworksByIdData, DeleteArtworksByIdError, DeleteArtworksByIdLikeData, DeleteArtworksByIdLikeError, DeleteArtworksByIdLikeResponse, DeleteArtworksByIdResponse, DeleteReportsByIdData, DeleteReportsByIdError, DeleteReportsByIdResponse, DeleteUserData, DeleteUserError, DeleteUserResponse, GetArtistsByIdData, GetArtistsByIdError, GetArtistsByIdHistoryData, GetArtistsByIdHistoryError, GetArtistsByIdHistoryResponse, GetArtistsByIdResponse, GetArtistsChangesData, GetArtistsChangesError, GetArtistsChangesMineData, GetArtistsChangesMineError, GetArtistsChangesMineResponse, GetArtistsChangesResponse, GetArtistsData, GetArtistsResponse, GetArtistsSlugBySlugData, GetArtistsSlugBySlugError, GetArtistsSlugBySlugResponse, GetArtworksByIdData, GetArtworksByIdError, GetArtworksByIdHistoryData, GetArtworksByIdHistoryError, GetArtworksByIdHistoryResponse, GetArtworksByIdResponse, GetArtworksChangesData, GetArtworksChangesError, GetArtworksChangesMineData, GetArtworksChangesMineError, GetArtworksChangesMineResponse, GetArtworksChangesResponse, GetArtworksData, GetArtworksError, GetArtworksResponse, GetArtworksSlugBySlugData, GetArtworksSlugBySlugError, GetArtworksSlugBySlugResponse, GetAuthAccountInfoData, GetAuthAccountInfoError, GetAuthAccountInfoResponse, GetAuthCallbackByIdData, GetAuthCallbackByIdError, GetAuthDeleteUserCallbackData, GetAuthDeleteUserCallbackError, GetAuthDeleteUserCallbackResponse, GetAuthErrorData, GetAuthErrorError, GetAuthErrorResponse, GetAuthOkData, GetAuthOkError, GetAuthOkResponse, GetAuthVerifyEmailData, GetAuthVerifyEmailError, GetAuthVerifyEmailResponse, GetHealthData, GetHealthResponse, GetPlacesAutocompleteData, GetPlacesAutocompleteError, GetPlacesAutocompleteResponse, GetPlacesDetailsData, GetPlacesDetailsError, GetPlacesDetailsResponse, GetReportsByIdData, GetReportsByIdError, GetReportsByIdResponse, GetReportsData, GetReportsError, GetReportsMineData, GetReportsMineError, GetReportsMineResponse, GetReportsResponse, GetSessionData, GetSessionError, GetSessionPostData, GetSessionPostError, GetTagsData, GetTagsError, GetTagsResponse, GetUserData, GetUserError, GetUserResponse, ImpersonateUserData, ImpersonateUserError, ImpersonateUserResponse, LinkSocialAccountData, LinkSocialAccountError, LinkSocialAccountResponse, ListUserAccountsData, ListUserAccountsError, ListUserAccountsResponse, ListUsersData, ListUsersError, ListUserSessionsData, ListUserSessionsError, ListUserSessionsResponse, ListUsersResponse, PatchArtistsByIdChangesByChangeIdData, PatchArtistsByIdChangesByChangeIdError, PatchArtistsByIdChangesByChangeIdResponse, PatchArtistsByIdVerifyData, PatchArtistsByIdVerifyError, PatchArtistsByIdVerifyResponse, PatchArtworksByIdChangesByChangeIdData, PatchArtworksByIdChangesByChangeIdError, PatchArtworksByIdChangesByChangeIdResponse, PatchArtworksByIdVerifyData, PatchArtworksByIdVerifyError, PatchArtworksByIdVerifyResponse, PatchReportsByIdData, PatchReportsByIdError, PatchReportsByIdResponse, PostArtistsByIdChangesData, PostArtistsByIdChangesError, PostArtistsByIdChangesResponse, PostArtistsByIdFollowData, PostArtistsByIdFollowError, PostArtistsByIdFollowResponse, PostArtistsData, PostArtistsError, PostArtistsResponse, PostArtworksByIdChangesData, PostArtworksByIdChangesError, PostArtworksByIdChangesResponse, PostArtworksByIdLikeData, PostArtworksByIdLikeError, PostArtworksByIdLikeResponse, PostArtworksData, PostArtworksError, PostArtworksResponse, PostAuthAdminHasPermissionData, PostAuthAdminHasPermissionError, PostAuthAdminHasPermissionResponse, PostAuthAdminStopImpersonatingData, PostAuthAdminStopImpersonatingError, PostAuthCallbackByIdData, PostAuthCallbackByIdError, PostAuthGetAccessTokenData, PostAuthGetAccessTokenError, PostAuthGetAccessTokenResponse, PostAuthRefreshTokenData, PostAuthRefreshTokenError, PostAuthRefreshTokenResponse, PostAuthRevokeOtherSessionsData, PostAuthRevokeOtherSessionsError, PostAuthRevokeOtherSessionsResponse, PostAuthRevokeSessionData, PostAuthRevokeSessionError, PostAuthRevokeSessionResponse, PostAuthRevokeSessionsData, PostAuthRevokeSessionsError, PostAuthRevokeSessionsResponse, PostAuthUnlinkAccountData, PostAuthUnlinkAccountError, PostAuthUnlinkAccountResponse, PostReportsData, PostReportsError, PostReportsResponse, RemoveUserData, RemoveUserError, RemoveUserResponse, RequestPasswordResetData, RequestPasswordResetError, RequestPasswordResetResponse, ResetPasswordCallbackData, ResetPasswordCallbackError, ResetPasswordCallbackResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, RevokeUserSessionData, RevokeUserSessionError, RevokeUserSessionResponse, RevokeUserSessionsData, RevokeUserSessionsError, RevokeUserSessionsResponse, SendVerificationEmailData, SendVerificationEmailError, SendVerificationEmailResponse, SetUserPasswordData, SetUserPasswordError, SetUserPasswordResponse, SetUserRoleData, SetUserRoleError, SetUserRoleResponse, SignInEmailData, SignInEmailError, SignInEmailResponse, SignOutData, SignOutError, SignOutResponse, SignUpWithEmailAndPasswordData, SignUpWithEmailAndPasswordError, SignUpWithEmailAndPasswordResponse, SocialSignInData, SocialSignInError, SocialSignInResponse, UnbanUserData, UnbanUserError, UnbanUserResponse, UpdateSessionData, UpdateSessionError, UpdateSessionResponse, UpdateUserData, UpdateUserError, UpdateUserResponse, VerifyPasswordData, VerifyPasswordError, VerifyPasswordResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -380,6 +380,26 @@ export const getArtworksByIdOptions = (options: Options<GetArtworksByIdData>) =>
     queryKey: getArtworksByIdQueryKey(options)
 });
 
+export const getArtworksSlugBySlugQueryKey = (options: Options<GetArtworksSlugBySlugData>) => createQueryKey('getArtworksSlugBySlug', options);
+
+/**
+ * Get an artwork by slug
+ *
+ * Fetch a single artwork by its URL slug. Public, but unverified artworks are visible only to admins and to their own owner (404 otherwise).
+ */
+export const getArtworksSlugBySlugOptions = (options: Options<GetArtworksSlugBySlugData>) => queryOptions<GetArtworksSlugBySlugResponse, GetArtworksSlugBySlugError, GetArtworksSlugBySlugResponse, ReturnType<typeof getArtworksSlugBySlugQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getArtworksSlugBySlug({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getArtworksSlugBySlugQueryKey(options)
+});
+
 /**
  * Verify an artwork
  *
@@ -627,7 +647,7 @@ export const getArtistsQueryKey = (options?: Options<GetArtistsData>) => createQ
 /**
  * List artists
  *
- * Return artists. Search with `name` (substring) and `tag` (exact); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
+ * Return artists. Search with `name` (substring) and `tag` (exact), and filter by moderation state with `verified` (true/false; omit for all); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
  */
 export const getArtistsOptions = (options?: Options<GetArtistsData>) => queryOptions<GetArtistsResponse, DefaultError, GetArtistsResponse, ReturnType<typeof getArtistsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -647,7 +667,7 @@ export const getArtistsInfiniteQueryKey = (options?: Options<GetArtistsData>): Q
 /**
  * List artists
  *
- * Return artists. Search with `name` (substring) and `tag` (exact); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
+ * Return artists. Search with `name` (substring) and `tag` (exact), and filter by moderation state with `verified` (true/false; omit for all); order with `sort` (multi-key, e.g. `name,-createdAt`; default newest first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`). Public; `followedByMe` reflects the caller when signed in.
  */
 export const getArtistsInfiniteOptions = (options?: Options<GetArtistsData>) => infiniteQueryOptions<GetArtistsResponse, DefaultError, InfiniteData<GetArtistsResponse>, QueryKey<Options<GetArtistsData>>, string | Pick<QueryKey<Options<GetArtistsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore
@@ -727,6 +747,26 @@ export const getArtistsByIdOptions = (options: Options<GetArtistsByIdData>) => q
         return data;
     },
     queryKey: getArtistsByIdQueryKey(options)
+});
+
+export const getArtistsSlugBySlugQueryKey = (options: Options<GetArtistsSlugBySlugData>) => createQueryKey('getArtistsSlugBySlug', options);
+
+/**
+ * Get an artist by slug
+ *
+ * Fetch a single artist by its URL slug. Public.
+ */
+export const getArtistsSlugBySlugOptions = (options: Options<GetArtistsSlugBySlugData>) => queryOptions<GetArtistsSlugBySlugResponse, GetArtistsSlugBySlugError, GetArtistsSlugBySlugResponse, ReturnType<typeof getArtistsSlugBySlugQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getArtistsSlugBySlug({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getArtistsSlugBySlugQueryKey(options)
 });
 
 /**
@@ -999,6 +1039,55 @@ export const getPlacesDetailsOptions = (options: Options<GetPlacesDetailsData>) 
         return data;
     },
     queryKey: getPlacesDetailsQueryKey(options)
+});
+
+export const getTagsQueryKey = (options?: Options<GetTagsData>) => createQueryKey('getTags', options);
+
+/**
+ * List my tags
+ *
+ * Return the authenticated user's tags with their usage counter. Tags are recorded automatically when you add them while creating an artwork or artist. Search with `name` (substring) and order with `sort` (multi-key, e.g. `-count,name`; default most-used first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ */
+export const getTagsOptions = (options?: Options<GetTagsData>) => queryOptions<GetTagsResponse, GetTagsError, GetTagsResponse, ReturnType<typeof getTagsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getTags({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getTagsQueryKey(options)
+});
+
+export const getTagsInfiniteQueryKey = (options?: Options<GetTagsData>): QueryKey<Options<GetTagsData>> => createQueryKey('getTags', options, true);
+
+/**
+ * List my tags
+ *
+ * Return the authenticated user's tags with their usage counter. Tags are recorded automatically when you add them while creating an artwork or artist. Search with `name` (substring) and order with `sort` (multi-key, e.g. `-count,name`; default most-used first). Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ */
+export const getTagsInfiniteOptions = (options?: Options<GetTagsData>) => infiniteQueryOptions<GetTagsResponse, GetTagsError, InfiniteData<GetTagsResponse>, QueryKey<Options<GetTagsData>>, string | Pick<QueryKey<Options<GetTagsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+// @ts-ignore
+{
+    queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<QueryKey<Options<GetTagsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+            query: {
+                cursor: pageParam
+            }
+        };
+        const params = createInfiniteParams(queryKey, page);
+        const { data } = await getTags({
+            ...options,
+            ...params,
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getTagsInfiniteQueryKey(options)
 });
 
 /**

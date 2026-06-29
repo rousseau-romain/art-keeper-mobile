@@ -1,12 +1,16 @@
+import {
+  Camera,
+  type CameraRef,
+  Map as MapView,
+  Marker,
+  type PressEvent,
+  type PressEventWithFeatures,
+  type StyleSpecification,
+} from "@maplibre/maplibre-react-native";
 import { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
-import MapView, {
-  type MapPressEvent,
-  Marker,
-  type PoiClickEvent,
-} from "react-native-maps";
+import { type NativeSyntheticEvent, StyleSheet, View } from "react-native";
 
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useDeviceLocation } from "@/pages/app/artwork/hooks/useDeviceLocation";
@@ -15,19 +19,39 @@ import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
-import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import {
+  IconSizeEnum,
+  RadiusEnum,
+  SpacingEnum,
+} from "@/theme/enums/scale.enums";
 
-// Paris fallback when no pin has been set yet (no EXIF GPS, no manual pick).
-const FALLBACK = { latitude: 48.8566, longitude: 2.3522 };
-const DELTA = { latitudeDelta: 0.01, longitudeDelta: 0.01 };
+// Key-free OpenStreetMap raster style (no API key / billing, unlike Google Maps).
+// MapLibre renders this directly — the same OSM tiles the web map (WebMap.tsx) uses.
+const OSM_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    osm: {
+      type: "raster",
+      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      tileSize: 256,
+      attribution: "© OpenStreetMap contributors",
+    },
+  },
+  layers: [{ id: "osm", type: "raster", source: "osm" }],
+};
 
-/** Step 2 — confirm the pin on a real map; tap/drag to move it, or use device GPS. */
+// Paris fallback when no pin is set yet. MapLibre coords are [lng, lat] — the
+// reverse of react-native-maps / the form's { latitude, longitude }.
+const FALLBACK: [number, number] = [2.3522, 48.8566];
+const ZOOM = 15;
+
+/** Step 2 — confirm the pin on an OpenStreetMap map; tap to move it, or use device GPS. */
 export const LocationStep = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
   const { setPin, useMyLocation, locating } = useDeviceLocation();
   const haptic = useHaptics();
-  const mapRef = useRef<MapView>(null);
+  const cameraRef = useRef<CameraRef>(null);
 
   // useWatch (not the watch() fn) so the React Compiler can't memoize the live
   // pin away — the component itself re-renders when these change.
@@ -39,27 +63,24 @@ export const LocationStep = () => {
   // Recenter the map whenever the pin moves (EXIF auto-pin, "use my location").
   useEffect(() => {
     if (latitude != null && longitude != null) {
-      mapRef.current?.animateToRegion({ latitude, longitude, ...DELTA }, 350);
+      cameraRef.current?.easeTo({
+        center: [longitude, latitude],
+        duration: 350,
+      });
     }
   }, [latitude, longitude]);
 
-  // Buzz on every manual pin change (tap, POI tap, marker drag) — not the
-  // automatic moves (EXIF auto-pin, "use my location"), which go through setPin
-  // directly without a haptic.
+  // Buzz on every manual pin change (map tap) — not the automatic moves (EXIF
+  // auto-pin, "use my location"), which go through setPin directly without a haptic.
   const placePin = (lat: number, lng: number) => {
     haptic("light");
     setPin(lat, lng);
   };
 
-  const onMapPress = (e: MapPressEvent) => {
-    const { latitude: lat, longitude: lng } = e.nativeEvent.coordinate;
-    placePin(lat, lng);
-  };
-
-  // Tapping a labelled place fires onPoiClick, not onPress — handle it too so a
-  // tap on a POI still drops the pin instead of doing nothing.
-  const onPoiClick = (e: PoiClickEvent) => {
-    const { latitude: lat, longitude: lng } = e.nativeEvent.coordinate;
+  const onMapPress = (
+    e: NativeSyntheticEvent<PressEvent | PressEventWithFeatures>,
+  ) => {
+    const [lng, lat] = e.nativeEvent.lngLat;
     placePin(lat, lng);
   };
 
@@ -78,28 +99,18 @@ export const LocationStep = () => {
             {tr("artwork.new.location.hint")}
           </Text>
         </View>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={{
-            ...(hasPin ? { latitude, longitude } : FALLBACK),
-            ...DELTA,
-          }}
-          onPress={onMapPress}
-          onPoiClick={onPoiClick}
-        >
+        <MapView style={styles.map} mapStyle={OSM_STYLE} onPress={onMapPress}>
+          <Camera
+            ref={cameraRef}
+            initialViewState={{
+              center: hasPin ? [longitude, latitude] : FALLBACK,
+              zoom: ZOOM,
+            }}
+          />
           {hasPin && (
-            <Marker
-              draggable
-              coordinate={{ latitude, longitude }}
-              pinColor={ColorEnum.accent}
-              onDragEnd={(e) =>
-                placePin(
-                  e.nativeEvent.coordinate.latitude,
-                  e.nativeEvent.coordinate.longitude,
-                )
-              }
-            />
+            <Marker lngLat={[longitude, latitude]}>
+              <View style={styles.pin} />
+            </Marker>
           )}
         </MapView>
       </View>
@@ -143,5 +154,13 @@ const styles = StyleSheet.create({
     backgroundColor: ColorEnum.surface,
   },
   map: { flex: 1 },
+  pin: {
+    width: IconSizeEnum.sm,
+    height: IconSizeEnum.sm,
+    borderRadius: RadiusEnum.full,
+    backgroundColor: ColorEnum.accent,
+    borderWidth: 2,
+    borderColor: ColorEnum.ink,
+  },
   addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
 });

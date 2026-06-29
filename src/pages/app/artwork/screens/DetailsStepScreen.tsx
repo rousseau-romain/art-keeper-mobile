@@ -16,6 +16,7 @@ import {
   type ArtworkValues,
 } from "@/pages/app/artwork/form/ArtworkForm";
 import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -50,6 +51,7 @@ export const DetailsStepScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={headerHeight}
     >
+      <Seo title={tr("artwork.new.title.details")} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scroll}

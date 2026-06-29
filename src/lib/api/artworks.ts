@@ -10,6 +10,7 @@ import {
   getArtworksByIdQueryKey,
   getArtworksInfiniteOptions,
   getArtworksInfiniteQueryKey,
+  getArtworksSlugBySlugOptions,
 } from "./generated/@tanstack/react-query.gen";
 import {
   deleteArtworksByIdLike,
@@ -70,7 +71,7 @@ export const useArtworks = (filters: ArtworkFilters = {}) => {
     // The generated queryFn treats an object pageParam as page params and a
     // string as the cursor; `{}` is the first page (no cursor).
     initialPageParam: {},
-    getNextPageParam: (last) => (last.nextCursor as string | null) ?? undefined,
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
   });
 
   const artworks = query.data?.pages.flatMap((page) => page.data) ?? [];
@@ -174,6 +175,18 @@ export const useArtwork = (id: string) => {
   return useQuery({
     ...getArtworksByIdOptions({ path: { id } }),
     enabled: !!id,
+  });
+};
+
+/**
+ * A single artwork by slug — the public, SEO-friendly lookup used by the detail
+ * route. The fetched artwork still carries `.id`, so writes (like/unlike, future
+ * edit) key off that.
+ */
+export const useArtworkBySlug = (slug: string) => {
+  return useQuery({
+    ...getArtworksSlugBySlugOptions({ path: { slug } }),
+    enabled: !!slug,
   });
 };
 

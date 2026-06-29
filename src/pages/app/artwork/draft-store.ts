@@ -15,14 +15,25 @@ export const saveArtworkDraft = async (
   try {
     await AsyncStorage.setItem(DRAFT_KEY, JSON.stringify(values));
   } catch {
-    // ignore — best-effort persistence
+    // Likely a localStorage quota overflow from a large data-URL photo on web —
+    // keep the rest of the draft rather than losing everything.
+    try {
+      await AsyncStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ ...values, photo: null }),
+      );
+    } catch {
+      // ignore — best-effort persistence
+    }
   }
 };
 
 /**
  * Read the saved draft, or `null` when there's none / it can't be parsed.
- * On web a picked photo's `uri` is a `blob:` URL that dies on reload, so we drop
- * it (keeping every other field) and let the user re-pick.
+ * Web photos are now persisted as self-contained `data:` URLs (see
+ * `usePhotoPicker`), so they restore intact. The `blob:` strip below is a safety
+ * net for stale drafts saved before that change — a `blob:` URL dies on reload,
+ * so we drop just the photo (keeping every other field) and let the user re-pick.
  */
 export const loadArtworkDraft = async (): Promise<ArtworkValues | null> => {
   try {

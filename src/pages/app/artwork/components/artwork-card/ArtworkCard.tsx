@@ -1,3 +1,4 @@
+import { type Href, Link } from "expo-router";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkLikeButton } from "@/pages/app/artwork/components/artwork-like-button/ArtworkLikeButton";
@@ -8,41 +9,46 @@ import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type ArtworkCardProps = {
   artwork: Artwork;
-  onPress: () => void;
+  href: Href;
 };
 
-export const ArtworkCard = ({ artwork, onPress }: ArtworkCardProps) => {
+// `Link asChild` clones `href` + `role="link"` onto the Pressable, so on web
+// react-native-web renders a real `<a href>` (crawlable, right-click-openable —
+// SEO) while native keeps the normal Pressable/View layout and navigation.
+export const ArtworkCard = ({ artwork, href }: ArtworkCardProps) => {
   return (
-    <Pressable style={styles.card} onPress={onPress}>
-      <Image
-        source={{ uri: artwork.imageUrl }}
-        style={styles.cardImage}
-        resizeMode="cover"
-      />
-      <View style={styles.cardBody}>
-        <View style={styles.cardTitleRow}>
-          <Text
-            font="display"
-            size="lg"
-            style={styles.cardTitle}
-            numberOfLines={2}
-          >
-            {artwork.title}
-          </Text>
-          <ArtworkLikeButton artwork={artwork} />
-        </View>
-        {artwork.tags.length > 0 ? (
-          <View style={styles.tagRow}>
-            {artwork.tags.slice(0, 4).map((tag) => (
-              <Tag key={tag} label={tag} />
-            ))}
+    <Link href={href} asChild>
+      <Pressable style={styles.card}>
+        <Image
+          source={{ uri: artwork.imageUrl }}
+          style={styles.cardImage}
+          resizeMode="cover"
+        />
+        <View style={styles.cardBody}>
+          <View style={styles.cardTitleRow}>
+            <Text
+              font="display"
+              size="lg"
+              style={styles.cardTitle}
+              numberOfLines={2}
+            >
+              {artwork.title}
+            </Text>
+            <ArtworkLikeButton artwork={artwork} />
           </View>
-        ) : null}
-        <Text font="mono" size="xs">
-          {artwork.latitude.toFixed(3)}, {artwork.longitude.toFixed(3)}
-        </Text>
-      </View>
-    </Pressable>
+          {artwork.tags.length > 0 ? (
+            <View style={styles.tagRow}>
+              {artwork.tags.slice(0, 4).map((tag) => (
+                <Tag key={tag} label={tag} />
+              ))}
+            </View>
+          ) : null}
+          <Text font="mono" size="xs">
+            {artwork.latitude.toFixed(3)}, {artwork.longitude.toFixed(3)}
+          </Text>
+        </View>
+      </Pressable>
+    </Link>
   );
 };
 

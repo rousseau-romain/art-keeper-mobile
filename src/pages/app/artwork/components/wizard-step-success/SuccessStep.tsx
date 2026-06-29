@@ -14,12 +14,12 @@ import {
 } from "@/theme/enums/scale.enums";
 
 export type SuccessStepProps = {
-  artworkId?: string;
+  slug?: string;
   onAnother: () => void;
 };
 
 /** Step 5 — the post-submit confirmation panel. */
-export const SuccessStep = ({ artworkId, onAnother }: SuccessStepProps) => {
+export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -46,11 +46,11 @@ export const SuccessStep = ({ artworkId, onAnother }: SuccessStepProps) => {
       </View>
 
       <View style={styles.actions}>
-        {artworkId && (
+        {slug && (
           <Button
             label={tr("artwork.new.success.track")}
             block
-            onPress={() => router.push(`/artworks/${artworkId}` as Href)}
+            onPress={() => router.push(`/artworks/${slug}` as Href)}
           />
         )}
         <Button

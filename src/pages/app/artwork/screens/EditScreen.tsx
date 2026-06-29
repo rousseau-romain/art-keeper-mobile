@@ -1,19 +1,21 @@
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useArtwork } from "@/lib/api/artworks";
+import { useArtworkBySlug } from "@/lib/api/artworks";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
-export type EditScreenProps = { id: string };
+export type EditScreenProps = { slug: string };
 
-export const EditScreen = ({ id }: EditScreenProps) => {
+export const EditScreen = ({ slug }: EditScreenProps) => {
   const { t: tr } = useTranslation();
-  const { data: artwork } = useArtwork(id);
+  const { data: artwork } = useArtworkBySlug(slug);
 
   return (
     <View style={styles.screen}>
+      <Seo title={artwork ? artwork.title : tr("artwork.title.edit")} />
       <Icon name="Pencil" size="xxl" color="inkMute" strokeWidth={1.6} />
       {artwork ? (
         <Text font="display" size="lg" style={styles.title} numberOfLines={2}>

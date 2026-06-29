@@ -42,7 +42,7 @@ export const useArtists = (
   const query = useInfiniteQuery({
     ...getArtistsInfiniteOptions({ query: { ...filters, limit: PAGE_SIZE } }),
     initialPageParam: {},
-    getNextPageParam: (last) => (last.nextCursor as string | null) ?? undefined,
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
     enabled: options.enabled,
   });
 

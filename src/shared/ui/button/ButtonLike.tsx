@@ -1,11 +1,11 @@
-import { View, type ViewProps } from "react-native";
+import { type GestureResponderEvent, View, type ViewProps } from "react-native";
 import { Button } from "./Button";
 import { useButtonLikeIcon } from "./hooks/useButtonLikeIcon";
 
 export type ButtonLikeProps = ViewProps & {
   liked: boolean;
   count: number;
-  onPress: () => void;
+  onPress: (event: GestureResponderEvent) => void;
 };
 
 export function ButtonLike({

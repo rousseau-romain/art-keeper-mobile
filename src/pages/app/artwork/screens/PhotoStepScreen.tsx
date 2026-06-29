@@ -8,6 +8,7 @@ import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/Wizar
 import { PhotoStep } from "@/pages/app/artwork/components/wizard-step-photo/PhotoStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useNewArtwork } from "@/pages/app/artwork/new-artwork-context";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -21,6 +22,7 @@ export const PhotoStepScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <Seo title={tr("artwork.new.title.index")} />
       {restored && <DraftBanner onDiscard={discardDraft} />}
 
       <ScrollView

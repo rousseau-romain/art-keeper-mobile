@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HeroGrid } from "@/pages/app/auth/components/hero-grid/HeroGrid";
 import { Segment } from "@/pages/app/auth/components/segment/Segment";
 import { LoginForm, type LoginValues } from "@/pages/app/auth/form/LoginForm";
 import { useGoogleSignIn } from "@/pages/app/auth/hooks/useGoogleSignIn";
@@ -17,6 +18,7 @@ import { useLoginSubmit } from "@/pages/app/auth/hooks/useLoginSubmit";
 import { useResendVerification } from "@/pages/app/auth/hooks/useResendVerification";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -29,6 +31,15 @@ import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
 type Mode = "sign-in" | "create";
 
+// Dev-only: prefill the form from EXPO_PUBLIC_DEV_* so you don't retype
+// credentials on every reload. Empty in production (the env vars are unset, and
+// `__DEV__` guards them out of release builds anyway).
+const DEFAULT_VALUES: LoginValues = {
+  name: "",
+  email: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_EMAIL ?? "") : "",
+  password: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_PASSWORD ?? "") : "",
+};
+
 export const LoginScreen = () => {
   const { t: tr } = useTranslation();
   const { wide } = useBreakpoint();
@@ -39,7 +50,7 @@ export const LoginScreen = () => {
 
   const methods = useForm<LoginValues>({
     mode: "onTouched",
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: DEFAULT_VALUES,
   });
   const {
     reset,
@@ -156,7 +167,8 @@ export const LoginScreen = () => {
     </View>
   );
 
-  // Hero — a fixed 50% side panel on desktop, a stacked banner on mobile.
+  // Hero — a side panel on desktop (image grid behind a scrim, text over), a
+  // stacked banner on mobile.
   const hero = (
     <View
       style={[
@@ -166,18 +178,26 @@ export const LoginScreen = () => {
           : [styles.heroNarrow, { paddingTop: insets.top + SpacingEnum.xxxl }],
       ]}
     >
-      <View style={styles.heroBrandWrap}>{brand}</View>
-      {tagline}
-      <Text
-        font="display"
-        size={wide ? "display" : "xxl"}
-        style={[
-          styles.heroHeading,
-          wide ? styles.heroHeadingWide : styles.heroHeadingNarrow,
-        ]}
-      >
-        {tr("auth.title.hero")}
-      </Text>
+      {wide ? (
+        <>
+          <HeroGrid />
+          <View style={[StyleSheet.absoluteFill, styles.scrim]} />
+        </>
+      ) : null}
+      <View style={wide ? styles.heroContentWide : undefined}>
+        <View style={styles.heroBrandWrap}>{brand}</View>
+        {tagline}
+        <Text
+          font="display"
+          size={wide ? "display" : "xxl"}
+          style={[
+            styles.heroHeading,
+            wide ? styles.heroHeadingWide : styles.heroHeadingNarrow,
+          ]}
+        >
+          {tr("auth.title.hero")}
+        </Text>
+      </View>
     </View>
   );
 
@@ -219,12 +239,13 @@ export const LoginScreen = () => {
       style={styles.screen}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
+      <Seo title={verifyEmail ? tr("auth.title.verify") : tr("auth.signIn")} />
       <View style={[styles.flex1, wide ? styles.row : styles.col]}>
         {/* On desktop the hero is a fixed 50% panel beside the scrolling form;
             on mobile it scrolls with the form inside the ScrollView. */}
         {wide ? hero : null}
         <ScrollView
-          style={wide ? styles.flex1 : undefined}
+          style={wide ? styles.formScrollWide : undefined}
           contentContainerStyle={
             wide ? styles.scrollContentWide : styles.scrollContentNarrow
           }
@@ -266,11 +287,14 @@ const styles = StyleSheet.create({
   hero: { backgroundColor: ColorEnum.surface2 },
   heroWide: {
     flex: 1,
+    overflow: "hidden",
     padding: SpacingEnum.xxxl,
     justifyContent: "flex-end",
     borderRightWidth: 1.5,
     borderRightColor: ColorEnum.line,
   },
+  heroContentWide: { position: "relative" },
+  scrim: { backgroundColor: ColorEnum.scrim },
   heroNarrow: {
     paddingBottom: SpacingEnum.xxl,
     paddingHorizontal: SpacingEnum.xl,
@@ -278,6 +302,7 @@ const styles = StyleSheet.create({
     borderBottomColor: ColorEnum.line,
   },
   heroHeading: { marginTop: SpacingEnum.lg, textTransform: "uppercase" },
+  formScrollWide: { width: 520 },
   scrollContentWide: {
     flexGrow: 1,
     justifyContent: "center",

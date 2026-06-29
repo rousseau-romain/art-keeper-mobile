@@ -50,6 +50,9 @@ export const fr: Resources = {
       edit: "Modifier l'œuvre",
       new: "Nouvelle œuvre",
     },
+    meta: {
+      descriptionFallback: "Découvrez {{title}} sur ArtKeeper.",
+    },
     location: "Paris 11e",
     pieceCount_one: "{{count}} œuvre",
     pieceCount_other: "{{count}} œuvres",

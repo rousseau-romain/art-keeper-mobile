@@ -11,12 +11,12 @@ export type Health = {
 
 export type ArtworkChangePatch = {
     title?: string;
-    description?: string | unknown | null;
+    description?: string | null;
     tags?: Array<string>;
     latitude?: number;
     longitude?: number;
     imageUrl?: string;
-    artistId?: string | unknown | null;
+    artistId?: string | null;
 };
 
 export type ArtworkChangeProposal = {
@@ -25,43 +25,43 @@ export type ArtworkChangeProposal = {
     userId: string;
     changes: {
         title?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         latitude?: number;
         longitude?: number;
         imageUrl?: string;
-        artistId?: string | unknown | null;
+        artistId?: string | null;
     };
     status: 'pending' | 'approved' | 'rejected';
-    reviewedByUserId: string | unknown | null;
-    reviewedAt: string | unknown | null;
+    reviewedByUserId: string | null;
+    reviewedAt: string | null;
     createdAt: string;
 };
 
 export type ArtworkHistory = {
     id: string;
     artworkId: string;
-    proposalId: string | unknown | null;
+    proposalId: string | null;
     changes: {
         title?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         latitude?: number;
         longitude?: number;
         imageUrl?: string;
-        artistId?: string | unknown | null;
+        artistId?: string | null;
     };
     previous: {
         title?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         latitude?: number;
         longitude?: number;
         imageUrl?: string;
-        artistId?: string | unknown | null;
+        artistId?: string | null;
     };
-    proposedByUserId: string | unknown | null;
-    reviewedByUserId: string | unknown | null;
+    proposedByUserId: string | null;
+    reviewedByUserId: string | null;
     appliedAt: string;
 };
 
@@ -72,49 +72,49 @@ export type ArtworkChangeProposalPage = {
         userId: string;
         changes: {
             title?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             latitude?: number;
             longitude?: number;
             imageUrl?: string;
-            artistId?: string | unknown | null;
+            artistId?: string | null;
         };
         status: 'pending' | 'approved' | 'rejected';
-        reviewedByUserId: string | unknown | null;
-        reviewedAt: string | unknown | null;
+        reviewedByUserId: string | null;
+        reviewedAt: string | null;
         createdAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type ArtworkHistoryPage = {
     data: Array<{
         id: string;
         artworkId: string;
-        proposalId: string | unknown | null;
+        proposalId: string | null;
         changes: {
             title?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             latitude?: number;
             longitude?: number;
             imageUrl?: string;
-            artistId?: string | unknown | null;
+            artistId?: string | null;
         };
         previous: {
             title?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             latitude?: number;
             longitude?: number;
             imageUrl?: string;
-            artistId?: string | unknown | null;
+            artistId?: string | null;
         };
-        proposedByUserId: string | unknown | null;
-        reviewedByUserId: string | unknown | null;
+        proposedByUserId: string | null;
+        reviewedByUserId: string | null;
         appliedAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type Error = {
@@ -125,13 +125,13 @@ export type Artwork = {
     id: string;
     title: string;
     slug: string;
-    description: string | unknown | null;
+    description: string | null;
     tags: Array<string>;
     latitude: number;
     longitude: number;
     imageUrl: string;
     verified: boolean;
-    artistId: string | unknown | null;
+    artistId: string | null;
     userId: string;
     likeCount: number;
     likedByMe: boolean;
@@ -144,25 +144,25 @@ export type ArtworkPage = {
         id: string;
         title: string;
         slug: string;
-        description: string | unknown | null;
+        description: string | null;
         tags: Array<string>;
         latitude: number;
         longitude: number;
         imageUrl: string;
         verified: boolean;
-        artistId: string | unknown | null;
+        artistId: string | null;
         userId: string;
         likeCount: number;
         likedByMe: boolean;
         createdAt: string;
         updatedAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type ArtistChangePatch = {
     name?: string;
-    description?: string | unknown | null;
+    description?: string | null;
     tags?: Array<string>;
     socialLinks?: {
         instagram?: string;
@@ -180,7 +180,7 @@ export type ArtistChangeProposal = {
     userId: string;
     changes: {
         name?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         socialLinks?: {
             instagram?: string;
@@ -192,18 +192,18 @@ export type ArtistChangeProposal = {
         avatarUrl?: string;
     };
     status: 'pending' | 'approved' | 'rejected';
-    reviewedByUserId: string | unknown | null;
-    reviewedAt: string | unknown | null;
+    reviewedByUserId: string | null;
+    reviewedAt: string | null;
     createdAt: string;
 };
 
 export type ArtistHistory = {
     id: string;
     artistId: string;
-    proposalId: string | unknown | null;
+    proposalId: string | null;
     changes: {
         name?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         socialLinks?: {
             instagram?: string;
@@ -216,7 +216,7 @@ export type ArtistHistory = {
     };
     previous: {
         name?: string;
-        description?: string | unknown | null;
+        description?: string | null;
         tags?: Array<string>;
         socialLinks?: {
             instagram?: string;
@@ -227,8 +227,8 @@ export type ArtistHistory = {
         };
         avatarUrl?: string;
     };
-    proposedByUserId: string | unknown | null;
-    reviewedByUserId: string | unknown | null;
+    proposedByUserId: string | null;
+    reviewedByUserId: string | null;
     appliedAt: string;
 };
 
@@ -239,7 +239,7 @@ export type ArtistChangeProposalPage = {
         userId: string;
         changes: {
             name?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             socialLinks?: {
                 instagram?: string;
@@ -251,21 +251,21 @@ export type ArtistChangeProposalPage = {
             avatarUrl?: string;
         };
         status: 'pending' | 'approved' | 'rejected';
-        reviewedByUserId: string | unknown | null;
-        reviewedAt: string | unknown | null;
+        reviewedByUserId: string | null;
+        reviewedAt: string | null;
         createdAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type ArtistHistoryPage = {
     data: Array<{
         id: string;
         artistId: string;
-        proposalId: string | unknown | null;
+        proposalId: string | null;
         changes: {
             name?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             socialLinks?: {
                 instagram?: string;
@@ -278,7 +278,7 @@ export type ArtistHistoryPage = {
         };
         previous: {
             name?: string;
-            description?: string | unknown | null;
+            description?: string | null;
             tags?: Array<string>;
             socialLinks?: {
                 instagram?: string;
@@ -289,11 +289,11 @@ export type ArtistHistoryPage = {
             };
             avatarUrl?: string;
         };
-        proposedByUserId: string | unknown | null;
-        reviewedByUserId: string | unknown | null;
+        proposedByUserId: string | null;
+        reviewedByUserId: string | null;
         appliedAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type SocialLinks = {
@@ -308,8 +308,8 @@ export type Artist = {
     id: string;
     name: string;
     slug: string;
-    description: string | unknown | null;
-    avatarUrl: string | unknown | null;
+    description: string | null;
+    avatarUrl: string | null;
     tags: Array<string>;
     socialLinks: {
         instagram?: string;
@@ -331,8 +331,8 @@ export type ArtistPage = {
         id: string;
         name: string;
         slug: string;
-        description: string | unknown | null;
-        avatarUrl: string | unknown | null;
+        description: string | null;
+        avatarUrl: string | null;
         tags: Array<string>;
         socialLinks: {
             instagram?: string;
@@ -348,7 +348,7 @@ export type ArtistPage = {
         createdAt: string;
         updatedAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type Report = {
@@ -357,10 +357,10 @@ export type Report = {
     targetType: 'user' | 'artwork' | 'artist';
     targetId: string;
     reason: 'spam' | 'inappropriate' | 'copyright' | 'harassment' | 'other';
-    details: string | unknown | null;
+    details: string | null;
     status: 'pending' | 'resolved' | 'dismissed';
-    reviewedByUserId: string | unknown | null;
-    reviewedAt: string | unknown | null;
+    reviewedByUserId: string | null;
+    reviewedAt: string | null;
     createdAt: string;
 };
 
@@ -371,13 +371,13 @@ export type ReportPage = {
         targetType: 'user' | 'artwork' | 'artist';
         targetId: string;
         reason: 'spam' | 'inappropriate' | 'copyright' | 'harassment' | 'other';
-        details: string | unknown | null;
+        details: string | null;
         status: 'pending' | 'resolved' | 'dismissed';
-        reviewedByUserId: string | unknown | null;
-        reviewedAt: string | unknown | null;
+        reviewedByUserId: string | null;
+        reviewedAt: string | null;
         createdAt: string;
     }>;
-    nextCursor: string | unknown | null;
+    nextCursor: string | null;
 };
 
 export type PlaceSuggestion = {
@@ -387,7 +387,7 @@ export type PlaceSuggestion = {
     category: string;
     type: string;
     placeRank: number;
-    countryCode: string | unknown | null;
+    countryCode: string | null;
     lat: number;
     lng: number;
     boundingBox: [
@@ -405,7 +405,7 @@ export type PlaceDetails = {
     category: string;
     type: string;
     placeRank: number;
-    countryCode: string | unknown | null;
+    countryCode: string | null;
     lat: number;
     lng: number;
     boundingBox: [
@@ -417,7 +417,7 @@ export type PlaceDetails = {
     geojson: {
         type: string;
         coordinates: unknown;
-    } | unknown | null;
+    } | null;
     address: {
         [key: string]: unknown;
     };
@@ -431,7 +431,7 @@ export type PlaceAutocompleteResult = {
         category: string;
         type: string;
         placeRank: number;
-        countryCode: string | unknown | null;
+        countryCode: string | null;
         lat: number;
         lng: number;
         boundingBox: [
@@ -441,6 +441,25 @@ export type PlaceAutocompleteResult = {
             unknown
         ];
     }>;
+};
+
+export type Tag = {
+    id: string;
+    name: string;
+    count: number;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type TagPage = {
+    data: Array<{
+        id: string;
+        name: string;
+        count: number;
+        createdAt: string;
+        updatedAt: string;
+    }>;
+    nextCursor: string | null;
 };
 
 export type User = {
@@ -835,6 +854,33 @@ export type GetArtworksByIdResponses = {
 
 export type GetArtworksByIdResponse = GetArtworksByIdResponses[keyof GetArtworksByIdResponses];
 
+export type GetArtworksSlugBySlugData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/artworks/slug/{slug}';
+};
+
+export type GetArtworksSlugBySlugErrors = {
+    /**
+     * Response for status 404
+     */
+    404: Error;
+};
+
+export type GetArtworksSlugBySlugError = GetArtworksSlugBySlugErrors[keyof GetArtworksSlugBySlugErrors];
+
+export type GetArtworksSlugBySlugResponses = {
+    /**
+     * Response for status 200
+     */
+    200: Artwork;
+};
+
+export type GetArtworksSlugBySlugResponse = GetArtworksSlugBySlugResponses[keyof GetArtworksSlugBySlugResponses];
+
 export type PatchArtworksByIdVerifyData = {
     body: {
         verified: boolean;
@@ -1131,6 +1177,10 @@ export type GetArtistsData = {
          */
         tag?: Array<string>;
         /**
+         * Filter by the artist's admin-moderated verified flag. Omit for all artists.
+         */
+        verified?: boolean;
+        /**
          * Comma-separated sort keys; a leading '-' means descending (e.g. `verified,name`). Allowed: name, createdAt, verified. Default: createdAt desc.
          */
         sort?: string;
@@ -1245,6 +1295,33 @@ export type GetArtistsByIdResponses = {
 };
 
 export type GetArtistsByIdResponse = GetArtistsByIdResponses[keyof GetArtistsByIdResponses];
+
+export type GetArtistsSlugBySlugData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/artists/slug/{slug}';
+};
+
+export type GetArtistsSlugBySlugErrors = {
+    /**
+     * Response for status 404
+     */
+    404: Error;
+};
+
+export type GetArtistsSlugBySlugError = GetArtistsSlugBySlugErrors[keyof GetArtistsSlugBySlugErrors];
+
+export type GetArtistsSlugBySlugResponses = {
+    /**
+     * Response for status 200
+     */
+    200: Artist;
+};
+
+export type GetArtistsSlugBySlugResponse = GetArtistsSlugBySlugResponses[keyof GetArtistsSlugBySlugResponses];
 
 export type PatchArtistsByIdVerifyData = {
     body: {
@@ -1629,6 +1706,42 @@ export type GetPlacesDetailsResponses = {
 };
 
 export type GetPlacesDetailsResponse = GetPlacesDetailsResponses[keyof GetPlacesDetailsResponses];
+
+export type GetTagsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        cursor?: string;
+        limit?: number;
+        /**
+         * Case-insensitive substring match on the tag name.
+         */
+        name?: string;
+        /**
+         * Comma-separated sort keys; a leading '-' means descending (e.g. `-count,name`). Allowed: name, count, createdAt. Default: count desc.
+         */
+        sort?: string;
+    };
+    url: '/tags/';
+};
+
+export type GetTagsErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+};
+
+export type GetTagsError = GetTagsErrors[keyof GetTagsErrors];
+
+export type GetTagsResponses = {
+    /**
+     * Response for status 200
+     */
+    200: TagPage;
+};
+
+export type GetTagsResponse = GetTagsResponses[keyof GetTagsResponses];
 
 export type SocialSignInData = {
     body: {

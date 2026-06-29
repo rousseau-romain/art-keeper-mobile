@@ -11,11 +11,11 @@ export default function ArtworksLayout() {
         options={{ headerShown: false, title: tr("artwork.tab") }}
       />
       <Stack.Screen
-        name="[id]/index"
+        name="[slug]/index"
         options={{ title: tr("artwork.title.detail") }}
       />
       <Stack.Screen
-        name="[id]/edit"
+        name="[slug]/edit"
         options={{ title: tr("artwork.title.edit") }}
       />
     </Stack>

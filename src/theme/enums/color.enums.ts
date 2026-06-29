@@ -27,6 +27,7 @@ export const ColorEnum = {
   infoBg: "#13202e",
   warn: "#e0a93f",
   warnBg: "#2a2110",
+  scrim: "rgba(14,14,15,0.72)",
 } as const;
 
 export type ColorEnumType = keyof typeof ColorEnum;

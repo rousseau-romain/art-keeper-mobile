@@ -8,23 +8,24 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useArtwork } from "@/lib/api/artworks";
+import { useArtworkBySlug } from "@/lib/api/artworks";
 import { ApiError } from "@/lib/api/client";
 import { ArtworkLikeButton } from "@/pages/app/artwork/components/artwork-like-button/ArtworkLikeButton";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 
-export type DetailScreenProps = { id: string };
+export type DetailScreenProps = { slug: string };
 
-export const DetailScreen = ({ id }: DetailScreenProps) => {
+export const DetailScreen = ({ slug }: DetailScreenProps) => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { data: artwork, isLoading, isError, error } = useArtwork(id);
+  const { data: artwork, isLoading, isError, error } = useArtworkBySlug(slug);
 
   if (isLoading) {
     return (
@@ -58,6 +59,14 @@ export const DetailScreen = ({ id }: DetailScreenProps) => {
         { paddingBottom: insets.bottom + SpacingEnum.xl },
       ]}
     >
+      <Seo
+        title={artwork.title}
+        description={
+          artwork.description ||
+          tr("artwork.meta.descriptionFallback", { title: artwork.title })
+        }
+        image={artwork.imageUrl}
+      />
       <Image
         source={{ uri: artwork.imageUrl }}
         style={styles.image}
@@ -76,13 +85,16 @@ export const DetailScreen = ({ id }: DetailScreenProps) => {
           ))}
         </View>
       ) : null}
+      {artwork.description && (
+        <Text color="inkSoft">{artwork.description}</Text>
+      )}
       <Text font="mono" size="sm">
         {artwork.latitude.toFixed(5)}, {artwork.longitude.toFixed(5)}
       </Text>
       <Button
         label={tr("artwork.edit")}
         variant="primary"
-        onPress={() => router.push(`/artworks/${artwork.id}/edit`)}
+        onPress={() => router.push(`/artworks/${artwork.slug}/edit`)}
       />
     </ScrollView>
   );
