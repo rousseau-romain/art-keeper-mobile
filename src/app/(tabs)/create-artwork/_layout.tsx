@@ -14,6 +14,10 @@ import {
 } from "@/pages/app/artwork/wizard-steps.constant";
 import { Stack } from "@/shared/ui/stack/Stack";
 
+export const unstable_settings = {
+  initialRouteName: "index",
+};
+
 /**
  * The create-artwork wizard shell: owns the form + draft persistence so the
  * collected values survive moving between steps. The native Stack header is kept

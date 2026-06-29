@@ -60,6 +60,23 @@ export const en = {
     location: "Paris 11e",
     pieceCount_one: "{{count}} piece",
     pieceCount_other: "{{count}} pieces",
+    // Browse map ⇄ grid view.
+    map: {
+      toggleMap: "Map",
+      toggleGrid: "Grid",
+      piecesInView_one: "{{count}} piece in view",
+      piecesInView_other: "{{count}} pieces in view",
+      dragForGrid: "drag ↑ for grid",
+    },
+    // Tag filter sheet (the (formsheet) modal).
+    filters: {
+      title: "Filter by tag",
+      open: "Filters",
+      clear: "Clear all",
+      done: "Done",
+      appliedCount_one: "{{count}} filter",
+      appliedCount_other: "{{count}} filters",
+    },
     statusUpdating: "updating",
     statusStale: "stale",
     statusLive: "live",
@@ -159,6 +176,10 @@ export const en = {
   a11y: {
     verified: "verified",
     language: "Language: {{language}}",
+    viewMap: "Show map view",
+    viewGrid: "Show grid view",
+    selectArtwork: "Show {{title}}",
+    filters: "Open tag filters",
   },
 };
 

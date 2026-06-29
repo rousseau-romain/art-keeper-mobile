@@ -56,6 +56,22 @@ export const fr: Resources = {
     location: "Paris 11e",
     pieceCount_one: "{{count}} œuvre",
     pieceCount_other: "{{count}} œuvres",
+    map: {
+      toggleMap: "Carte",
+      toggleGrid: "Grille",
+      piecesInView_one: "{{count}} œuvre en vue",
+      piecesInView_other: "{{count}} œuvres en vue",
+      dragForGrid: "glisser ↑ pour la grille",
+    },
+    // Tag filter sheet (the (formsheet) modal).
+    filters: {
+      title: "Filtrer par tag",
+      open: "Filtres",
+      clear: "Tout effacer",
+      done: "Terminé",
+      appliedCount_one: "{{count}} filtre",
+      appliedCount_other: "{{count}} filtres",
+    },
     statusUpdating: "mise à jour",
     statusStale: "obsolète",
     statusLive: "à jour",
@@ -155,5 +171,9 @@ export const fr: Resources = {
   a11y: {
     verified: "vérifié",
     language: "Langue : {{language}}",
+    viewMap: "Afficher la carte",
+    viewGrid: "Afficher la grille",
+    selectArtwork: "Afficher {{title}}",
+    filters: "Ouvrir les filtres par tag",
   },
 };

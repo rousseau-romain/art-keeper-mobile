@@ -64,7 +64,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "biome lint .",
+    "lint": "biome lint . && bun scripts/check-unused-styles.ts",
+    "lint:styles": "bun scripts/check-unused-styles.ts",
+    "hooks:install": "git config core.hooksPath .githooks",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "gen:api": "openapi-ts"

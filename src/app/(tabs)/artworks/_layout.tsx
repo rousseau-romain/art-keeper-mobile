@@ -1,6 +1,10 @@
 import { useTranslation } from "react-i18next";
-
+import { formsheetOptions } from "@/shared/navigation/formsheet-options.constant";
 import { Stack } from "@/shared/ui/stack/Stack";
+
+export const unstable_settings = {
+  initialRouteName: "index",
+};
 
 export default function ArtworksLayout() {
   const { t: tr } = useTranslation();
@@ -17,6 +21,10 @@ export default function ArtworksLayout() {
       <Stack.Screen
         name="[slug]/edit"
         options={{ title: tr("artwork.title.edit") }}
+      />
+      <Stack.Screen
+        name="filters"
+        options={{ ...formsheetOptions, headerShown: false }}
       />
     </Stack>
   );

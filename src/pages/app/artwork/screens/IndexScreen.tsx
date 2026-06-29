@@ -1,8 +1,10 @@
-import { useCallback, useState } from "react";
+import { useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
+  type LayoutChangeEvent,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -10,11 +12,19 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useArtworks } from "@/lib/api/artworks";
+import { type Artwork, useArtworks } from "@/lib/api/artworks";
 import { ApiError } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLocale } from "@/lib/i18n/I18nProvider";
 import { ArtworkCard } from "@/pages/app/artwork/components/artwork-card/ArtworkCard";
+import { ArtworkMap } from "@/pages/app/artwork/components/artwork-map/ArtworkMap";
+import { FilterPill } from "@/pages/app/artwork/components/filter-pill/FilterPill";
+import { MapCarousel } from "@/pages/app/artwork/components/map-carousel/MapCarousel";
+import {
+  type ArtworkView,
+  ViewToggle,
+} from "@/pages/app/artwork/components/view-toggle/ViewToggle";
+import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
@@ -36,6 +46,13 @@ export const IndexScreen = () => {
   const { width } = useWindowDimensions();
   const { signOut } = useAuth();
   const haptic = useHaptics();
+  const router = useRouter();
+  const { selectedTags, count: filterCount } = useArtworkFilters();
+
+  const [view, setView] = useState<ArtworkView>("map");
+  const [selectedId, setSelectedId] = useState<string | undefined>();
+  // Strip height positions the floating tag bar just above the strip.
+  const [stripHeight, setStripHeight] = useState(0);
 
   // Responsive grid: derive a column count from the window width, then size
   // each cell to an explicit pixel width so a lone card on an odd last row
@@ -45,6 +62,12 @@ export const IndexScreen = () => {
   const itemWidth =
     (width - SpacingEnum.lg * 2 - SpacingEnum.lg * (numColumns - 1)) /
     numColumns;
+
+  // Tag chips drive the list query; an empty selection means "all".
+  const filters = useMemo(
+    () => (selectedTags.length ? { tag: selectedTags } : {}),
+    [selectedTags]
+  );
 
   const {
     artworks,
@@ -57,7 +80,24 @@ export const IndexScreen = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useArtworks();
+  } = useArtworks(filters);
+
+  const onOpenFilters = useCallback(() => {
+    haptic("light");
+    router.push("/(tabs)/artworks/filters");
+  }, [haptic, router]);
+
+  const onSelectArtwork = useCallback(
+    (artwork: Artwork) => {
+      haptic("selection");
+      setSelectedId(artwork.id);
+    },
+    [haptic]
+  );
+
+  const onStripLayout = useCallback((e: LayoutChangeEvent) => {
+    setStripHeight(e.nativeEvent.layout.height);
+  }, []);
 
   // RefreshControl must reflect ONLY a user-initiated pull, not the background
   // refetches that cache invalidation (e.g. after a like) triggers — otherwise
@@ -180,9 +220,49 @@ export const IndexScreen = () => {
     );
   }
 
+  // --- Map view -----------------------------------------------------------
+  if (view === "map") {
+    return (
+      <View style={styles.screen}>
+        {header}
+        <View style={styles.mapWrap}>
+          <ArtworkMap
+            artworks={artworks}
+            selectedId={selectedId}
+            onSelect={onSelectArtwork}
+          />
+          <View style={styles.mapToggle} pointerEvents="box-none">
+            <ViewToggle view={view} onChange={setView} />
+          </View>
+          <View
+            style={[styles.mapFilter, { bottom: stripHeight + SpacingEnum.md }]}
+            pointerEvents="box-none"
+          >
+            <FilterPill count={filterCount} onPress={onOpenFilters} />
+          </View>
+          <View
+            onLayout={onStripLayout}
+            style={[styles.stripWrap, { paddingBottom: insets.bottom }]}
+          >
+            <MapCarousel
+              artworks={artworks}
+              selectedId={selectedId}
+              onSelect={onSelectArtwork}
+            />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  // --- Grid view ----------------------------------------------------------
   return (
     <View style={styles.screen}>
       {header}
+      <View style={styles.gridControls}>
+        <FilterPill count={filterCount} onPress={onOpenFilters} />
+        <ViewToggle view={view} onChange={setView} />
+      </View>
       <FlatList
         data={artworks}
         keyExtractor={(item) => item.id}
@@ -238,14 +318,13 @@ export const IndexScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
+  screen: { flex: 1, backgroundColor: ColorEnum.bg, gap: SpacingEnum.md },
   header: {
-    paddingHorizontal: SpacingEnum.xl,
-    paddingBottom: SpacingEnum.md,
     gap: SpacingEnum.xs,
     borderBottomWidth: 1.5,
     backgroundColor: ColorEnum.bg,
     borderBottomColor: ColorEnum.hair,
+    paddingBottom: SpacingEnum.md,
   },
   langLabel: { textTransform: "uppercase" },
   title: { textTransform: "uppercase" },
@@ -253,19 +332,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: SpacingEnum.xl,
   },
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
     gap: SpacingEnum.lg,
   },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-  list: { flex: 1 },
-  listContent: { padding: SpacingEnum.lg, gap: SpacingEnum.lg, flexGrow: 1 },
-  columnWrapper: { gap: SpacingEnum.lg },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SpacingEnum.sm,
+    paddingHorizontal: SpacingEnum.xl,
+  },
+  gridControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: SpacingEnum.sm,
+    paddingHorizontal: SpacingEnum.xl,
+  },
+  mapWrap: { flex: 1 },
+  // Toggle floats top-right; tags float along the bottom, above the strip.
+  mapToggle: {
+    position: "absolute",
+    top: SpacingEnum.md,
+    right: SpacingEnum.xl,
+  },
+  // Floating "Filters" pill, bottom-left above the strip — opens the filter sheet.
+  mapFilter: { position: "absolute", left: SpacingEnum.xl },
+  stripWrap: { position: "absolute", left: 0, right: 0, bottom: 0 },
   centerNote: { marginTop: SpacingEnum.md },
   centerText: { textAlign: "center" },
   errorText: { marginVertical: SpacingEnum.md },
   emptyText: { marginTop: SpacingEnum.md },
+  listContent: { padding: SpacingEnum.lg, gap: SpacingEnum.lg, flexGrow: 1 },
+  columnWrapper: { gap: SpacingEnum.lg },
   footerSpinner: { marginVertical: SpacingEnum.md },
 });

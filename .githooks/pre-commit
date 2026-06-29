@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# Lint only the staged TS/TSX files: Biome (--staged) + unused StyleSheet keys.
+# Enable once per clone with: bun run hooks:install
+# (or git config core.hooksPath .githooks). Skip with `git commit --no-verify`.
+
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.ts' '*.tsx')
+[ -z "$staged" ] && exit 0
+
+bunx biome lint --staged --no-errors-on-unmatched || exit 1
+echo "$staged" | xargs bun scripts/check-unused-styles.ts
