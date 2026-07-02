@@ -36,8 +36,8 @@ type Mode = "sign-in" | "create";
 // `__DEV__` guards them out of release builds anyway).
 const DEFAULT_VALUES: LoginValues = {
   name: "",
-  email: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_EMAIL ?? "") : "",
-  password: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_PASSWORD ?? "") : "",
+  email: __DEV__ ? process.env.EXPO_PUBLIC_DEV_EMAIL ?? "" : "",
+  password: __DEV__ ? process.env.EXPO_PUBLIC_DEV_PASSWORD ?? "" : "",
 };
 
 export const LoginScreen = () => {
@@ -203,7 +203,7 @@ export const LoginScreen = () => {
 
   const footer = verifyEmail ? null : (
     <View style={wide ? styles.footerRow : styles.footerCol}>
-      <Pressable onPress={() => show(tr("auth.resetSoon"))} hitSlop={8}>
+      <Pressable onPress={() => show(tr("auth.resetSoon"))}>
         <Text
           font={wide ? "mono" : "body"}
           size="md"
@@ -212,10 +212,7 @@ export const LoginScreen = () => {
           {tr("auth.forgotPassword")}
         </Text>
       </Pressable>
-      <Pressable
-        onPress={() => setMode(isCreate ? "sign-in" : "create")}
-        hitSlop={8}
-      >
+      <Pressable onPress={() => setMode(isCreate ? "sign-in" : "create")}>
         <Text
           font={wide ? "mono" : "body"}
           size="md"
@@ -241,16 +238,11 @@ export const LoginScreen = () => {
     >
       <Seo title={verifyEmail ? tr("auth.title.verify") : tr("auth.signIn")} />
       <View style={[styles.flex1, wide ? styles.row : styles.col]}>
-        {/* On desktop the hero is a fixed 50% panel beside the scrolling form;
-            on mobile it scrolls with the form inside the ScrollView. */}
         {wide ? hero : null}
         <ScrollView
           style={wide ? styles.formScrollWide : undefined}
-          contentContainerStyle={
-            wide ? styles.scrollContentWide : styles.scrollContentNarrow
-          }
+          contentContainerStyle={wide ? styles.scrollContentWide : undefined}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
         >
           {wide ? null : hero}
           <View style={wide ? styles.formWide : styles.formNarrow}>
@@ -288,9 +280,9 @@ const styles = StyleSheet.create({
   heroWide: {
     flex: 1,
     overflow: "hidden",
-    padding: SpacingEnum.xxxl,
-    justifyContent: "flex-end",
-    borderRightWidth: 1.5,
+    padding: SpacingEnum.md,
+    justifyContent: "center",
+    borderRightWidth: 1,
     borderRightColor: ColorEnum.line,
   },
   heroContentWide: { position: "relative" },
@@ -302,13 +294,12 @@ const styles = StyleSheet.create({
     borderBottomColor: ColorEnum.line,
   },
   heroHeading: { marginTop: SpacingEnum.lg, textTransform: "uppercase" },
-  formScrollWide: { width: 520 },
+  formScrollWide: { flexGrow: 0, flexShrink: 0, alignSelf: "center" },
   scrollContentWide: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: SpacingEnum.xxxl,
+    padding: SpacingEnum.xl,
   },
-  scrollContentNarrow: { flexGrow: 1 },
   formWide: {
     width: "100%",
     maxWidth: 440,

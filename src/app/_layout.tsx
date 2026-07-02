@@ -14,6 +14,7 @@ import "@/lib/api/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { queryClient } from "@/lib/query";
+import { LockScreen } from "@/pages/app/auth/screens/LockScreen";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { useAppFonts } from "@/theme/hooks/useAppFonts";
 
@@ -49,7 +50,7 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const [fontsLoaded, fontError] = useAppFonts();
-  const { status } = useAuth();
+  const { status, locked } = useAuth();
 
   const ready = (fontsLoaded || !!fontError) && status !== "loading";
 
@@ -58,6 +59,18 @@ function RootNavigator() {
   }, [ready]);
 
   if (!ready) return <View style={staticStyles.screen} />;
+
+  // Biometric gate: a stored session is loading behind this, but nothing is
+  // shown until the user passes the Lock screen. Clearing `locked` reveals the
+  // normal Stack (already in whatever state the session settled into).
+  if (status === "authenticated" && locked) {
+    return (
+      <View style={staticStyles.screen}>
+        <StatusBar style="dark" />
+        <LockScreen />
+      </View>
+    );
+  }
 
   return (
     <View style={staticStyles.screen}>
@@ -72,6 +85,7 @@ function RootNavigator() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="settings" options={{ presentation: "card" }} />
       </Stack>
     </View>
   );

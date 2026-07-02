@@ -1,11 +1,7 @@
 import { useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  type TextInput as RNTextInput,
-  StyleSheet,
-  View,
-} from "react-native";
+import { type TextInput as RNTextInput, StyleSheet, View } from "react-native";
 
 import { ArtistAutocomplete } from "@/pages/app/artwork/components/artist-autocomplete/ArtistAutocomplete";
 import { TagPicker } from "@/pages/app/artwork/components/tag-picker/TagPicker";

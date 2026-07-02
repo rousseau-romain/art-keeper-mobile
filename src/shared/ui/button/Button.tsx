@@ -74,7 +74,7 @@ export const Button = ({
             {...iconBefore}
           />
         )}
-        <Text size={sm ? "md" : "base"} style={[styles.label, { color: fg }]}>
+        <Text size={sm ? "md" : "base"} style={{ color: fg }}>
           {label}
         </Text>
         {iconAfter && (
@@ -99,6 +99,5 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: RadiusEnum.sm,
   },
-  label: { fontWeight: "600", letterSpacing: 0.2 },
   row: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
 });

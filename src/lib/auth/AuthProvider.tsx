@@ -7,8 +7,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
+import { Alert, AppState, Platform } from "react-native";
 
 import {
   getSession,
@@ -21,7 +24,17 @@ import {
   type User,
 } from "@/lib/api/auth";
 import { getSessionQueryKey } from "@/lib/api/generated/@tanstack/react-query.gen";
+import {
+  getBiometricAsked,
+  getBiometricPref,
+  setBiometricAsked,
+  setBiometricPref,
+} from "./biometric-pref";
+import { authenticate, isBiometricAvailable } from "./biometrics";
 import { clearToken, getToken, hydrateToken, setToken } from "./token-store";
+
+/** Re-lock after the app has been backgrounded at least this long. */
+const LOCK_TIMEOUT_MS = 30_000;
 
 /** Generated TanStack Query key for GET /auth/get-session. */
 const SESSION_KEY = getSessionQueryKey();
@@ -42,6 +55,14 @@ type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
   isAdmin: boolean;
+  /** True when a session exists but the user hasn't passed the biometric gate. */
+  locked: boolean;
+  /** Prompt for biometrics; on success clears `locked`. Resolves the outcome. */
+  unlock: () => Promise<boolean>;
+  /** Whether the user has opted into biometric app-lock. */
+  biometricEnabled: boolean;
+  /** Toggle the opt-in. Enabling verifies with biometrics first; resolves success. */
+  setBiometricEnabled: (enabled: boolean) => Promise<boolean>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     name: string,
@@ -63,15 +84,98 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const qc = useQueryClient();
+  const { t } = useTranslation();
+
+  // Biometric app-lock: `biometricEnabled` is the persisted opt-in, `locked` is
+  // the live gate (a session exists but biometrics haven't been passed yet).
+  const [biometricEnabled, setBiometricEnabledState] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   // The bearer token must be in the in-memory mirror before the session query
-  // can authenticate, so gate the query on a one-shot hydration flag.
+  // can authenticate, so gate the query on a one-shot hydration flag. In the same
+  // pass we decide whether to open locked: a stored token + the opt-in + enrolled
+  // biometrics means the app starts behind the Lock screen (the session still
+  // loads in the background so it's ready the moment they unlock).
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
-    hydrateToken()
-      .then((tok) => console.log(`[auth] token hydrated present=${!!tok}`))
-      .finally(() => setHydrated(true));
+    (async () => {
+      const tok = await hydrateToken();
+      const pref = await getBiometricPref();
+      setBiometricEnabledState(pref);
+      if (tok && pref && (await isBiometricAvailable())) setLocked(true);
+      console.log(
+        `[auth] token hydrated present=${!!tok} biometric=${pref} locked=${
+          !!tok && pref
+        }`,
+      );
+    })().finally(() => setHydrated(true));
   }, []);
+
+  // Re-lock when the app returns to the foreground after being backgrounded past
+  // the timeout — a session left open on a table doesn't stay open forever.
+  const backgroundedAt = useRef<number | null>(null);
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (next) => {
+      if (next === "background") {
+        backgroundedAt.current = Date.now();
+        return;
+      }
+      if (next !== "active") return;
+      const since = backgroundedAt.current;
+      backgroundedAt.current = null;
+      if (
+        since !== null &&
+        Date.now() - since > LOCK_TIMEOUT_MS &&
+        biometricEnabled &&
+        getToken()
+      ) {
+        setLocked(true);
+      }
+    });
+    return () => sub.remove();
+  }, [biometricEnabled]);
+
+  const unlock = useCallback(async (): Promise<boolean> => {
+    const ok = await authenticate(t("auth.unlockPrompt"));
+    if (ok) setLocked(false);
+    return ok;
+  }, [t]);
+
+  const setBiometricEnabled = useCallback(
+    async (enabled: boolean): Promise<boolean> => {
+      // Enabling requires a live biometric check so we never turn on a lock the
+      // user can't actually pass. Disabling is unconditional.
+      if (enabled && !(await authenticate(t("auth.enablePrompt"))))
+        return false;
+      await setBiometricPref(enabled);
+      setBiometricEnabledState(enabled);
+      return true;
+    },
+    [t],
+  );
+
+  // One-time, post-login nudge to turn on biometric unlock. Native-only, shown at
+  // most once (guarded by the "asked" flag), and skipped if it's already on or
+  // the device can't do biometrics. Tapping "Enable" runs the normal opt-in
+  // (which itself prompts for a biometric to confirm).
+  const offerBiometric = useCallback(async () => {
+    if (Platform.OS === "web") return;
+    if (await getBiometricAsked()) return;
+    if (await getBiometricPref()) return;
+    if (!(await isBiometricAvailable())) return;
+    await setBiometricAsked();
+    Alert.alert(
+      t("settings.enablePromptTitle"),
+      t("settings.enablePromptBody"),
+      [
+        { text: t("common.notNow"), style: "cancel" },
+        {
+          text: t("common.enable"),
+          onPress: () => void setBiometricEnabled(true),
+        },
+      ],
+    );
+  }, [t, setBiometricEnabled]);
 
   // get-session returns `{ session, user }` or `null`, so `data === undefined`
   // cleanly means "not loaded yet".
@@ -141,6 +245,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data?.token) await setToken(data.token);
       if (data?.user) primeSession(data.user);
       await invalidateSession();
+      // First successful sign-in on a capable device: offer to turn on the lock.
+      if (data?.token) void offerBiometric();
     },
     onError: (e) => console.warn("[auth] sign-in failed:", e),
   });
@@ -184,6 +290,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onSettled: async () => {
       console.log("[auth] sign-out — clearing token + session");
       await clearToken();
+      // Drop the lock gate too — there's no session left to protect, and a stale
+      // `locked` would strand the next Login screen behind the Lock screen.
+      setLocked(false);
       qc.setQueryData(SESSION_KEY, null);
     },
   });
@@ -259,6 +368,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       status,
       user,
       isAdmin: user?.role === "admin",
+      locked,
+      unlock,
+      biometricEnabled,
+      setBiometricEnabled,
       signIn,
       signUp,
       signInWithGoogle,
@@ -271,6 +384,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [
       status,
       user,
+      locked,
+      unlock,
+      biometricEnabled,
+      setBiometricEnabled,
       signIn,
       signUp,
       signInWithGoogle,

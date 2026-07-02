@@ -19,7 +19,7 @@ import { SpacingEnum } from "@/theme/enums/scale.enums";
  * updates the browse list live. Content-sized (no `flex: 1`) to suit the sheet's
  * `fitToContents` detent.
  */
-export const FilterSheetScreen = () => {
+export const FilterFormSheetScreen = () => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();

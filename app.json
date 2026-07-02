@@ -14,7 +14,8 @@
         "NSCameraUsageDescription": "ArtKeeper uses the camera to photograph street art you submit.",
         "NSPhotoLibraryUsageDescription": "ArtKeeper lets you pick photos of street art from your library.",
         "NSLocationWhenInUseUsageDescription": "ArtKeeper uses your location to pin pieces on the map and find art near you."
-      }
+      },
+      "supportsTablet": true
     },
     "android": {
       "package": "com.artkeeper.app",
@@ -48,6 +49,12 @@
         }
       ],
       "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "ArtKeeper uses Face ID to unlock your saved session."
+        }
+      ],
       "expo-localization",
       "expo-image-picker",
       "expo-location",

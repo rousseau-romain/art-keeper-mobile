@@ -5,12 +5,15 @@ export const fr: Resources = {
   common: {
     or: "ou",
     retry: "Réessayer",
+    notNow: "Plus tard",
+    enable: "Activer",
   },
   auth: {
     tagline: "Une carte vivante du street art.",
     title: {
       hero: "Cataloguez les murs avant qu'ils disparaissent.",
       verify: "Vérifiez votre boîte mail",
+      lock: "Verrouillé",
     },
     signIn: "Se connecter",
     createAccount: "Créer un compte",
@@ -34,11 +37,22 @@ export const fr: Resources = {
     googleUnavailable: "Connexion Google indisponible",
     googleFailed: "Échec de la connexion Google.",
     resetSoon: "Réinitialisation du mot de passe bientôt disponible",
+    faceId: "Face ID",
+    touchId: "Touch ID",
+    faceUnlock: "déverrouillage facial",
+    fingerprint: "empreinte digitale",
+    biometric: "biométrie",
+    unlockPrompt: "Déverrouiller ArtKeeper",
+    enablePrompt: "Confirmez pour activer le déverrouillage biométrique",
+    lockSubtitle: "Déverrouillez pour retrouver le mur.",
+    unlockCta: "Déverrouiller avec {{method}}",
+    lockSignOut: "Se déconnecter plutôt",
     errors: {
       nameRequired: "Saisissez votre nom",
       emailRequired: "Saisissez votre e-mail",
       emailInvalid: "Saisissez un e-mail valide",
       passwordRequired: "Saisissez votre mot de passe",
+      biometricFailed: "Vérification impossible. Réessayez.",
     },
   },
   artwork: {
@@ -161,6 +175,23 @@ export const fr: Resources = {
       },
     },
   },
+  settings: {
+    title: {
+      index: "Réglages",
+    },
+    security: "Sécurité",
+    biometricLabel: "Déverrouiller avec {{method}}",
+    biometricHint:
+      "Demander {{method}} au lancement et à votre retour après un moment.",
+    biometricNotEnrolled:
+      "Configurez {{method}} dans les réglages de l'appareil pour l'activer.",
+    biometricUnavailable:
+      "Le déverrouillage biométrique n'est pas disponible sur cet appareil.",
+    signOut: "Se déconnecter",
+    enablePromptTitle: "Verrouiller ArtKeeper ?",
+    enablePromptBody:
+      "Exiger un déverrouillage biométrique à l'ouverture pour protéger votre session.",
+  },
   dev: {
     tab: "Dev",
     haptics: {
@@ -175,5 +206,7 @@ export const fr: Resources = {
     viewGrid: "Afficher la grille",
     selectArtwork: "Afficher {{title}}",
     filters: "Ouvrir les filtres par tag",
+    settings: "Ouvrir les réglages",
+    biometricToggle: "Activer le déverrouillage biométrique",
   },
 };

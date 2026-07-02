@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, type ViewProps } from "react-native";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
@@ -8,17 +8,22 @@ import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 /** Which face of the browse screen is showing — the map or the card grid. */
 export type ArtworkView = "map" | "grid";
 
-export type ViewToggleProps = {
+export type ViewToggleProps = ViewProps & {
   view: ArtworkView;
   onChange: (view: ArtworkView) => void;
 };
 
 /** Segmented Map ⇄ Grid control for the browse header. */
-export const ViewToggle = ({ view, onChange }: ViewToggleProps) => {
+export const ViewToggle = ({
+  view,
+  onChange,
+  style,
+  ...rest
+}: ViewToggleProps) => {
   const { t: tr } = useTranslation();
 
   return (
-    <View style={styles.group}>
+    <View style={[styles.group, style]} {...rest}>
       <Pressable
         onPress={() => onChange("map")}
         accessibilityRole="button"

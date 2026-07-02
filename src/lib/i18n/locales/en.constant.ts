@@ -4,12 +4,15 @@ export const en = {
   common: {
     or: "or",
     retry: "Retry",
+    notNow: "Not now",
+    enable: "Enable",
   },
   auth: {
     tagline: "A living map of street art.",
     title: {
       hero: "Catalog the walls before they're gone.",
       verify: "Check your inbox",
+      lock: "Locked",
     },
     signIn: "Sign in",
     createAccount: "Create account",
@@ -37,12 +40,26 @@ export const en = {
     googleUnavailable: "Google sign-in unavailable",
     googleFailed: "Google sign-in failed.",
     resetSoon: "Password reset coming soon",
+    // Biometric app-lock. `{{method}}` interpolates the device's biometric name,
+    // picked per platform by getBiometricLabelKey (iOS: Face ID / Touch ID;
+    // Android: Face unlock / Fingerprint; else the generic "biometrics").
+    faceId: "Face ID",
+    touchId: "Touch ID",
+    faceUnlock: "Face unlock",
+    fingerprint: "Fingerprint",
+    biometric: "biometrics",
+    unlockPrompt: "Unlock ArtKeeper",
+    enablePrompt: "Confirm to enable biometric unlock",
+    lockSubtitle: "Unlock to get back to the wall.",
+    unlockCta: "Unlock with {{method}}",
+    lockSignOut: "Sign out instead",
     // Form validation messages
     errors: {
       nameRequired: "Enter your name",
       emailRequired: "Enter your email",
       emailInvalid: "Enter a valid email",
       passwordRequired: "Enter your password",
+      biometricFailed: "Couldn't verify. Try again.",
     },
   },
   artwork: {
@@ -166,6 +183,24 @@ export const en = {
       },
     },
   },
+  settings: {
+    title: {
+      index: "Settings",
+    },
+    security: "Security",
+    // `{{method}}` interpolates the device biometric name (see auth.faceId/…).
+    biometricLabel: "Unlock with {{method}}",
+    biometricHint:
+      "Ask for {{method}} on launch and when you return after a while.",
+    biometricNotEnrolled:
+      "Set up {{method}} in your device settings to turn this on.",
+    biometricUnavailable: "Biometric unlock isn't available on this device.",
+    signOut: "Sign out",
+    // One-time post-login offer (Alert).
+    enablePromptTitle: "Lock ArtKeeper?",
+    enablePromptBody:
+      "Require biometric unlock to open the app and protect your session.",
+  },
   dev: {
     tab: "Dev",
     haptics: {
@@ -180,6 +215,8 @@ export const en = {
     viewGrid: "Show grid view",
     selectArtwork: "Show {{title}}",
     filters: "Open tag filters",
+    settings: "Open settings",
+    biometricToggle: "Toggle biometric unlock",
   },
 };
 

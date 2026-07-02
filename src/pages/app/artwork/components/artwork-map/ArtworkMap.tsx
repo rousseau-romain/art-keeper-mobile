@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
+import type { MapViewProps } from "@/pages/app/artwork/components/map-view/MapView";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -18,6 +19,7 @@ export type ArtworkMapProps = {
   /** The highlighted artwork (its marker scales up). */
   selectedId?: string;
   onSelect: (artwork: Artwork) => void;
+  style?: MapViewProps["style"];
 };
 
 // Key-free CARTO dark basemap — matches the brutalist dark theme (the create
@@ -66,6 +68,7 @@ export const ArtworkMap = ({
   artworks,
   selectedId,
   onSelect,
+  style,
 }: ArtworkMapProps) => {
   const cameraRef = useRef<CameraRef>(null);
 
@@ -113,7 +116,7 @@ export const ArtworkMap = ({
   }, [selectedId]);
 
   return (
-    <MapView style={styles.map} mapStyle={DARK_STYLE}>
+    <MapView style={[styles.map, style]} mapStyle={DARK_STYLE}>
       <Camera ref={cameraRef} initialViewState={initialViewState} />
       {artworks.map((artwork) => {
         const active = artwork.id === selectedId;

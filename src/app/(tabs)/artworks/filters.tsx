@@ -1,5 +1,5 @@
-import { FilterSheetScreen } from "@/pages/app/artwork/screens/FilterSheetScreen";
+import { FilterFormSheetScreen } from "@/pages/app/artwork/screens/FilterFormSheetScreen";
 
 export default function Screen() {
-  return <FilterSheetScreen />;
+  return <FilterFormSheetScreen />;
 }
