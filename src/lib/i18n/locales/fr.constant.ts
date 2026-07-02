@@ -67,6 +67,7 @@ export const fr: Resources = {
     meta: {
       descriptionFallback: "Découvrez {{title}} sur ArtKeeper.",
     },
+    byline: "par {{name}}",
     location: "Paris 11e",
     pieceCount_one: "{{count}} œuvre",
     pieceCount_other: "{{count}} œuvres",
@@ -79,10 +80,17 @@ export const fr: Resources = {
     },
     // Tag filter sheet (the (formsheet) modal).
     filters: {
-      title: "Filtrer par tag",
+      title: "Filtres",
       open: "Filtres",
       clear: "Tout effacer",
       done: "Terminé",
+      searchLabel: "Recherche",
+      searchPlaceholder: "Rechercher par nom…",
+      scopeAll: "Tout",
+      scopeTitle: "Œuvre",
+      scopeArtist: "Artiste",
+      tagsLabel: "Tags",
+      addPlaceholder: "Ajouter un tag — tapez puis entrée",
       appliedCount_one: "{{count}} filtre",
       appliedCount_other: "{{count}} filtres",
     },

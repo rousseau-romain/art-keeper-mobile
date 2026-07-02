@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useArtist } from "@/lib/api/artists";
 import { useArtworkBySlug } from "@/lib/api/artworks";
 import { ApiError } from "@/lib/api/client";
 import { ArtworkLikeButton } from "@/pages/app/artwork/components/artwork-like-button/ArtworkLikeButton";
@@ -26,6 +27,7 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { data: artwork, isLoading, isError, error } = useArtworkBySlug(slug);
+  const { data: artist } = useArtist(artwork?.artistId);
 
   if (isLoading) {
     return (
@@ -73,9 +75,16 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
         resizeMode="cover"
       />
       <View style={styles.titleRow}>
-        <Text font="display" size="xxl" style={styles.title}>
-          {artwork.title}
-        </Text>
+        <View style={styles.titleCol}>
+          <Text font="display" size="xxl" style={styles.title}>
+            {artwork.title}
+          </Text>
+          {artist && (
+            <Text font="body" size="base" color="inkSoft">
+              {tr("artwork.byline", { name: artist.name })}
+            </Text>
+          )}
+        </View>
         <ArtworkLikeButton artwork={artwork} />
       </View>
       {artwork.tags.length > 0 ? (
@@ -123,6 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: SpacingEnum.md,
   },
-  title: { flex: 1, textTransform: "uppercase" },
+  titleCol: { flex: 1, gap: SpacingEnum.xs },
+  title: { textTransform: "uppercase" },
   tagRow: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
 });

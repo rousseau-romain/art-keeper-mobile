@@ -1,7 +1,11 @@
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { type Artwork, useArtworks } from "@/lib/api/artworks";
+import {
+  type Artwork,
+  type ArtworkFilters,
+  useBrowseArtworks,
+} from "@/lib/api/artworks";
 import { ErrorState } from "@/pages/app/artwork/components/error-state/ErrorState";
 import { GridView } from "@/pages/app/artwork/components/grid-view/GridView";
 import { IndexHeader } from "@/pages/app/artwork/components/index-header/IndexHeader";
@@ -15,15 +19,21 @@ import { ColorEnum } from "@/theme/enums/color.enums";
 export const IndexScreen = () => {
   const haptic = useHaptics();
   const router = useRouter();
-  const { selectedTags, count: filterCount } = useArtworkFilters();
+  const {
+    selectedTags,
+    search,
+    searchScope,
+    count: filterCount,
+  } = useArtworkFilters();
 
   const [view, setView] = useState<ArtworkView>("map");
   const [selectedId, setSelectedId] = useState<string | undefined>();
 
-  // Tag chips drive the list query; an empty selection means "all".
-  const filters = useMemo(
+  // Tag chips are the base list filters; the free-text search (over title
+  // and/or artist) is applied by `useBrowseArtworks`. Empty = "all".
+  const filters = useMemo<ArtworkFilters>(
     () => (selectedTags.length ? { tag: selectedTags } : {}),
-    [selectedTags]
+    [selectedTags],
   );
 
   const {
@@ -37,7 +47,7 @@ export const IndexScreen = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useArtworks(filters);
+  } = useBrowseArtworks(filters, search, searchScope);
 
   const onOpenFilters = useCallback(() => {
     haptic("light");
@@ -49,7 +59,7 @@ export const IndexScreen = () => {
       haptic("selection");
       setSelectedId(artwork.id);
     },
-    [haptic]
+    [haptic],
   );
 
   // RefreshControl must reflect ONLY a user-initiated pull, not the background

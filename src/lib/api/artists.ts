@@ -1,9 +1,11 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  getArtistsByIdOptions,
   getArtistsInfiniteOptions,
   getArtistsInfiniteQueryKey,
 } from "./generated/@tanstack/react-query.gen";
@@ -49,6 +51,17 @@ export const useArtists = (
   const artists = query.data?.pages.flatMap((page) => page.data) ?? [];
   return { ...query, artists };
 };
+
+/**
+ * Fetch a single artist by id — used to resolve an artwork's `artistId` to its
+ * name on the artwork detail screen. Public endpoint; skips the fetch when no
+ * `id` is set (an artwork with no attributed artist).
+ */
+export const useArtist = (id: string | null | undefined) =>
+  useQuery({
+    ...getArtistsByIdOptions({ path: { id: id ?? "" } }),
+    enabled: !!id,
+  });
 
 /**
  * Create an artist from just a name — the quick-create path on the artist

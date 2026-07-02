@@ -720,6 +720,10 @@ export type GetArtworksData = {
         title?: Array<string>;
         tag?: Array<string>;
         artist?: Array<string>;
+        /**
+         * Free-text search matched case-insensitively against the title OR the artist's name (substring). Combines with the other filters via AND.
+         */
+        q?: string;
         lat?: number;
         lng?: number;
         radius?: number;

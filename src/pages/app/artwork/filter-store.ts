@@ -1,13 +1,19 @@
-// In-memory reactive store for the browse tag filters. It lives outside React so
+// In-memory reactive store for the browse filters. It lives outside React so
 // the filter sheet (a root-level (formsheet) route) and the browse list (deep in
 // the (tabs) navigator) — which can't share a layout-scoped Context — read and
 // write the same selection. This is ephemeral UI state that only derives the list
 // query, so it stays out of the TanStack Query cache (see data-fetching rule) and
 // needs no persistence (unlike the wizard's draft-store).
 
+import type { SearchScope } from "@/lib/api/artworks";
+
 type Listener = () => void;
 
+const DEFAULT_SCOPE: SearchScope = "all";
+
 let selectedTags: string[] = [];
+let search = "";
+let searchScope: SearchScope = DEFAULT_SCOPE;
 const listeners = new Set<Listener>();
 
 const emit = (): void => {
@@ -25,6 +31,12 @@ export const subscribe = (listener: Listener): (() => void) => {
 /** Current selection — a stable reference between changes for `useSyncExternalStore`. */
 export const getSelectedTags = (): string[] => selectedTags;
 
+/** Current free-text search query. */
+export const getSearch = (): string => search;
+
+/** Which field the search targets (a single, mutually-exclusive scope). */
+export const getSearchScope = (): SearchScope => searchScope;
+
 /** Add or remove a tag from the selection. */
 export const toggleTag = (tag: string): void => {
   selectedTags = selectedTags.includes(tag)
@@ -33,9 +45,33 @@ export const toggleTag = (tag: string): void => {
   emit();
 };
 
-/** Drop every active filter. No-op (no emit) when already empty. */
+/** Add a tag to the selection. No-op (no emit) when already selected. */
+export const addTag = (tag: string): void => {
+  if (selectedTags.includes(tag)) return;
+  selectedTags = [...selectedTags, tag];
+  emit();
+};
+
+/** Set the free-text search query. No-op (no emit) when unchanged. */
+export const setSearch = (next: string): void => {
+  if (next === search) return;
+  search = next;
+  emit();
+};
+
+/** Set the search scope. No-op (no emit) when unchanged. */
+export const setSearchScope = (scope: SearchScope): void => {
+  if (scope === searchScope) return;
+  searchScope = scope;
+  emit();
+};
+
+/** Drop every active filter — tags, search, and scope back to default.
+ * No-op (no emit) when nothing is active. */
 export const clearTags = (): void => {
-  if (selectedTags.length === 0) return;
+  if (selectedTags.length === 0 && search === "") return;
   selectedTags = [];
+  search = "";
+  searchScope = DEFAULT_SCOPE;
   emit();
 };

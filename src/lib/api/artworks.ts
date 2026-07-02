@@ -32,6 +32,13 @@ export type ArtworkFilters = Omit<
   "cursor" | "limit"
 >;
 
+/**
+ * Which field a free-text browse search targets — a single, mutually-exclusive
+ * scope. `"all"` uses the API's `q` (title OR artist); `"title"` / `"artist"`
+ * narrow to that one field. See `searchFilter` / `useBrowseArtworks`.
+ */
+export type SearchScope = "all" | "title" | "artist";
+
 const PAGE_SIZE = 20;
 
 // --- Query keys ------------------------------------------------------------
@@ -65,18 +72,53 @@ function withLike(a: Artwork, liked: boolean): Artwork {
  * Returns the flattened rows plus the raw query so the screen can render
  * loading / error / empty / background-refetch / stale states.
  */
-export const useArtworks = (filters: ArtworkFilters = {}) => {
+export const useArtworks = (
+  filters: ArtworkFilters = {},
+  options?: { enabled?: boolean },
+) => {
   const query = useInfiniteQuery({
     ...getArtworksInfiniteOptions({ query: { ...filters, limit: PAGE_SIZE } }),
     // The generated queryFn treats an object pageParam as page params and a
     // string as the cursor; `{}` is the first page (no cursor).
     initialPageParam: {},
     getNextPageParam: (last) => last.nextCursor ?? undefined,
+    enabled: options?.enabled ?? true,
   });
 
   const artworks = query.data?.pages.flatMap((page) => page.data) ?? [];
   return { ...query, artworks };
 };
+
+/**
+ * Map a free-text search + its target scope to the list query's search fields.
+ * `"all"` uses the API's `q` (a title-OR-artist substring match); `"title"` /
+ * `"artist"` narrow to that one field. Empty query → no search filter (the plain
+ * base list).
+ */
+const searchFilter = (query: string, scope: SearchScope): ArtworkFilters => {
+  if (!query) return {};
+  switch (scope) {
+    case "title":
+      return { title: [query] };
+    case "artist":
+      return { artist: [query] };
+    default:
+      return { q: query };
+  }
+};
+
+/**
+ * The browse list, with an optional free-text search targeting a single scope.
+ * A single request handles every case: `"all"` goes through the API's `q` (title
+ * OR artist), `"title"` / `"artist"` narrow to that field, and no search is the
+ * plain filtered list. Returns the `useArtworks` query verbatim (`artworks` +
+ * the query-state flags) — the shape `IndexScreen` consumes.
+ */
+export const useBrowseArtworks = (
+  filters: ArtworkFilters = {},
+  search = "",
+  scope: SearchScope = "all",
+) => useArtworks({ ...filters, ...searchFilter(search.trim(), scope) });
 
 /** What the new-artwork flow collects before it can submit. */
 export type CreateArtworkInput = {
@@ -226,10 +268,10 @@ export const useToggleArtworkLike = () => {
             pages: old.pages.map((page) => ({
               ...page,
               data: page.data.map((a) =>
-                a.id === id ? withLike(a, liked) : a
+                a.id === id ? withLike(a, liked) : a,
               ),
             })),
-          }
+          },
       );
 
       return { previousDetail, previousLists };
@@ -239,7 +281,7 @@ export const useToggleArtworkLike = () => {
       if (ctx?.previousDetail) {
         qc.setQueryData(
           getArtworksByIdQueryKey({ path: { id } }),
-          ctx.previousDetail
+          ctx.previousDetail,
         );
       }
       ctx?.previousLists?.forEach(([key, data]) => {
