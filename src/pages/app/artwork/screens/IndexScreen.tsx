@@ -13,12 +13,24 @@ import { LoadingState } from "@/pages/app/artwork/components/loading-state/Loadi
 import { MapView } from "@/pages/app/artwork/components/map-view/MapView";
 import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
+import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { ColorEnum } from "@/theme/enums/color.enums";
 
-export const IndexScreen = () => {
+export type IndexScreenProps = {
+  initialQuery?: string;
+  initialScope?: string;
+  initialTags?: string | string[];
+};
+
+export const IndexScreen = ({
+  initialQuery,
+  initialScope,
+  initialTags,
+}: IndexScreenProps) => {
   const haptic = useHaptics();
   const router = useRouter();
+  useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
   const {
     selectedTags,
     search,
