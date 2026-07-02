@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
+import { normalizeTag } from "@/pages/app/artwork/normalize-tag";
 import { ARTWORK_TAG_PRESETS } from "@/pages/app/artwork/tags.constant";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
@@ -14,10 +15,6 @@ export type TagPickerProps = {
 
 // Widened view of the preset tuple so `.includes(aString)` type-checks.
 const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
-
-/** Normalize a typed tag: trim, lowercase, drop a leading "#". */
-const normalizeTag = (raw: string) =>
-  raw.trim().toLowerCase().replace(/^#+/, "");
 
 /**
  * Tag selector for the Details step: the preset quick-pick chips plus any

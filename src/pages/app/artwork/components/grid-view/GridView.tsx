@@ -58,7 +58,7 @@ export const GridView = ({
     numColumns;
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.gridControls}>
         <FilterPill count={filterCount} onPress={onOpenFilters} />
         <ViewToggle view={view} onChange={onChangeView} />
@@ -106,6 +106,7 @@ export const GridView = ({
 };
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   gridControls: {
     flexDirection: "row",
     justifyContent: "space-between",
