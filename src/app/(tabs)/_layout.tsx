@@ -1,4 +1,4 @@
-import { Redirect, Tabs, useRouter, useSegments } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import {
   Map as MapIcon,
   Plus as PlusIcon,
@@ -8,15 +8,21 @@ import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { WebHeader } from "@/shared/navigation/web-header/WebHeader";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { ControlHeightEnum, FontSizeEnum } from "@/theme/enums/scale.enums";
 import { FONTS } from "@/theme/fonts.constant";
+import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
 export default function TabsLayout() {
   const { t: tr } = useTranslation();
   const { status } = useAuth();
-  const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { wide } = useBreakpoint();
+
+  // Desktop web swaps the bottom tab bar for a top brand header; native and
+  // narrow / mobile web keep the default bottom bar.
+  const webHeader = Platform.OS === "web" && wide;
 
   // Auth guard: a sign-out (or expired/invalidated session) flips status to
   // "unauthenticated" while the user is deep in the tab stack — bounce them
@@ -25,8 +31,10 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      tabBar={webHeader ? (props) => <WebHeader {...props} /> : undefined}
       screenOptions={{
         headerShown: false,
+        tabBarPosition: webHeader ? "top" : "bottom",
         tabBarActiveTintColor: ColorEnum.accent,
         tabBarInactiveTintColor: ColorEnum.inkMute,
         tabBarStyle: [

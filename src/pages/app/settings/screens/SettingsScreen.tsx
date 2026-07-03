@@ -12,17 +12,31 @@ import {
   getBiometricKind,
   getBiometricLabelKey,
 } from "@/lib/auth/biometrics";
+import { useLocale } from "@/lib/i18n/I18nProvider";
+import { type Language, SUPPORTED_LANGUAGES } from "@/lib/i18n/index";
 import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
 import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
+import { SectionTitle } from "@/pages/app/settings/components/section-title/SectionTitle";
 import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingRow";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Picker } from "@/shared/ui/picker/Picker";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type SettingsScreenProps = Record<string, never>;
+
+// Language names are rendered as endonyms; the key maps each supported language
+// to its `settings.language*` translation entry.
+const LANGUAGE_LABEL_KEY: Record<
+  Language,
+  "settings.languageEnglish" | "settings.languageFrench"
+> = {
+  en: "settings.languageEnglish",
+  fr: "settings.languageFrench",
+};
 
 // The sub-label explains *why* the toggle is off when it can't be enabled:
 // "not-enrolled" is actionable (set one up in system settings), "no-hardware"
@@ -44,6 +58,12 @@ export const SettingsScreen = () => {
   const router = useRouter();
   const { biometricEnabled, setBiometricEnabled, signOut } = useAuth();
   const { source, setSource } = useTagSource();
+  const { language, setLanguage } = useLocale();
+
+  const languageOptions = SUPPORTED_LANGUAGES.map((lng) => ({
+    value: lng,
+    label: tr(LANGUAGE_LABEL_KEY[lng]),
+  }));
 
   const [availability, setAvailability] =
     useState<BiometricAvailability | null>(null);
@@ -65,34 +85,16 @@ export const SettingsScreen = () => {
 
   const method = tr(getBiometricLabelKey(kind));
 
-  return (
-    <View style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}>
-      <Seo title={tr("settings.title.index")} />
-
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          hitSlop={8}
-          accessibilityRole="button"
-        >
-          <Icon name="ChevronLeft" size="lg" color="ink" />
-        </Pressable>
-        <Text font="display" size="xxl">
-          {tr("settings.title.index")}
-        </Text>
-      </View>
-
-      <Text font="mono" size="sm" color="inkMute" style={styles.section}>
-        {tr("settings.security")}
-      </Text>
-
-      <SettingRow
-        label={tr("settings.biometricLabel", { method })}
-        hint={tr(
-          availability ? HINT_KEY[availability] : "settings.biometricHint",
-          { method }
-        )}
-      >
+  const sections = [
+    {
+      key: "security",
+      title: tr("settings.security"),
+      label: tr("settings.biometricLabel", { method }),
+      hint: tr(
+        availability ? HINT_KEY[availability] : "settings.biometricHint",
+        { method }
+      ),
+      control: (
         <Switch
           value={biometricEnabled}
           onValueChange={onToggle}
@@ -101,23 +103,54 @@ export const SettingsScreen = () => {
           thumbColor={ColorEnum.ink}
           accessibilityLabel={tr("a11y.biometricToggle")}
         />
-      </SettingRow>
+      ),
+    },
+    {
+      key: "language",
+      title: tr("settings.language"),
+      label: tr("settings.languageLabel"),
+      hint: tr("settings.languageHint"),
+      control: (
+        <Picker
+          value={language}
+          onChange={setLanguage}
+          options={languageOptions}
+          accessibilityLabel={tr("a11y.language", { language })}
+        />
+      ),
+    },
+    {
+      key: "tags",
+      title: tr("settings.tags"),
+      label: tr("settings.tagSourceLabel"),
+      hint: tr("settings.tagSourceHint"),
+      control: <TagSourcePicker value={source} onChange={setSource} />,
+    },
+  ];
 
-      <Text
-        font="mono"
-        size="sm"
-        color="inkMute"
-        style={[styles.section, styles.sectionSpaced]}
-      >
-        {tr("settings.tags")}
-      </Text>
+  return (
+    <View style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}>
+      <Seo title={tr("settings.title.index")} />
 
-      <SettingRow
-        label={tr("settings.tagSourceLabel")}
-        hint={tr("settings.tagSourceHint")}
-      >
-        <TagSourcePicker value={source} onChange={setSource} />
-      </SettingRow>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} accessibilityRole="button">
+          <Icon name="ChevronLeft" size="lg" color="ink" />
+        </Pressable>
+        <Text font="display" size="xxl">
+          {tr("settings.title.index")}
+        </Text>
+      </View>
+
+      <View style={styles.sections}>
+        {sections.map(({ key, title, label, hint, control }) => (
+          <View key={key}>
+            <SectionTitle label={title} />
+            <SettingRow label={label} hint={hint}>
+              {control}
+            </SettingRow>
+          </View>
+        ))}
+      </View>
 
       <View
         style={[
@@ -149,11 +182,6 @@ const styles = StyleSheet.create({
     gap: SpacingEnum.md,
     marginBottom: SpacingEnum.xxl,
   },
-  section: {
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: SpacingEnum.md,
-  },
-  sectionSpaced: { marginTop: SpacingEnum.xxl },
+  sections: { gap: SpacingEnum.md },
   footer: { marginTop: "auto" },
 });

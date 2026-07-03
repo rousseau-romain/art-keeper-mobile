@@ -187,6 +187,11 @@ export const fr: Resources = {
     title: {
       index: "Réglages",
     },
+    language: "Langue",
+    languageLabel: "Langue de l'application",
+    languageHint: "Choisissez la langue utilisée dans l'application.",
+    languageEnglish: "English",
+    languageFrench: "Français",
     security: "Sécurité",
     biometricLabel: "Déverrouiller avec {{method}}",
     biometricHint:

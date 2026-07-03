@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import {
   type Artwork,
@@ -8,13 +9,13 @@ import {
 } from "@/lib/api/artworks";
 import { ErrorState } from "@/pages/app/artwork/components/error-state/ErrorState";
 import { GridView } from "@/pages/app/artwork/components/grid-view/GridView";
-import { IndexHeader } from "@/pages/app/artwork/components/index-header/IndexHeader";
 import { LoadingState } from "@/pages/app/artwork/components/loading-state/LoadingState";
 import { MapView } from "@/pages/app/artwork/components/map-view/MapView";
 import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useHaptics } from "@/shared/hooks/useHaptics";
+import { Seo } from "@/shared/ui/seo/Seo";
 import { ColorEnum } from "@/theme/enums/color.enums";
 
 export type IndexScreenProps = {
@@ -28,6 +29,7 @@ export const IndexScreen = ({
   initialScope,
   initialTags,
 }: IndexScreenProps) => {
+  const { t: tr } = useTranslation();
   const haptic = useHaptics();
   const router = useRouter();
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
@@ -54,8 +56,6 @@ export const IndexScreen = ({
     isError,
     error,
     refetch,
-    isFetching,
-    isStale,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -93,22 +93,6 @@ export const IndexScreen = ({
   const onEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // A background refetch is in flight when we're fetching but not doing the
-  // first load, a manual pull-to-refresh, or a "load more". This now covers
-  // the like-invalidation refetch, which surfaces as the "updating" status dot
-  // rather than the pull-to-refresh spinner.
-  const backgroundRefetching =
-    isFetching && !isLoading && !manualRefreshing && !isFetchingNextPage;
-
-  const header = (
-    <IndexHeader
-      count={artworks.length}
-      hasNextPage={hasNextPage}
-      backgroundRefetching={backgroundRefetching}
-      isStale={isStale}
-    />
-  );
 
   const body = () => {
     // Initial load: nothing cached yet.
@@ -150,7 +134,7 @@ export const IndexScreen = ({
 
   return (
     <View style={styles.screen}>
-      {header}
+      <Seo title={tr("artwork.title.index")} />
       {body()}
     </View>
   );

@@ -195,6 +195,13 @@ export const en = {
     title: {
       index: "Settings",
     },
+    language: "Language",
+    languageLabel: "App language",
+    languageHint: "Choose the language used across the app.",
+    // Language names are shown as endonyms (each in its own language), so these
+    // stay identical across locales.
+    languageEnglish: "English",
+    languageFrench: "Français",
     security: "Security",
     // `{{method}}` interpolates the device biometric name (see auth.faceId/…).
     biometricLabel: "Unlock with {{method}}",
@@ -210,7 +217,8 @@ export const en = {
       "Require biometric unlock to open the app and protect your session.",
     tags: "Tags",
     tagSourceLabel: "Suggested tags",
-    tagSourceHint: "Which tags to suggest as quick-pick chips on a new artwork.",
+    tagSourceHint:
+      "Which tags to suggest as quick-pick chips on a new artwork.",
     tagSourceMostUsed: "Most used",
     tagSourceLastUsed: "Last used",
     tagSourceNone: "No tags",
