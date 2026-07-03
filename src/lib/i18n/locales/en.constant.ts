@@ -208,6 +208,12 @@ export const en = {
     enablePromptTitle: "Lock ArtKeeper?",
     enablePromptBody:
       "Require biometric unlock to open the app and protect your session.",
+    tags: "Tags",
+    tagSourceLabel: "Suggested tags",
+    tagSourceHint: "Which tags to suggest as quick-pick chips on a new artwork.",
+    tagSourceMostUsed: "Most used",
+    tagSourceLastUsed: "Last used",
+    tagSourceNone: "No tags",
   },
   dev: {
     tab: "Dev",
@@ -225,6 +231,7 @@ export const en = {
     filters: "Open tag filters",
     settings: "Open settings",
     biometricToggle: "Toggle biometric unlock",
+    tagSourceToggle: "Choose how suggested tags are ordered",
   },
 };
 

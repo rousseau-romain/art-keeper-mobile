@@ -199,6 +199,13 @@ export const fr: Resources = {
     enablePromptTitle: "Verrouiller ArtKeeper ?",
     enablePromptBody:
       "Exiger un déverrouillage biométrique à l'ouverture pour protéger votre session.",
+    tags: "Tags",
+    tagSourceLabel: "Tags suggérés",
+    tagSourceHint:
+      "Quels tags proposer en accès rapide sur une nouvelle œuvre.",
+    tagSourceMostUsed: "Les plus utilisés",
+    tagSourceLastUsed: "Les plus récents",
+    tagSourceNone: "Aucun tag",
   },
   dev: {
     tab: "Dev",
@@ -216,5 +223,6 @@ export const fr: Resources = {
     filters: "Ouvrir les filtres par tag",
     settings: "Ouvrir les réglages",
     biometricToggle: "Activer le déverrouillage biométrique",
+    tagSourceToggle: "Choisir l'ordre des tags suggérés",
   },
 };

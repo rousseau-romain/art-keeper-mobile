@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
+import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
+import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
 import { normalizeTag } from "@/pages/app/artwork/normalize-tag";
-import { ARTWORK_TAG_PRESETS } from "@/pages/app/artwork/tags.constant";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -13,21 +14,23 @@ export type TagPickerProps = {
   onChange: (next: string[]) => void;
 };
 
-// Widened view of the preset tuple so `.includes(aString)` type-checks.
-const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
-
 /**
- * Tag selector for the Details step: the preset quick-pick chips plus any
- * free-form tags the user typed. Tapping a chip toggles it; typing a tag and
- * submitting adds a custom one (deduped against the presets and existing tags).
+ * Tag selector for the Details step: quick-pick chips plus any free-form tags
+ * the user typed. The chips come from `useTagSource` — the account's tags from
+ * `GET /tags/` ordered by the user's most-used / last-used preference, or none
+ * when the preference is "No tags" (picked via the native `TagSourcePicker`).
+ * Tapping a chip toggles it; typing a tag and submitting adds a custom one
+ * (deduped against the chips and existing tags).
  */
 export const TagPicker = ({ value, onChange }: TagPickerProps) => {
   const { t: tr } = useTranslation();
   const [draft, setDraft] = useState("");
 
+  const { source, setSource, chips } = useTagSource();
+
   const toggle = (tag: string) =>
     onChange(
-      value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag],
+      value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag]
     );
 
   const addDraft = () => {
@@ -36,14 +39,15 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
     setDraft("");
   };
 
-  // Custom tags = selected tags that aren't preset chips; shown as active chips
-  // after the presets so they're visible and removable (tap to remove).
-  const customTags = value.filter((tag) => !PRESETS.includes(tag));
+  // Custom tags = selected tags that aren't quick-pick chips; shown as active
+  // chips after the chips so they're visible and removable (tap to remove).
+  const customTags = value.filter((tag) => !chips.includes(tag));
 
   return (
     <View style={styles.wrap}>
+      <TagSourcePicker value={source} onChange={setSource} />
       <View style={styles.tagWrap}>
-        {ARTWORK_TAG_PRESETS.map((tag) => (
+        {chips.map((tag) => (
           <Tag
             key={tag}
             label={tag}
@@ -68,7 +72,7 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="done"
-        blurOnSubmit={false}
+        submitBehavior="blurAndSubmit"
       />
     </View>
   );

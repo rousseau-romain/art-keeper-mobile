@@ -12,6 +12,9 @@ import {
   getBiometricKind,
   getBiometricLabelKey,
 } from "@/lib/auth/biometrics";
+import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
+import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
+import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingRow";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
@@ -40,6 +43,7 @@ export const SettingsScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { biometricEnabled, setBiometricEnabled, signOut } = useAuth();
+  const { source, setSource } = useTagSource();
 
   const [availability, setAvailability] =
     useState<BiometricAvailability | null>(null);
@@ -82,20 +86,13 @@ export const SettingsScreen = () => {
         {tr("settings.security")}
       </Text>
 
-      <View style={styles.row}>
-        <View style={styles.rowText}>
-          <Text font="body" size="base">
-            {tr("settings.biometricLabel", { method })}
-          </Text>
-          <Text font="body" size="sm" color="inkSoft">
-            {tr(
-              availability ? HINT_KEY[availability] : "settings.biometricHint",
-              {
-                method,
-              },
-            )}
-          </Text>
-        </View>
+      <SettingRow
+        label={tr("settings.biometricLabel", { method })}
+        hint={tr(
+          availability ? HINT_KEY[availability] : "settings.biometricHint",
+          { method }
+        )}
+      >
         <Switch
           value={biometricEnabled}
           onValueChange={onToggle}
@@ -104,7 +101,23 @@ export const SettingsScreen = () => {
           thumbColor={ColorEnum.ink}
           accessibilityLabel={tr("a11y.biometricToggle")}
         />
-      </View>
+      </SettingRow>
+
+      <Text
+        font="mono"
+        size="sm"
+        color="inkMute"
+        style={[styles.section, styles.sectionSpaced]}
+      >
+        {tr("settings.tags")}
+      </Text>
+
+      <SettingRow
+        label={tr("settings.tagSourceLabel")}
+        hint={tr("settings.tagSourceHint")}
+      >
+        <TagSourcePicker value={source} onChange={setSource} />
+      </SettingRow>
 
       <View
         style={[
@@ -141,16 +154,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: SpacingEnum.md,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: SpacingEnum.lg,
-    paddingVertical: SpacingEnum.md,
-    borderTopWidth: 1.5,
-    borderBottomWidth: 1.5,
-    borderColor: ColorEnum.hair,
-  },
-  rowText: { flex: 1, gap: SpacingEnum.xs },
+  sectionSpaced: { marginTop: SpacingEnum.xxl },
   footer: { marginTop: "auto" },
 });

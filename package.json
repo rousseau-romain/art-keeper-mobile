@@ -59,6 +59,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
+    "prebuild": "expo prebuild --clean",
     "start": "expo start --dev-client",
     "start:tunel": "expo start --dev-client --tunnel",
     "start:mcp": "EXPO_UNSTABLE_MCP_SERVER=1 expo start --dev-client",
