@@ -18,7 +18,7 @@ export const PhotoStep = () => {
       <Text font="display" size="xxl" style={styles.title}>
         {tr("artwork.new.photo.title")}
       </Text>
-      <Text font="body" size="base" color="inkSoft">
+      <Text font="body" size="base" color="textSoft">
         {tr("artwork.new.photo.subtitle")}
       </Text>
 
@@ -31,7 +31,7 @@ export const PhotoStep = () => {
               contentFit="cover"
             />
             <View style={styles.coverBadge}>
-              <Text font="mono" size="xs" color="inkSoft">
+              <Text font="mono" size="xs" color="textSoft">
                 {tr("artwork.new.photo.replace")}
               </Text>
             </View>
@@ -39,8 +39,8 @@ export const PhotoStep = () => {
 
           {exifPinned && (
             <View style={styles.exif}>
-              <Icon name="MapPin" size="xs" color="accent" />
-              <Text font="mono" size="sm" color="accent">
+              <Icon name="MapPin" size="xs" color="primary" />
+              <Text font="mono" size="sm" color="primary">
                 {tr("artwork.new.photo.exifFound")}
               </Text>
             </View>
@@ -48,16 +48,16 @@ export const PhotoStep = () => {
         </View>
       ) : (
         <Pressable onPress={addPhoto} style={styles.empty}>
-          <Icon name="Camera" size="xxl" color="inkMute" strokeWidth={1.4} />
+          <Icon name="Camera" size="xxl" color="textMuted" strokeWidth={1.4} />
           <Text
             font="display"
             size="lg"
-            color="inkSoft"
+            color="textSoft"
             style={styles.emptyCta}
           >
             {tr("artwork.new.photo.cta")}
           </Text>
-          <Text font="mono" size="sm" color="inkMute">
+          <Text font="mono" size="sm" color="textMuted">
             {tr("artwork.new.photo.tapToAdd")}
           </Text>
         </Pressable>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: RadiusEnum.lg,
     borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: ColorEnum.line,
+    borderColor: ColorEnum.border,
     alignItems: "center",
     justifyContent: "center",
     gap: SpacingEnum.md,

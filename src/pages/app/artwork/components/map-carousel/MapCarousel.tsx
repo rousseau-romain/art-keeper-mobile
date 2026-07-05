@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   strip: {
     backgroundColor: ColorEnum.bg,
     borderTopWidth: 1.5,
-    borderTopColor: ColorEnum.hair,
+    borderTopColor: ColorEnum.borderSoft,
     gap: SpacingEnum.md,
     padding: SpacingEnum.sm,
   },

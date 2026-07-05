@@ -15,11 +15,11 @@ type ToastColors = {
 export const useToastColors = (variant: ToastVariant): ToastColors => {
   switch (variant) {
     case "success":
-      return { bg: "diffAddBg", accent: "diffAdd", icon: "CircleCheck" };
+      return { bg: "successBg", accent: "success", icon: "CircleCheck" };
     case "warning":
       return { bg: "warnBg", accent: "warn", icon: "TriangleAlert" };
     case "error":
-      return { bg: "diffDelBg", accent: "diffDel", icon: "CircleX" };
+      return { bg: "dangerBg", accent: "danger", icon: "CircleX" };
     default:
       return { bg: "infoBg", accent: "info", icon: "Info" };
   }

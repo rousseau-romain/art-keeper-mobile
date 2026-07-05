@@ -29,7 +29,7 @@ export const HapticsScreen = () => {
       <Text font="display" size="xxl" style={styles.title}>
         {tr("dev.haptics.title")}
       </Text>
-      <Text font="mono" size="sm" color="inkMute">
+      <Text font="mono" size="sm" color="textMuted">
         {tr("dev.haptics.subtitle")}
       </Text>
 

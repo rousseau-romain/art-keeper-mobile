@@ -14,7 +14,7 @@ export type TextProps = RNTextProps & {
 export const Text = ({
   font = "body",
   size = "base",
-  color = "ink",
+  color = "text",
   style,
   ...rest
 }: TextProps) => (

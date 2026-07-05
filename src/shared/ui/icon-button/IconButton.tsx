@@ -19,7 +19,7 @@ export type IconButtonProps = Omit<
 export const IconButton = ({
   name,
   size = "md",
-  color = "inkMute",
+  color = "textMuted",
   strokeWidth,
   hitSlop = 8,
   disabled,

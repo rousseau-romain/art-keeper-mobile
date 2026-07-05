@@ -8,17 +8,17 @@ or chained ternary pyramid.
 // Yes — switch on the discriminant, return per case.
 switch (variant) {
   case "primary":
-    return { bg: liked ? t.accentSoft : t.accent, fg: liked ? t.accent : t.accentInk };
+    return { bg: liked ? t.primarySoft : t.primary, fg: liked ? t.primary : t.primaryInk };
   case "ghost":
-    return { bg: "transparent", fg: liked ? t.accent : t.ink };
+    return { bg: "transparent", fg: liked ? t.primary : t.ink };
   default:
-    return { bg: t.surface2, fg: liked ? t.accent : t.ink };
+    return { bg: t.surface2, fg: liked ? t.primary : t.ink };
 }
 
 // No — nested ternaries on the same discriminant.
 const bg =
   variant === "primary"
-    ? liked ? t.accentSoft : t.accent
+    ? liked ? t.primarySoft : t.primary
     : variant === "ghost"
       ? "transparent"
       : t.surface2;

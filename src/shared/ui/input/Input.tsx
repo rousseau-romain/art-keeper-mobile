@@ -31,7 +31,7 @@ export const Input = ({
   debounce = 0,
   value,
   onChangeText,
-  placeholderTextColor = ColorEnum.inkMute,
+  placeholderTextColor = ColorEnum.textMuted,
   style,
   ...input
 }: InputProps) => {
@@ -60,7 +60,7 @@ export const Input = ({
       placeholderTextColor={placeholderTextColor}
       style={[
         styles.input,
-        { borderColor: invalid ? ColorEnum.diffDel : ColorEnum.hair },
+        { borderColor: invalid ? ColorEnum.danger : ColorEnum.borderSoft },
         style,
       ]}
     />
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SpacingEnum.lg,
     paddingVertical: SpacingEnum.md,
     fontFamily: FONTS.body,
-    color: ColorEnum.ink,
+    color: ColorEnum.text,
     backgroundColor: ColorEnum.surface,
   },
 });

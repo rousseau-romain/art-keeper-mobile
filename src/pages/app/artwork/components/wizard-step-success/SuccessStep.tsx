@@ -29,18 +29,18 @@ export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
       style={[styles.success, { paddingTop: insets.top + SpacingEnum.xxxl }]}
     >
       <View style={styles.icon}>
-        <Icon name="Check" size="xxl" color="accentInk" strokeWidth={2.4} />
+        <Icon name="Check" size="xxl" color="primaryInk" strokeWidth={2.4} />
       </View>
 
       <Text font="display" size="xxl" style={styles.title}>
         {tr("artwork.new.success.title")}
       </Text>
-      <Text font="body" size="base" color="inkSoft" style={styles.body}>
+      <Text font="body" size="base" color="textSoft" style={styles.body}>
         {tr("artwork.new.success.body")}
       </Text>
 
       <View style={styles.statusPill}>
-        <Text font="mono" size="xs" color="inkMute">
+        <Text font="mono" size="xs" color="textMuted">
           {tr("artwork.new.success.status")}
         </Text>
       </View>
@@ -64,7 +64,7 @@ export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
           hitSlop={8}
           style={styles.backLink}
         >
-          <Text font="mono" size="sm" color="accent">
+          <Text font="mono" size="sm" color="primary">
             {tr("artwork.new.success.backToBrowse")}
           </Text>
         </Pressable>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: RadiusEnum.full,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: ColorEnum.accent,
+    backgroundColor: ColorEnum.primary,
   },
   title: { textTransform: "uppercase" },
   body: { textAlign: "center" },

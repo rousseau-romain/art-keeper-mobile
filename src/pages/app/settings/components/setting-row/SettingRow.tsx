@@ -21,7 +21,7 @@ export const SettingRow = ({
       <Text font="body" size="base">
         {label}
       </Text>
-      <Text font="body" size="sm" color="inkSoft">
+      <Text font="body" size="sm" color="textSoft">
         {hint}
       </Text>
     </View>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     paddingVertical: SpacingEnum.md,
     borderTopWidth: 1.5,
     borderBottomWidth: 1.5,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
   },
   rowText: { flex: 1, gap: SpacingEnum.xs },
 });

@@ -15,7 +15,7 @@ export type IconProps = Omit<LucideProps, "size" | "color"> & {
 export const Icon = ({
   name,
   size = "sm",
-  color = "ink",
+  color = "text",
   strokeWidth = 1.8,
   ...rest
 }: IconProps) => {

@@ -35,8 +35,8 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarPosition: webHeader ? "top" : "bottom",
-        tabBarActiveTintColor: ColorEnum.accent,
-        tabBarInactiveTintColor: ColorEnum.inkMute,
+        tabBarActiveTintColor: ColorEnum.primary,
+        tabBarInactiveTintColor: ColorEnum.textMuted,
         tabBarStyle: [
           styles.tabBar,
           Platform.OS === "web" && {
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   tabBar: {
     borderTopWidth: 1.5,
     backgroundColor: ColorEnum.surface,
-    borderTopColor: ColorEnum.hair,
+    borderTopColor: ColorEnum.borderSoft,
   },
   tabLabel: { fontSize: FontSizeEnum.xs, fontFamily: FONTS.mono },
 });

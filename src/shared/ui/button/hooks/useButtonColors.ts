@@ -12,26 +12,26 @@ export const useButtonColors = (variant: ButtonVariant): ButtonColors => {
   switch (variant) {
     case "primary":
       return {
-        bg: ColorEnum.accent,
-        fg: ColorEnum.accentInk,
+        bg: ColorEnum.primary,
+        fg: ColorEnum.primaryInk,
         border: ColorEnum.transparent,
       };
     case "ghost":
       return {
         bg: ColorEnum.transparent,
-        fg: ColorEnum.ink,
-        border: ColorEnum.line,
+        fg: ColorEnum.text,
+        border: ColorEnum.border,
       };
     case "text":
       return {
         bg: "transparent",
-        fg: ColorEnum.ink,
+        fg: ColorEnum.text,
         border: "transparent",
       };
     default:
       return {
         bg: ColorEnum.surface2,
-        fg: ColorEnum.ink,
+        fg: ColorEnum.text,
         border: ColorEnum.transparent,
       };
   }

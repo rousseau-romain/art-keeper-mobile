@@ -18,7 +18,7 @@ const pinIcon = (active: boolean) => {
   const size = active ? 26 : 18;
   return L.divIcon({
     className: "",
-    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${ColorEnum.accent};border:2px solid ${active ? "#fff" : ColorEnum.accentInk}"></div>`,
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${ColorEnum.primary};border:2px solid ${active ? "#fff" : ColorEnum.primaryInk}"></div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size],
   });

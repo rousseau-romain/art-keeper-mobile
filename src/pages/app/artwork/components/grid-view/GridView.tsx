@@ -79,7 +79,7 @@ export const GridView = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={ColorEnum.accent}
+            tintColor={ColorEnum.primary}
           />
         }
         onEndReached={onEndReached}
@@ -95,7 +95,7 @@ export const GridView = ({
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator
-              color={ColorEnum.accent}
+              color={ColorEnum.primary}
               style={styles.footerSpinner}
             />
           ) : null

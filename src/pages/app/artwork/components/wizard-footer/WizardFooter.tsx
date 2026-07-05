@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SpacingEnum.xl,
     paddingVertical: SpacingEnum.md,
     borderTopWidth: 1.5,
-    borderTopColor: ColorEnum.hair,
+    borderTopColor: ColorEnum.borderSoft,
     backgroundColor: ColorEnum.bg,
   },
 });

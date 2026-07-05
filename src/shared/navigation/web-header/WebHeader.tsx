@@ -30,7 +30,7 @@ export const WebHeader = ({
   return (
     <View style={styles.header}>
       <View style={styles.brand}>
-        <Icon name="Star" size="xl" color="accent" fill={ColorEnum.accent} />
+        <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
         <Text font="display" size="xl">
           ArtKeeper
         </Text>
@@ -69,7 +69,7 @@ export const WebHeader = ({
                 <Text
                   font="mono"
                   size="sm"
-                  color={active ? "accent" : "inkMute"}
+                  color={active ? "primary" : "textMuted"}
                 >
                   {options.title}
                 </Text>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     paddingVertical: SpacingEnum.lg,
     backgroundColor: ColorEnum.surface,
     borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.hair,
+    borderBottomColor: ColorEnum.borderSoft,
   },
   brand: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
   right: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xl },

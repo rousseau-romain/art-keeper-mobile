@@ -74,14 +74,14 @@ export const FilterFormSheetScreen = () => {
           {tr("artwork.filters.title")}
         </Text>
         {appliedLabel && (
-          <Text font="mono" size="sm" color="inkMute">
+          <Text font="mono" size="sm" color="textMuted">
             {appliedLabel}
           </Text>
         )}
       </View>
 
       <View style={styles.section}>
-        <Text font="mono" size="sm" color="inkMute" style={styles.label}>
+        <Text font="mono" size="sm" color="textMuted" style={styles.label}>
           {tr("artwork.filters.searchLabel")}
         </Text>
         <View style={styles.tags}>
@@ -109,7 +109,7 @@ export const FilterFormSheetScreen = () => {
       </View>
 
       <View style={styles.section}>
-        <Text font="mono" size="sm" color="inkMute" style={styles.label}>
+        <Text font="mono" size="sm" color="textMuted" style={styles.label}>
           {tr("artwork.filters.tagsLabel")}
         </Text>
         <View style={styles.tags}>

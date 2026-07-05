@@ -16,7 +16,7 @@ export const TextInput = ({ label, error, ...input }: TextInputProps) => (
     </Text>
     <Input {...input} invalid={!!error} />
     {error ? (
-      <Text font="body" size="xs" color="diffDel">
+      <Text font="body" size="xs" color="danger">
         {error}
       </Text>
     ) : null}

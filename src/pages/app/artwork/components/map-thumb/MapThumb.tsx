@@ -31,7 +31,7 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
         <View
           style={[
             styles.frame,
-            { borderColor: active ? ColorEnum.accent : ColorEnum.hair },
+            { borderColor: active ? ColorEnum.primary : ColorEnum.borderSoft },
           ]}
         >
           <Image
@@ -44,7 +44,7 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
           font="mono"
           size="xs"
           numberOfLines={1}
-          color={active ? "accent" : "inkMute"}
+          color={active ? "primary" : "textMuted"}
           style={styles.label}
         >
           {artwork.title}

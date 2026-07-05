@@ -11,7 +11,7 @@ export const SectionTitle = ({ label, style, ...rest }: SectionTitleProps) => (
   <Text
     font="mono"
     size="sm"
-    color="inkMute"
+    color="textMuted"
     {...rest}
     style={[styles.title, style]}
   >

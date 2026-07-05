@@ -24,7 +24,7 @@ export const Check = ({ size = "base", style, ...rest }: CheckProps) => {
     >
       <CheckIcon
         size={px * 0.66}
-        color={ColorEnum.accentInk}
+        color={ColorEnum.primaryInk}
         strokeWidth={2.4}
       />
     </View>
@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
   badge: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: ColorEnum.accent,
+    backgroundColor: ColorEnum.primary,
   },
 });

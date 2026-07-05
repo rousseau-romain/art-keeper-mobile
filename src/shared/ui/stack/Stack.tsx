@@ -17,7 +17,7 @@ export const Stack = ({ screenOptions, ...rest }: StackProps) => (
   <ExpoStack
     screenOptions={{
       headerStyle: styles.header,
-      headerTintColor: ColorEnum.accent,
+      headerTintColor: ColorEnum.primary,
       headerTitleStyle: styles.headerTitle,
       contentStyle: styles.content,
       ...screenOptions,
@@ -30,6 +30,6 @@ Stack.Screen = ExpoStack.Screen;
 
 const styles = StyleSheet.create({
   header: { backgroundColor: ColorEnum.surface },
-  headerTitle: { fontFamily: FONTS.display, color: ColorEnum.ink },
+  headerTitle: { fontFamily: FONTS.display, color: ColorEnum.text },
   content: { backgroundColor: ColorEnum.bg },
 });

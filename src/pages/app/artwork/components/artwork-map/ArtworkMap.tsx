@@ -132,8 +132,8 @@ export const ArtworkMap = ({
                 <Icon
                   name="MapPin"
                   size={active ? "xxl" : "lg"}
-                  color="accent"
-                  fill={ColorEnum.accent}
+                  color="primary"
+                  fill={ColorEnum.primary}
                   strokeWidth={1.5}
                 />
               </View>

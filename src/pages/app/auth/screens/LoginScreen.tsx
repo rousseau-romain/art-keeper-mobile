@@ -70,7 +70,7 @@ export const LoginScreen = () => {
 
   const brand = (
     <View style={styles.brand}>
-      <Icon name="Star" size="xl" color="accent" fill={ColorEnum.accent} />
+      <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
       <Text font="display" size="xl" style={styles.brandText}>
         ArtKeeper
       </Text>
@@ -78,7 +78,7 @@ export const LoginScreen = () => {
   );
 
   const tagline = (
-    <Text font="mono" size="md" color="inkSoft">
+    <Text font="mono" size="md" color="textSoft">
       {tr("auth.tagline")}
     </Text>
   );
@@ -134,14 +134,14 @@ export const LoginScreen = () => {
   const verifyCore = (
     <View style={styles.verify}>
       <View style={styles.verifyIcon}>
-        <Icon name="MailCheck" size="lg" color="accent" />
+        <Icon name="MailCheck" size="lg" color="primary" />
       </View>
       <Text font="display" size="xl" style={styles.verifyTitle}>
         {tr("auth.title.verify")}
       </Text>
-      <Text font="body" size="base" color="inkSoft" style={styles.verifyText}>
+      <Text font="body" size="base" color="textSoft" style={styles.verifyText}>
         {tr("auth.verifyBefore")}
-        <Text color="ink" style={styles.verifyEmail}>
+        <Text color="text" style={styles.verifyEmail}>
           {verifyEmail}
         </Text>
         {tr("auth.verifyAfter")}
@@ -207,7 +207,7 @@ export const LoginScreen = () => {
         <Text
           font={wide ? "mono" : "body"}
           size="md"
-          color={wide ? "accent" : "inkMute"}
+          color={wide ? "primary" : "textMuted"}
         >
           {tr("auth.forgotPassword")}
         </Text>
@@ -216,7 +216,7 @@ export const LoginScreen = () => {
         <Text
           font={wide ? "mono" : "body"}
           size="md"
-          color={wide ? "accent" : "inkSoft"}
+          color={wide ? "primary" : "textSoft"}
         >
           {wide
             ? isCreate
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: ColorEnum.bg },
   row: { flexDirection: "row" },
   col: { flexDirection: "column" },
-  dividerLine: { flex: 1, height: 1.5, backgroundColor: ColorEnum.hair },
+  dividerLine: { flex: 1, height: 1.5, backgroundColor: ColorEnum.borderSoft },
   verifyIcon: {
     width: ControlHeightEnum.md,
     height: ControlHeightEnum.md,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: ColorEnum.surface2,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
   },
   verifyTitle: { textTransform: "uppercase" },
   verifyText: { lineHeight: 21 },
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     padding: SpacingEnum.md,
     justifyContent: "center",
     borderRightWidth: 1,
-    borderRightColor: ColorEnum.line,
+    borderRightColor: ColorEnum.border,
   },
   heroContentWide: { position: "relative" },
   scrim: { backgroundColor: ColorEnum.scrim },
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     paddingBottom: SpacingEnum.xxl,
     paddingHorizontal: SpacingEnum.xl,
     borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.line,
+    borderBottomColor: ColorEnum.border,
   },
   heroHeading: { marginTop: SpacingEnum.lg, textTransform: "uppercase" },
   formScrollWide: { flexGrow: 0, flexShrink: 0, alignSelf: "center" },
@@ -336,6 +336,6 @@ const styles = StyleSheet.create({
     borderRadius: RadiusEnum.sm,
     padding: SpacingEnum.xs,
     backgroundColor: ColorEnum.surface2,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
   },
 });

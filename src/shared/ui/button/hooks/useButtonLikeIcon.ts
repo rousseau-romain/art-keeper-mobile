@@ -6,8 +6,8 @@ export const useButtonLikeIcon = (liked: boolean): IconProps => {
   const { t: tr } = useTranslation();
   return {
     name: "Heart",
-    color: liked ? "accent" : "inkMute",
+    color: liked ? "primary" : "textMuted",
     accessibilityLabel: liked ? tr("artwork.unlike") : tr("artwork.like"),
-    fill: liked ? ColorEnum.accent : ColorEnum.transparent,
+    fill: liked ? ColorEnum.primary : ColorEnum.transparent,
   };
 };

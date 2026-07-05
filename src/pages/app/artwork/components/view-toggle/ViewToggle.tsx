@@ -33,19 +33,19 @@ export const ViewToggle = ({
           styles.segment,
           {
             backgroundColor:
-              view === "map" ? ColorEnum.accent : ColorEnum.transparent,
+              view === "map" ? ColorEnum.primary : ColorEnum.transparent,
           },
         ]}
       >
         <Icon
           name="Map"
           size="xs"
-          color={view === "map" ? "accentInk" : "inkMute"}
+          color={view === "map" ? "primaryInk" : "textMuted"}
         />
         <Text
           font="mono"
           size="sm"
-          color={view === "map" ? "accentInk" : "inkMute"}
+          color={view === "map" ? "primaryInk" : "textMuted"}
         >
           {tr("artwork.map.toggleMap")}
         </Text>
@@ -59,19 +59,19 @@ export const ViewToggle = ({
           styles.segment,
           {
             backgroundColor:
-              view === "grid" ? ColorEnum.accent : ColorEnum.transparent,
+              view === "grid" ? ColorEnum.primary : ColorEnum.transparent,
           },
         ]}
       >
         <Icon
           name="LayoutGrid"
           size="xs"
-          color={view === "grid" ? "accentInk" : "inkMute"}
+          color={view === "grid" ? "primaryInk" : "textMuted"}
         />
         <Text
           font="mono"
           size="sm"
-          color={view === "grid" ? "accentInk" : "inkMute"}
+          color={view === "grid" ? "primaryInk" : "textMuted"}
         >
           {tr("artwork.map.toggleGrid")}
         </Text>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   group: {
     flexDirection: "row",
     borderWidth: 1.5,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
     borderRadius: RadiusEnum.sm,
     backgroundColor: ColorEnum.surface,
     overflow: "hidden",

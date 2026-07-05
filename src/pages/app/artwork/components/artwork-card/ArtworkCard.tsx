@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     overflow: "hidden",
     backgroundColor: ColorEnum.surface,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
   },
   cardImage: {
     width: "100%",

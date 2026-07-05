@@ -76,20 +76,20 @@ export const LockScreen = () => {
 
       <View style={styles.center}>
         <View style={styles.brand}>
-          <Icon name="Star" size="xl" color="accent" fill={ColorEnum.accent} />
+          <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
           <Text font="display" size="xl" style={styles.brandText}>
             ArtKeeper
           </Text>
         </View>
 
         <View style={styles.lockIcon}>
-          <Icon name="LockKeyhole" size="xl" color="accent" />
+          <Icon name="LockKeyhole" size="xl" color="primary" />
         </View>
 
         <Text font="display" size="xxl" style={styles.title}>
           {tr("auth.title.lock")}
         </Text>
-        <Text font="body" size="base" color="inkSoft" style={styles.subtitle}>
+        <Text font="body" size="base" color="textSoft" style={styles.subtitle}>
           {tr("auth.lockSubtitle")}
         </Text>
       </View>

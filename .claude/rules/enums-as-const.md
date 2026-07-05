@@ -7,7 +7,7 @@ object, and **every** such object exports a key-union type derived from it with
 ```ts
 export const ColorEnum = {
   bg: "#0e0e0f",
-  accent: "#ff5b1f",
+  primary: "#ff5b1f",
   // …
 } as const;
 
@@ -30,8 +30,8 @@ export type ColorEnumType = keyof typeof ColorEnum;
 
 ## Colors: also derive a `*Value` union for the resolved values
 
-`ColorEnum` is consumed as resolved **values** (`ColorEnum.accent` is the hex
-string `"#ff5b1f"`, not the key `"accent"`), so it pairs its key union with a
+`ColorEnum` is consumed as resolved **values** (`ColorEnum.primary` is the hex
+string `"#ff5b1f"`, not the key `"primary"`), so it pairs its key union with a
 **value union** derived with an indexed access, right below the key type:
 
 ```ts

@@ -32,7 +32,7 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={ColorEnum.accent} />
+        <ActivityIndicator color={ColorEnum.primary} />
       </View>
     );
   }
@@ -40,11 +40,11 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
   if (isError || !artwork) {
     return (
       <View style={styles.centered}>
-        <Icon name="RotateCw" size="xxl" color="inkMute" strokeWidth={1.6} />
+        <Icon name="RotateCw" size="xxl" color="textMuted" strokeWidth={1.6} />
         <Text
           font="body"
           size="base"
-          color="inkSoft"
+          color="textSoft"
           style={[styles.centerText, styles.errorText]}
         >
           {error instanceof ApiError ? error.message : tr("artwork.notFound")}
@@ -80,7 +80,7 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
             {artwork.title}
           </Text>
           {artist && (
-            <Text font="body" size="base" color="inkSoft">
+            <Text font="body" size="base" color="textSoft">
               {tr("artwork.byline", { name: artist.name })}
             </Text>
           )}
@@ -101,7 +101,7 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
         </View>
       ) : null}
       {artwork.description && (
-        <Text color="inkSoft">{artwork.description}</Text>
+        <Text color="textSoft">{artwork.description}</Text>
       )}
       <Text font="mono" size="sm">
         {artwork.latitude.toFixed(5)}, {artwork.longitude.toFixed(5)}

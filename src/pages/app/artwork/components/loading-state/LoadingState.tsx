@@ -11,7 +11,7 @@ export const LoadingState = () => {
 
   return (
     <Centered>
-      <ActivityIndicator color={ColorEnum.accent} />
+      <ActivityIndicator color={ColorEnum.primary} />
       <Text font="mono" size="sm">
         {tr("artwork.loading")}
       </Text>

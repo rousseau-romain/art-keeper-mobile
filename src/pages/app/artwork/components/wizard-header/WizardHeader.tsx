@@ -33,20 +33,20 @@ export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
                   styles.dot,
                   {
                     backgroundColor: done
-                      ? ColorEnum.accent
+                      ? ColorEnum.primary
                       : ColorEnum.transparent,
                     borderColor:
-                      done || active ? ColorEnum.accent : ColorEnum.line,
+                      done || active ? ColorEnum.primary : ColorEnum.border,
                   },
                 ]}
               >
                 {done ? (
-                  <Icon name="Check" size="xs" color="accentInk" />
+                  <Icon name="Check" size="xs" color="primaryInk" />
                 ) : (
                   <Text
                     font="mono"
                     size="xs"
-                    color={active ? "accent" : "inkMute"}
+                    color={active ? "primary" : "textMuted"}
                   >
                     {n}
                   </Text>
@@ -57,7 +57,7 @@ export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
                   style={[
                     styles.connector,
                     {
-                      backgroundColor: done ? ColorEnum.accent : ColorEnum.line,
+                      backgroundColor: done ? ColorEnum.primary : ColorEnum.border,
                     },
                   ]}
                 />
@@ -67,7 +67,7 @@ export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
         })}
       </View>
 
-      <Text font="mono" size="sm" color="inkMute">
+      <Text font="mono" size="sm" color="textMuted">
         {tr("artwork.new.stepOf", { step, total })}
       </Text>
     </View>

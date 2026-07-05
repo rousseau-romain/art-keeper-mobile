@@ -89,13 +89,13 @@ export const LocationStep = () => {
       <Text font="display" size="xxl" style={styles.title}>
         {tr("artwork.new.location.title")}
       </Text>
-      <Text font="body" size="base" color="inkSoft">
+      <Text font="body" size="base" color="textSoft">
         {tr("artwork.new.location.subtitle")}
       </Text>
 
       <View style={styles.mapWrap}>
         <View style={styles.hint}>
-          <Text font="mono" size="sm" color="accent">
+          <Text font="mono" size="sm" color="primary">
             {tr("artwork.new.location.hint")}
           </Text>
         </View>
@@ -117,8 +117,8 @@ export const LocationStep = () => {
 
       {address ? (
         <View style={styles.addr}>
-          <Icon name="MapPin" size="xs" color="inkSoft" />
-          <Text font="mono" size="sm" color="inkSoft">
+          <Icon name="MapPin" size="xs" color="textSoft" />
+          <Text font="mono" size="sm" color="textSoft">
             {address}
           </Text>
         </View>
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   mapWrap: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: ColorEnum.accent,
+    borderColor: ColorEnum.primary,
     borderRadius: RadiusEnum.sm,
     overflow: "hidden",
   },
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SpacingEnum.md,
     paddingVertical: SpacingEnum.sm,
     borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.accent,
+    borderBottomColor: ColorEnum.primary,
     backgroundColor: ColorEnum.surface,
   },
   map: { flex: 1 },
@@ -158,9 +158,9 @@ const styles = StyleSheet.create({
     width: IconSizeEnum.sm,
     height: IconSizeEnum.sm,
     borderRadius: RadiusEnum.full,
-    backgroundColor: ColorEnum.accent,
+    backgroundColor: ColorEnum.primary,
     borderWidth: 2,
-    borderColor: ColorEnum.ink,
+    borderColor: ColorEnum.text,
   },
   addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
 });

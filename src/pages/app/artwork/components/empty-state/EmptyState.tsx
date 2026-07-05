@@ -12,8 +12,8 @@ export const EmptyState = () => {
 
   return (
     <Centered>
-      <Icon name="MapPin" size="xxxl" color="inkMute" strokeWidth={1.6} />
-      <Text font="body" size="base" color="inkSoft" style={styles.text}>
+      <Icon name="MapPin" size="xxxl" color="textMuted" strokeWidth={1.6} />
+      <Text font="body" size="base" color="textSoft" style={styles.text}>
         {tr("artwork.empty")}
       </Text>
     </Centered>

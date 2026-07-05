@@ -10,7 +10,7 @@ Split styling by what's knowable at module load. The reference is
   which now includes **all colors and font families** — `ColorEnum.*` and
   `FONTS.*` are plain module constants (the single theme is a constant; there is
   no `useTheme` hook), exactly like the design scales. So `backgroundColor:
-  ColorEnum.bg`, `color: ColorEnum.inkMute`, `borderColor: ColorEnum.hair`,
+  ColorEnum.bg`, `color: ColorEnum.textMuted`, `borderColor: ColorEnum.borderSoft`,
   `fontFamily: FONTS.body` all go in `styles` alongside `flex`, `gap`,
   `borderWidth: 1.5`, `borderRadius: RadiusEnum.sm`, `fontSize: FontSizeEnum.sm`, …
 - **Inline** (a style object written in the JSX) holds **only** values that
@@ -19,7 +19,7 @@ Split styling by what's knowable at module load. The reference is
     like `useButtonColors`), `opacity: disabled ? 0.5 : 1`,
     `minHeight: sm ? ControlHeightEnum.sm : ControlHeightEnum.md`,
     `paddingTop: insets.top + SpacingEnum.xl`, and a **color picked by a
-    prop/state** — `backgroundColor: active ? ColorEnum.accent :
+    prop/state** — `backgroundColor: active ? ColorEnum.primary :
     ColorEnum.transparent`. The value is a `ColorEnum` token, but the *choice* is
     dynamic, so it stays inline.
   - **the `display` / `body` / `mono` helper calls** — `display(FontSizeEnum.xl)`
@@ -30,7 +30,7 @@ Split styling by what's knowable at module load. The reference is
 If a value is fixed at module load (a literal, a scale step, or a bare
 `ColorEnum.*` / `FONTS.*`), it's in `styles`. If it's chosen or computed from a
 prop/state, it's inline. **There is no third bucket** — a bare `borderWidth: 1.5`
-next to a fixed `borderColor: ColorEnum.hair` both go to `styles`; only a
+next to a fixed `borderColor: ColorEnum.borderSoft` both go to `styles`; only a
 prop/state-chosen color stays inline.
 
 Do **not** build a `StyleSheet` factory or a `useThemedStyles`-style hook, and
@@ -62,7 +62,7 @@ array** — split every object that mixes static and dynamic:
 <View style={[styles.dot, { backgroundColor: color }]} />
 
 // color chosen by state → inline (the choice is dynamic, the values are tokens)
-<View style={[styles.segment, { backgroundColor: active ? ColorEnum.accent : ColorEnum.transparent }]} />
+<View style={[styles.segment, { backgroundColor: active ? ColorEnum.primary : ColorEnum.transparent }]} />
 ```
 
 When an object mixes static and dynamic props, **pull the static props out** into

@@ -109,10 +109,10 @@ export const SettingsScreen = () => {
                     onValueChange={onToggle}
                     disabled={busy || availability !== "available"}
                     trackColor={{
-                      false: ColorEnum.line,
-                      true: ColorEnum.accent,
+                      false: ColorEnum.border,
+                      true: ColorEnum.primary,
                     }}
-                    thumbColor={ColorEnum.ink}
+                    thumbColor={ColorEnum.text}
                     accessibilityLabel={tr("a11y.biometricToggle")}
                   />
                 ),
@@ -159,7 +159,7 @@ export const SettingsScreen = () => {
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} accessibilityRole="button">
-          <Icon name="ChevronLeft" size="lg" color="ink" />
+          <Icon name="ChevronLeft" size="lg" color="text" />
         </Pressable>
         <Text font="display" size="xxl">
           {tr("settings.title.index")}

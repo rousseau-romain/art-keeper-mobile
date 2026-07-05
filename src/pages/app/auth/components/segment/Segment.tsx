@@ -14,13 +14,13 @@ export const Segment = ({ label, active, ...rest }: SegmentProps) => (
     {...rest}
     style={[
       styles.segment,
-      { backgroundColor: active ? ColorEnum.accent : ColorEnum.transparent },
+      { backgroundColor: active ? ColorEnum.primary : ColorEnum.transparent },
     ]}
   >
     <Text
       font="body"
       size="md"
-      color={active ? "accentInk" : "inkSoft"}
+      color={active ? "primaryInk" : "textSoft"}
       style={styles.segmentLabel}
     >
       {label}

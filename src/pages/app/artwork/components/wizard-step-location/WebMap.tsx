@@ -17,7 +17,7 @@ const ZOOM = 15;
 type WebMapProps = {
   latitude?: number | null;
   longitude?: number | null;
-  /** Accent colour for the pin (ColorEnum.accent). */
+  /** Accent colour for the pin (ColorEnum.primary). */
   accent: string;
   onPick: (latitude: number, longitude: number) => void;
 };

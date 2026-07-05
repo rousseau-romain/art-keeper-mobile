@@ -16,21 +16,21 @@ export const useGetTagColors = (state: TagState): TagColors => {
   switch (state) {
     case "solid":
       return {
-        bg: ColorEnum.accent,
-        fg: ColorEnum.accentInk,
-        borderColor: ColorEnum.hair,
+        bg: ColorEnum.primary,
+        fg: ColorEnum.primaryInk,
+        borderColor: ColorEnum.borderSoft,
       };
     case "active":
       return {
-        bg: ColorEnum.accentSoft,
-        fg: ColorEnum.accent,
-        borderColor: ColorEnum.accent,
+        bg: ColorEnum.primarySoft,
+        fg: ColorEnum.primary,
+        borderColor: ColorEnum.primary,
       };
     default:
       return {
         bg: ColorEnum.surface2,
-        fg: ColorEnum.inkSoft,
-        borderColor: ColorEnum.hair,
+        fg: ColorEnum.textSoft,
+        borderColor: ColorEnum.borderSoft,
       };
   }
 };

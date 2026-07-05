@@ -35,21 +35,21 @@ export const Checkbox = ({
         style={[
           styles.box,
           {
-            backgroundColor: checked ? ColorEnum.accent : ColorEnum.transparent,
-            borderColor: checked ? ColorEnum.accent : ColorEnum.line,
+            backgroundColor: checked ? ColorEnum.primary : ColorEnum.transparent,
+            borderColor: checked ? ColorEnum.primary : ColorEnum.border,
           },
         ]}
       >
         {checked && (
           <CheckIcon
             size={IconSizeEnum.xs}
-            color={ColorEnum.accentInk}
+            color={ColorEnum.primaryInk}
             strokeWidth={2.6}
           />
         )}
       </View>
       {label && (
-        <Text font="body" size="base" color="inkSoft" style={styles.label}>
+        <Text font="body" size="base" color="textSoft" style={styles.label}>
           {label}
         </Text>
       )}

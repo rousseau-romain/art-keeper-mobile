@@ -15,7 +15,7 @@ export const DraftBanner = ({ onDiscard }: DraftBannerProps) => {
 
   return (
     <View style={styles.banner}>
-      <Text size="md" color="inkSoft" style={styles.label}>
+      <Text size="md" color="textSoft" style={styles.label}>
         {tr("artwork.new.draft.restored")}
       </Text>
       <Button
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     borderRadius: RadiusEnum.sm,
     backgroundColor: ColorEnum.surface2,
     borderWidth: 1.5,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
   },
   label: { flex: 1 },
 });

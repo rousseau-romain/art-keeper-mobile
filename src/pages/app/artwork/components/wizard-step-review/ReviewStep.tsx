@@ -78,7 +78,7 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
           <Text font="display" size="lg" style={styles.pieceTitle}>
             {title || tr("artwork.title.new")}
           </Text>
-          <Text font="body" size="sm" color="inkMute">
+          <Text font="body" size="sm" color="textMuted">
             {artistHandle
               ? `@${artistHandle}`
               : tr("artwork.new.review.noArtist")}
@@ -89,14 +89,14 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
       <View style={styles.rows}>
         {rows.map((row) => (
           <View key={row.key} style={styles.row}>
-            <Text font="mono" size="xs" color="inkMute" style={styles.rowLabel}>
+            <Text font="mono" size="xs" color="textMuted" style={styles.rowLabel}>
               {row.label}
             </Text>
-            <Text font="body" size="sm" color="inkSoft" style={styles.rowValue}>
+            <Text font="body" size="sm" color="textSoft" style={styles.rowValue}>
               {row.value}
             </Text>
             <Pressable onPress={() => onEdit(row.target)} hitSlop={6}>
-              <Text font="mono" size="sm" color="accent">
+              <Text font="mono" size="sm" color="primary">
                 {tr("artwork.new.review.edit")}
               </Text>
             </Pressable>

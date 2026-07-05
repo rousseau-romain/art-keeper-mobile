@@ -17,8 +17,8 @@ export const ErrorState = ({ error, onRetry }: ErrorStateProps) => {
 
   return (
     <Centered style={styles.container}>
-      <Icon name="RotateCw" size="xxl" color="inkMute" />
-      <Text font="body" size="base" color="inkSoft">
+      <Icon name="RotateCw" size="xxl" color="textMuted" />
+      <Text font="body" size="base" color="textSoft">
         {error instanceof ApiError ? error.message : tr("artwork.loadError")}
       </Text>
       <Button

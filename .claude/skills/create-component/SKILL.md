@@ -120,7 +120,7 @@ These mirror `.claude/rules/` — the always-on conventions.
     `FONTS.*` families (they're module constants, knowable at load).
   - Inline (style arrays in JSX) holds **only** prop/state-driven values
     (`backgroundColor: bg`, `opacity: disabled ? 0.5 : 1`, a color *chosen* by
-    state like `active ? ColorEnum.accent : ColorEnum.transparent`) and the
+    state like `active ? ColorEnum.primary : ColorEnum.transparent`) and the
     `display` / `body` / `mono` helper calls.
   - Merge the two with a style array: `style={[styles.base, { backgroundColor: bg }]}`.
     Split any object that mixes static + dynamic — static props (incl. fixed

@@ -36,7 +36,7 @@ export const FilterPill = ({
       ]}
       {...rest}
     >
-      <Icon name="SlidersHorizontal" size="xs" color="ink" />
+      <Icon name="SlidersHorizontal" size="xs" color="text" />
       <Text font="mono" size="sm">
         {label}
       </Text>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SpacingEnum.md,
     paddingVertical: SpacingEnum.sm,
     borderWidth: 1.5,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
     borderRadius: RadiusEnum.full,
     backgroundColor: ColorEnum.surface,
   },

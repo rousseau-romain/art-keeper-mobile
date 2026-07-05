@@ -102,11 +102,11 @@ export const ArtistAutocomplete = ({
               onPress={() => select(artist)}
               style={styles.row}
             >
-              <Text font="mono" size="sm" color="ink">
+              <Text font="mono" size="sm" color="text">
                 @{artist.slug}
               </Text>
               <View style={styles.rowRight}>
-                <Text font="body" size="sm" color="inkMute">
+                <Text font="body" size="sm" color="textMuted">
                   {artist.name}
                 </Text>
                 {artist.verified && <Check size="sm" />}
@@ -121,7 +121,7 @@ export const ArtistAutocomplete = ({
           disabled={creating}
           style={[styles.create, creating && styles.createPending]}
         >
-          <Text font="body" size="sm" color="ink">
+          <Text font="body" size="sm" color="text">
             {tr("artwork.new.details.createArtist", { name: newName })}
           </Text>
         </Pressable>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   dropdown: {
     borderWidth: 1.5,
     borderRadius: RadiusEnum.sm,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
     backgroundColor: ColorEnum.surface2,
     overflow: "hidden",
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   create: {
     borderWidth: 1.5,
     borderRadius: RadiusEnum.sm,
-    borderColor: ColorEnum.hair,
+    borderColor: ColorEnum.borderSoft,
     backgroundColor: ColorEnum.surface2,
     paddingHorizontal: SpacingEnum.md,
     paddingVertical: SpacingEnum.sm,

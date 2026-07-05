@@ -16,13 +16,13 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
   return (
     <View style={styles.screen}>
       <Seo title={artwork ? artwork.title : tr("artwork.title.edit")} />
-      <Icon name="Pencil" size="xxl" color="inkMute" strokeWidth={1.6} />
+      <Icon name="Pencil" size="xxl" color="textMuted" strokeWidth={1.6} />
       {artwork ? (
         <Text font="display" size="lg" style={styles.title} numberOfLines={2}>
           {artwork.title}
         </Text>
       ) : null}
-      <Text font="body" size="base" color="inkSoft" style={styles.note}>
+      <Text font="body" size="base" color="textSoft" style={styles.note}>
         {tr("artwork.editComingSoon")}
       </Text>
     </View>
