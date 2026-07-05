@@ -236,6 +236,7 @@ export const en = {
     viewMap: "Show map view",
     viewGrid: "Show grid view",
     selectArtwork: "Show {{title}}",
+    searchTag: "Browse artworks tagged {{tag}}",
     filters: "Open tag filters",
     settings: "Open settings",
     biometricToggle: "Toggle biometric unlock",

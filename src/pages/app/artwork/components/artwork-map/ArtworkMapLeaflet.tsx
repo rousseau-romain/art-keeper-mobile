@@ -2,8 +2,9 @@ import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
 import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import type { Artwork } from "@/lib/api/artworks";
+import { ArtworkLeafletMarker } from "@/pages/app/artwork/components/artwork-map/ArtworkLeafletMarker";
 import { ColorEnum } from "@/theme/enums/color.enums";
 
 type ArtworkMapLeafletProps = {
@@ -14,18 +15,6 @@ type ArtworkMapLeafletProps = {
 
 const FALLBACK: [number, number] = [48.8566, 2.3522]; // Paris [lat, lng]
 const FALLBACK_ZOOM = 11;
-
-// Accent teardrop pin (a bare divIcon dodges leaflet's broken default PNG asset,
-// same trick as the create flow's WebMap). The active pin is larger + ringed.
-const pinIcon = (active: boolean) => {
-  const size = active ? 26 : 18;
-  return L.divIcon({
-    className: "",
-    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${ColorEnum.accent};border:2px solid ${active ? "#fff" : ColorEnum.accentInk}"></div>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size],
-  });
-};
 
 // Fit all pins on mount / when the set changes, and re-measure (leaflet's
 // 0-height-in-flex race). Ease to the selected pin when one is picked.
@@ -111,11 +100,11 @@ const ArtworkMapLeaflet = ({
       />
       <MapController artworks={artworks} selectedId={selectedId} />
       {artworks.map((artwork) => (
-        <Marker
+        <ArtworkLeafletMarker
           key={artwork.id}
-          position={[artwork.latitude, artwork.longitude]}
-          icon={pinIcon(artwork.id === selectedId)}
-          eventHandlers={{ click: () => onSelect(artwork) }}
+          artwork={artwork}
+          selected={artwork.id === selectedId}
+          onSelect={onSelect}
         />
       ))}
     </MapContainer>

@@ -8,7 +8,6 @@ import { ControlHeightEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 export type MapCarouselProps = ScrollViewProps & {
   artworks: Artwork[];
   selectedId?: string;
-  onSelect: (artwork: Artwork) => void;
 };
 
 // A thumb's on-screen stride: its width (MapThumb's frame) plus the strip gap.
@@ -17,11 +16,7 @@ const THUMB = ControlHeightEnum.lg;
 const STRIDE = THUMB + SpacingEnum.md;
 
 /** Horizontal carousel of artwork thumbnails shown over the map. */
-export const MapCarousel = ({
-  artworks,
-  selectedId,
-  onSelect,
-}: MapCarouselProps) => {
+export const MapCarousel = ({ artworks, selectedId }: MapCarouselProps) => {
   const scrollRef = useRef<ScrollView>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
 
@@ -50,7 +45,6 @@ export const MapCarousel = ({
           key={artwork.id}
           artwork={artwork}
           active={artwork.id === selectedId}
-          onPress={() => onSelect(artwork)}
         />
       ))}
     </ScrollView>

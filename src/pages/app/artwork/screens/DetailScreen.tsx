@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -90,7 +90,13 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
       {artwork.tags.length > 0 ? (
         <View style={styles.tagRow}>
           {artwork.tags.map((tag) => (
-            <Tag key={tag} label={tag} />
+            <Link
+              key={tag}
+              href={{ pathname: "/artworks", params: { tag } }}
+              accessibilityLabel={tr("a11y.searchTag", { tag })}
+            >
+              <Tag label={tag} />
+            </Link>
           ))}
         </View>
       ) : null}

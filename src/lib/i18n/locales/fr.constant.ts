@@ -225,6 +225,7 @@ export const fr: Resources = {
     viewMap: "Afficher la carte",
     viewGrid: "Afficher la grille",
     selectArtwork: "Afficher {{title}}",
+    searchTag: "Parcourir les œuvres taguées {{tag}}",
     filters: "Ouvrir les filtres par tag",
     settings: "Ouvrir les réglages",
     biometricToggle: "Activer le déverrouillage biométrique",

@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { Text } from "@/shared/ui/text/Text";
@@ -12,40 +13,44 @@ export type MapThumbProps = {
   artwork: Artwork;
   /** Highlighted (its pin is selected on the map). */
   active: boolean;
-  onPress: () => void;
 };
 
-/** One thumbnail in the bottom "pieces in view" strip of the map. */
-export const MapThumb = ({ artwork, active, onPress }: MapThumbProps) => {
+/**
+ * One artwork thumbnail on the map — both in the bottom "pieces in view" strip
+ * and floating over a selected pin. Tapping it opens the artwork detail
+ * (`Link asChild` → a real `<a href>` on web, a router push on native).
+ */
+export const MapThumb = ({ artwork, active }: MapThumbProps) => {
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={artwork.title}
-      style={styles.thumb}
-    >
-      <View
-        style={[
-          styles.frame,
-          { borderColor: active ? ColorEnum.accent : ColorEnum.hair },
-        ]}
+    <Link href={`/artworks/${artwork.slug}`} asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel={artwork.title}
+        style={styles.thumb}
       >
-        <Image
-          source={{ uri: artwork.imageUrl }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      </View>
-      <Text
-        font="mono"
-        size="xs"
-        numberOfLines={1}
-        color={active ? "accent" : "inkMute"}
-        style={styles.label}
-      >
-        {artwork.title}
-      </Text>
-    </Pressable>
+        <View
+          style={[
+            styles.frame,
+            { borderColor: active ? ColorEnum.accent : ColorEnum.hair },
+          ]}
+        >
+          <Image
+            source={{ uri: artwork.imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <Text
+          font="mono"
+          size="xs"
+          numberOfLines={1}
+          color={active ? "accent" : "inkMute"}
+          style={styles.label}
+        >
+          {artwork.title}
+        </Text>
+      </Pressable>
+    </Link>
   );
 };
 

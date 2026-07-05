@@ -43,11 +43,7 @@ export const MapView = ({
       </View>
 
       <View>
-        <MapCarousel
-          artworks={artworks}
-          selectedId={selectedId}
-          onSelect={onSelect}
-        />
+        <MapCarousel artworks={artworks} selectedId={selectedId} />
       </View>
     </View>
   );

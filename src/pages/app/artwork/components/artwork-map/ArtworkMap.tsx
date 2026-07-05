@@ -6,13 +6,14 @@ import {
   Marker,
   type StyleSpecification,
 } from "@maplibre/maplibre-react-native";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
+import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
 import type { MapViewProps } from "@/pages/app/artwork/components/map-view/MapView";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { ColorEnum } from "@/theme/enums/color.enums";
-import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { IconSizeEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type ArtworkMapProps = {
   artworks: Artwork[];
@@ -121,22 +122,36 @@ export const ArtworkMap = ({
       {artworks.map((artwork) => {
         const active = artwork.id === selectedId;
         return (
-          <Marker
-            key={artwork.id}
-            lngLat={[artwork.longitude, artwork.latitude]}
-            anchor="bottom"
-            onPress={() => onSelect(artwork)}
-          >
-            <View style={styles.pin}>
-              <Icon
-                name="MapPin"
-                size={active ? "xxl" : "lg"}
-                color="accent"
-                fill={ColorEnum.accent}
-                strokeWidth={1.5}
-              />
-            </View>
-          </Marker>
+          <Fragment key={artwork.id}>
+            <Marker
+              lngLat={[artwork.longitude, artwork.latitude]}
+              anchor="bottom"
+              onPress={() => onSelect(artwork)}
+            >
+              <View style={styles.pin}>
+                <Icon
+                  name="MapPin"
+                  size={active ? "xxl" : "lg"}
+                  color="accent"
+                  fill={ColorEnum.accent}
+                  strokeWidth={1.5}
+                />
+              </View>
+            </Marker>
+            {/* Floating thumbnail above the selected pin — its own marker (no
+                `onPress`) so the inner `MapThumb` link handles the tap; the
+                `box-none` wrapper lets touches through its empty top gap. */}
+            {active ? (
+              <Marker
+                lngLat={[artwork.longitude, artwork.latitude]}
+                anchor="bottom"
+              >
+                <View style={styles.callout} pointerEvents="box-none">
+                  <MapThumb artwork={artwork} active />
+                </View>
+              </Marker>
+            ) : null}
+          </Fragment>
         );
       })}
     </MapView>
@@ -147,4 +162,10 @@ const styles = StyleSheet.create({
   map: { flex: 1 },
   // A little padding so the marker has a comfortable touch target.
   pin: { padding: SpacingEnum.xs },
+  // Lift the floating thumb above the (bottom-anchored) selected pin: the
+  // paddingBottom clears the active pin's height, and it centers over the pin.
+  callout: {
+    alignItems: "center",
+    paddingBottom: IconSizeEnum.xxl + SpacingEnum.md,
+  },
 });

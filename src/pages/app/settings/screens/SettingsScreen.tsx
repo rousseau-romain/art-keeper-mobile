@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, Switch, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -86,45 +86,70 @@ export const SettingsScreen = () => {
   const method = tr(getBiometricLabelKey(kind));
 
   const sections = [
-    {
-      key: "security",
-      title: tr("settings.security"),
-      label: tr("settings.biometricLabel", { method }),
-      hint: tr(
-        availability ? HINT_KEY[availability] : "settings.biometricHint",
-        { method }
-      ),
-      control: (
-        <Switch
-          value={biometricEnabled}
-          onValueChange={onToggle}
-          disabled={busy || availability !== "available"}
-          trackColor={{ false: ColorEnum.line, true: ColorEnum.accent }}
-          thumbColor={ColorEnum.ink}
-          accessibilityLabel={tr("a11y.biometricToggle")}
-        />
-      ),
-    },
+    // Biometrics are a native-only capability — hide the security section on web.
+    ...(Platform.OS === "web"
+      ? []
+      : [
+          {
+            key: "security",
+            title: tr("settings.security"),
+            rows: [
+              {
+                key: "biometric",
+                label: tr("settings.biometricLabel", { method }),
+                hint: tr(
+                  availability
+                    ? HINT_KEY[availability]
+                    : "settings.biometricHint",
+                  { method }
+                ),
+                control: (
+                  <Switch
+                    value={biometricEnabled}
+                    onValueChange={onToggle}
+                    disabled={busy || availability !== "available"}
+                    trackColor={{
+                      false: ColorEnum.line,
+                      true: ColorEnum.accent,
+                    }}
+                    thumbColor={ColorEnum.ink}
+                    accessibilityLabel={tr("a11y.biometricToggle")}
+                  />
+                ),
+              },
+            ],
+          },
+        ]),
     {
       key: "language",
       title: tr("settings.language"),
-      label: tr("settings.languageLabel"),
-      hint: tr("settings.languageHint"),
-      control: (
-        <Picker
-          value={language}
-          onChange={setLanguage}
-          options={languageOptions}
-          accessibilityLabel={tr("a11y.language", { language })}
-        />
-      ),
+      rows: [
+        {
+          key: "language",
+          label: tr("settings.languageLabel"),
+          hint: tr("settings.languageHint"),
+          control: (
+            <Picker
+              value={language}
+              onChange={setLanguage}
+              options={languageOptions}
+              accessibilityLabel={tr("a11y.language", { language })}
+            />
+          ),
+        },
+      ],
     },
     {
       key: "tags",
       title: tr("settings.tags"),
-      label: tr("settings.tagSourceLabel"),
-      hint: tr("settings.tagSourceHint"),
-      control: <TagSourcePicker value={source} onChange={setSource} />,
+      rows: [
+        {
+          key: "tagSource",
+          label: tr("settings.tagSourceLabel"),
+          hint: tr("settings.tagSourceHint"),
+          control: <TagSourcePicker value={source} onChange={setSource} />,
+        },
+      ],
     },
   ];
 
@@ -142,12 +167,14 @@ export const SettingsScreen = () => {
       </View>
 
       <View style={styles.sections}>
-        {sections.map(({ key, title, label, hint, control }) => (
+        {sections.map(({ key, title, rows }) => (
           <View key={key}>
             <SectionTitle label={title} />
-            <SettingRow label={label} hint={hint}>
-              {control}
-            </SettingRow>
+            {rows.map(({ key: rowKey, label, hint, control }) => (
+              <SettingRow key={rowKey} label={label} hint={hint}>
+                {control}
+              </SettingRow>
+            ))}
           </View>
         ))}
       </View>

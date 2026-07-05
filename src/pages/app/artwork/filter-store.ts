@@ -66,6 +66,26 @@ export const setSearchScope = (scope: SearchScope): void => {
   emit();
 };
 
+/**
+ * Replace the whole selection in one shot — used when seeding the filters from
+ * the URL (a deep link or a tag link into `/artworks`). Emits once (no flicker
+ * through intermediate states); a no-op when the selection already matches.
+ */
+export const setFilters = (next: {
+  tags: string[];
+  search: string;
+  scope: SearchScope;
+}): void => {
+  const sameTags =
+    next.tags.length === selectedTags.length &&
+    next.tags.every((tag, i) => tag === selectedTags[i]);
+  if (sameTags && next.search === search && next.scope === searchScope) return;
+  selectedTags = next.tags;
+  search = next.search;
+  searchScope = next.scope;
+  emit();
+};
+
 /** Drop every active filter — tags, search, and scope back to default.
  * No-op (no emit) when nothing is active. */
 export const clearTags = (): void => {
