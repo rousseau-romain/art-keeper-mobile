@@ -2,12 +2,14 @@ import { Link } from "expo-router";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type MapThumbProps = {
   artwork: Artwork;
@@ -21,6 +23,8 @@ export type MapThumbProps = {
  * (`Link asChild` → a real `<a href>` on web, a router push on native).
  */
 export const MapThumb = ({ artwork, active }: MapThumbProps) => {
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
   return (
     <Link href={`/artworks/${artwork.slug}`} asChild>
       <Pressable
@@ -31,7 +35,7 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
         <View
           style={[
             styles.frame,
-            { borderColor: active ? ColorEnum.primary : ColorEnum.borderSoft },
+            { borderColor: active ? colors.primary : colors.borderSoft },
           ]}
         >
           <Image
@@ -56,16 +60,17 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
 
 const THUMB = ControlHeightEnum.lg;
 
-const styles = StyleSheet.create({
-  thumb: { width: THUMB, gap: SpacingEnum.xs },
-  frame: {
-    width: THUMB,
-    height: THUMB,
-    borderWidth: 1.5,
-    borderRadius: RadiusEnum.sm,
-    overflow: "hidden",
-    backgroundColor: ColorEnum.surface2,
-  },
-  image: { width: "100%", height: "100%" },
-  label: { textAlign: "center", textTransform: "lowercase" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    thumb: { width: THUMB, gap: SpacingEnum.xs },
+    frame: {
+      width: THUMB,
+      height: THUMB,
+      borderWidth: 1.5,
+      borderRadius: RadiusEnum.sm,
+      overflow: "hidden",
+      backgroundColor: c.surface2,
+    },
+    image: { width: "100%", height: "100%" },
+    label: { textAlign: "center", textTransform: "lowercase" },
+  });

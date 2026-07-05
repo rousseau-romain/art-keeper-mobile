@@ -1,38 +1,38 @@
-import { ColorEnum, type ColorEnumValue } from "@/theme/enums/color.enums";
+import type { ColorEnumType } from "@/theme/enums/color.enums";
 
 export type ButtonVariant = "primary" | "ghost" | "text" | "default";
 
 type ButtonColors = {
-  bg: ColorEnumValue;
-  fg: ColorEnumValue;
-  border: ColorEnumValue;
+  bg: ColorEnumType;
+  fg: ColorEnumType;
+  border: ColorEnumType;
 };
 
 export const useButtonColors = (variant: ButtonVariant): ButtonColors => {
   switch (variant) {
     case "primary":
       return {
-        bg: ColorEnum.primary,
-        fg: ColorEnum.primaryInk,
-        border: ColorEnum.transparent,
+        bg: "primary",
+        fg: "primaryInk",
+        border: "transparent",
       };
     case "ghost":
       return {
-        bg: ColorEnum.transparent,
-        fg: ColorEnum.text,
-        border: ColorEnum.border,
+        bg: "transparent",
+        fg: "text",
+        border: "border",
       };
     case "text":
       return {
         bg: "transparent",
-        fg: ColorEnum.text,
+        fg: "text",
         border: "transparent",
       };
     default:
       return {
-        bg: ColorEnum.surface2,
-        fg: ColorEnum.text,
-        border: ColorEnum.transparent,
+        bg: "surface2",
+        fg: "text",
+        border: "transparent",
       };
   }
 };

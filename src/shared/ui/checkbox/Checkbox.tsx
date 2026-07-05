@@ -2,13 +2,13 @@ import { Check as CheckIcon } from "lucide-react-native";
 import { Pressable, type PressableProps, StyleSheet, View } from "react-native";
 
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import {
   FontSizeEnum,
   IconSizeEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type CheckboxProps = Omit<PressableProps, "style" | "onPress"> & {
   checked: boolean;
@@ -22,6 +22,7 @@ export const Checkbox = ({
   label,
   ...rest
 }: CheckboxProps) => {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -35,15 +36,15 @@ export const Checkbox = ({
         style={[
           styles.box,
           {
-            backgroundColor: checked ? ColorEnum.primary : ColorEnum.transparent,
-            borderColor: checked ? ColorEnum.primary : ColorEnum.border,
+            backgroundColor: checked ? colors.primary : colors.transparent,
+            borderColor: checked ? colors.primary : colors.border,
           },
         ]}
       >
         {checked && (
           <CheckIcon
             size={IconSizeEnum.xs}
-            color={ColorEnum.primaryInk}
+            color={colors.primaryInk}
             strokeWidth={2.6}
           />
         )}

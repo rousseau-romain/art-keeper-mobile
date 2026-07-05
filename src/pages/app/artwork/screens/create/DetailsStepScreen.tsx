@@ -19,8 +19,9 @@ import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 3 — the artwork details form (title, artist, tags, note). */
 export const DetailsStepScreen = () => {
@@ -31,6 +32,7 @@ export const DetailsStepScreen = () => {
   const artistId = useWatch({ control, name: "artistId" });
   const warnedNoArtist = useRef(false);
   const headerHeight = useHeaderHeight();
+  const styles = useThemeStyles(createStyles);
 
   // Only advance once the title validates. The first attempt without an artist
   // warns (once) instead of advancing, so the user gets a chance to credit one;
@@ -75,10 +77,11 @@ export const DetailsStepScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  scrollView: { flex: 1 },
-  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
-  details: { gap: SpacingEnum.xl },
-  detailsTitle: { textTransform: "uppercase" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    scrollView: { flex: 1 },
+    scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
+    details: { gap: SpacingEnum.xl },
+    detailsTitle: { textTransform: "uppercase" },
+  });

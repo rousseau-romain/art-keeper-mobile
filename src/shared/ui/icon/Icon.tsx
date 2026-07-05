@@ -1,8 +1,9 @@
 import type { LucideProps } from "lucide-react-native";
 import * as icons from "lucide-react-native/icons";
 
-import { ColorEnum, type ColorEnumType } from "@/theme/enums/color.enums";
+import type { ColorEnumType } from "@/theme/enums/color.enums";
 import { IconSizeEnum, type IconSizeEnumType } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type IconName = keyof typeof icons;
 
@@ -19,11 +20,12 @@ export const Icon = ({
   strokeWidth = 1.8,
   ...rest
 }: IconProps) => {
+  const { colors } = useTheme();
   const Glyph = icons[name];
   return (
     <Glyph
       size={IconSizeEnum[size]}
-      color={ColorEnum[color]}
+      color={colors[color]}
       strokeWidth={strokeWidth}
       {...rest}
     />

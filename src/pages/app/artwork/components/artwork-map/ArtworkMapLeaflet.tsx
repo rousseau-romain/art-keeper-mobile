@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkLeafletMarker } from "@/pages/app/artwork/components/artwork-map/ArtworkLeafletMarker";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 type ArtworkMapLeafletProps = {
   artworks: Artwork[];
@@ -79,8 +79,8 @@ const MapController = ({
 };
 
 /**
- * Web browse map (react-leaflet + CARTO dark tiles). Loaded lazily from
- * ArtworkMap.web.tsx so `leaflet` only evaluates in the browser, never during
+ * Web browse map (react-leaflet + CARTO tiles, skinned per theme). Loaded lazily
+ * from ArtworkMap.web.tsx so `leaflet` only evaluates in the browser, never during
  * Expo's static (Node) prerender. The native app uses MapLibre (ArtworkMap.tsx).
  */
 const ArtworkMapLeaflet = ({
@@ -88,15 +88,17 @@ const ArtworkMapLeaflet = ({
   selectedId,
   onSelect,
 }: ArtworkMapLeafletProps) => {
+  const { scheme, colors } = useTheme();
   return (
     <MapContainer
       center={FALLBACK}
       zoom={FALLBACK_ZOOM}
-      style={{ height: "100%", width: "100%", background: ColorEnum.bg }}
+      style={{ height: "100%", width: "100%", background: colors.bg }}
     >
       <TileLayer
+        key={scheme}
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+        url={`https://{s}.basemaps.cartocdn.com/${scheme}_all/{z}/{x}/{y}.png`}
       />
       <MapController artworks={artworks} selectedId={selectedId} />
       {artworks.map((artwork) => (

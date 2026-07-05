@@ -1,80 +1,95 @@
-# Rule: styling — inline holds only prop/state-driven values; everything static is `StyleSheet`
+# Rule: styling — theme colors via `createStyles` factory; inline holds only prop/state-driven values
 
-Split styling by what's knowable at module load. The reference is
-`src/app/(auth)/login.tsx`.
+The app has two palettes (dark + light, see `src/theme/enums/color.enums.ts`)
+switched at runtime by `ThemeProvider` (`src/theme/ThemeProvider.tsx`): `auto` /
+`light` / `dark`, persisted, with `auto` following the device/browser scheme. So
+**colors are theme-dependent** and can never live in a module-scope constant
+style. The reference is `src/pages/app/auth/screens/LoginScreen.tsx`.
 
 ## The split
 
-- **Everything static lives in a single module-scope `StyleSheet.create({ ... })`**
-  at the bottom of the file (named `styles`). "Static" = knowable at module load,
-  which now includes **all colors and font families** — `ColorEnum.*` and
-  `FONTS.*` are plain module constants (the single theme is a constant; there is
-  no `useTheme` hook), exactly like the design scales. So `backgroundColor:
-  ColorEnum.bg`, `color: ColorEnum.textMuted`, `borderColor: ColorEnum.borderSoft`,
-  `fontFamily: FONTS.body` all go in `styles` alongside `flex`, `gap`,
-  `borderWidth: 1.5`, `borderRadius: RadiusEnum.sm`, `fontSize: FontSizeEnum.sm`, …
+- **Every color-bearing sheet is a `createStyles` factory** at the bottom of the
+  file, resolved in the component by `useThemeStyles`
+  (`src/theme/hooks/useThemeStyles.ts`):
+
+  ```ts
+  export const MyThing = () => {
+    const styles = useThemeStyles(createStyles); // one line in the component
+    return <View style={styles.card} />;         // usage unchanged
+  };
+
+  // bottom of file — same shape as the old static sheet, palette in, sheet out
+  const createStyles = (c: Palette) =>
+    StyleSheet.create({
+      card: {
+        borderWidth: 1.5,
+        borderRadius: RadiusEnum.sm,
+        backgroundColor: c.surface,   // palette token, not a hard-coded hex
+        borderColor: c.borderSoft,
+      },
+    });
+  ```
+
+  `useThemeStyles` caches per factory per scheme (a module `WeakMap`), so each
+  sheet is built at most twice for the app's lifetime — treat the factory as
+  cheap and the pattern as the default.
+- **A sheet with no color props stays a plain module-scope
+  `StyleSheet.create`** (named `styles`) — don't convert layout-only sheets.
+  Scales (`SpacingEnum.*`, `RadiusEnum.*`, `FontSizeEnum.*`, …) and `FONTS.*`
+  are still plain module constants and belong in either kind of sheet.
 - **Inline** (a style object written in the JSX) holds **only** values that
-  *cannot* live in a static `StyleSheet`:
-  - **prop/state-driven values** — `backgroundColor: bg` (a color from a hook
-    like `useButtonColors`), `opacity: disabled ? 0.5 : 1`,
-    `minHeight: sm ? ControlHeightEnum.sm : ControlHeightEnum.md`,
-    `paddingTop: insets.top + SpacingEnum.xl`, and a **color picked by a
-    prop/state** — `backgroundColor: active ? ColorEnum.primary :
-    ColorEnum.transparent`. The value is a `ColorEnum` token, but the *choice* is
-    dynamic, so it stays inline.
-  - **the `display` / `body` / `mono` helper calls** — `display(FontSizeEnum.xl)`
-    returns a runtime `TextStyle` (size is a param), so the call is written inline
-    and merged via a style array (see [design-scale](design-scale.md) for the
-    helpers).
+  cannot live in a sheet:
+  - **prop/state-driven values** — `opacity: disabled ? 0.5 : 1`,
+    `paddingTop: insets.top + SpacingEnum.xl`, a color from a hook
+    (`backgroundColor: bg` from `useButtonColors`), and a **color picked by
+    prop/state** — `backgroundColor: active ? colors.primary :
+    colors.transparent` (values from `useTheme().colors`; the *choice* is
+    dynamic, so it stays inline).
 
-If a value is fixed at module load (a literal, a scale step, or a bare
-`ColorEnum.*` / `FONTS.*`), it's in `styles`. If it's chosen or computed from a
-prop/state, it's inline. **There is no third bucket** — a bare `borderWidth: 1.5`
-next to a fixed `borderColor: ColorEnum.borderSoft` both go to `styles`; only a
-prop/state-chosen color stays inline.
+If a value is layout/scale/font, it's in a sheet (factory or static). If it's a
+color, it's a `c.*` token in the factory — or, when chosen by prop/state, a
+`colors.*` read inline. If it's computed from a prop/state, it's inline. **There
+is no other bucket.**
 
-Do **not** build a `StyleSheet` factory or a `useThemedStyles`-style hook, and
-do **not** route colors through a `useTheme()` hook — those indirections were
-removed on purpose. Read `ColorEnum` / `FONTS` straight from `@/theme`.
+## Reading colors outside a sheet
 
-## Composing the two
-
-Merge a static named style with an inline prop/state object via a **style
-array** — split every object that mixes static and dynamic:
+Pull the active palette from `useTheme()` and index it:
 
 ```ts
-// fully static (flex + bg) → one named style, no inline object
-<View style={styles.screen} />
-
-// static header layout; safe-area inset is dynamic (prop-derived) → inline.
-// The bg/border colors are static, so they live in styles.header.
-<View style={[styles.header, { paddingTop: insets.top + SpacingEnum.xl }]} />
-
-// font helper (runtime size). The default ink color is baked into display(),
-// so no color override is needed.
-<Text style={display(FontSizeEnum.xl)}>ArtKeeper</Text>
-
-// a "card": borderRadius + borderWidth + the fixed colors are all static →
-// everything lives in styles.card, the JSX is just the named style
-<View style={styles.card} />
-
-// prop-driven color (from a hook / passed in) → inline
-<View style={[styles.dot, { backgroundColor: color }]} />
-
-// color chosen by state → inline (the choice is dynamic, the values are tokens)
-<View style={[styles.segment, { backgroundColor: active ? ColorEnum.primary : ColorEnum.transparent }]} />
+const { colors, scheme } = useTheme();
+<ActivityIndicator color={colors.primary} />
+<Switch trackColor={{ false: colors.border, true: colors.primary }} />
 ```
 
-When an object mixes static and dynamic props, **pull the static props out** into
-`styles` and merge via the array — the inline object must end up containing
-nothing but prop/state-driven values. An object whose props are all dynamic is
-left inline as-is; an element whose styles are all static takes the named style
-directly (no inline object at all).
+Components that take a token **key** prop (`color?: ColorEnumType`, like `Text`
+/ `Icon`) resolve it internally via `useTheme().colors[color]` — call sites just
+pass the key. Never import `DarkColorEnum` / `LightColorEnum` directly in a
+component — the only legitimate consumers of the palette objects are the theme
+layer itself and the web HTML shell (`src/app/+html.tsx`, static render).
+
+## Composing
+
+Merge a sheet style with an inline prop/state object via a **style array** —
+split every object that mixes sheet-able and dynamic props:
+
+```ts
+// fully sheet-able → one named style, no inline object
+<View style={styles.screen} />
+
+// sheet layout + dynamic inset → array
+<View style={[styles.header, { paddingTop: insets.top + SpacingEnum.xl }]} />
+
+// color chosen by state → inline (values are palette tokens, choice is dynamic)
+<View style={[styles.segment, { backgroundColor: active ? colors.primary : colors.transparent }]} />
+```
 
 ## Exceptions
 
 - `StyleSheet.absoluteFill` and other RN style constants are used as-is.
-- Navigation config that only accepts a single style object (some
-  `screenOptions` fields) takes the named static style directly when it's fully
-  static (`tabBarStyle: styles.tabBar`, `contentStyle: staticStyles.bg`), or a
-  **style array** when it mixes in a dynamic value.
+- Navigation config that only accepts a single style object takes the resolved
+  themed style (`tabBarStyle: styles.tabBar` where `styles` came from
+  `useThemeStyles` inside the layout component), or a **style array** when it
+  mixes in a dynamic value.
+- Do **not** rebuild a `useTheme`-per-property indirection beyond this: one
+  `useThemeStyles(createStyles)` per file, plus one `useTheme()` where inline
+  colors are needed.

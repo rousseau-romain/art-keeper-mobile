@@ -6,13 +6,15 @@ import { HAPTIC_NAMES, useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export const HapticsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const haptic = useHaptics();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <ScrollView
@@ -49,12 +51,13 @@ export const HapticsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  content: {
-    paddingHorizontal: SpacingEnum.xl,
-    gap: SpacingEnum.xs,
-  },
-  title: { textTransform: "uppercase" },
-  list: { marginTop: SpacingEnum.xl, gap: SpacingEnum.md },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    content: {
+      paddingHorizontal: SpacingEnum.xl,
+      gap: SpacingEnum.xs,
+    },
+    title: { textTransform: "uppercase" },
+    list: { marginTop: SpacingEnum.xl, gap: SpacingEnum.md },
+  });

@@ -6,8 +6,9 @@ import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/Wizar
 import { LocationStep } from "@/pages/app/artwork/components/wizard-step-location/LocationStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { Seo } from "@/shared/ui/seo/Seo";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 2 — confirm the pin. The map can't sit in a ScrollView (gesture conflict). */
 export const LocationStepScreen = () => {
@@ -17,6 +18,7 @@ export const LocationStepScreen = () => {
   const latitude = useWatch({ control, name: "latitude" });
   const longitude = useWatch({ control, name: "longitude" });
   const hasPin = latitude != null && longitude != null;
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={styles.screen}>
@@ -35,7 +37,8 @@ export const LocationStepScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  mapBody: { flex: 1, padding: SpacingEnum.xl },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    mapBody: { flex: 1, padding: SpacingEnum.xl },
+  });

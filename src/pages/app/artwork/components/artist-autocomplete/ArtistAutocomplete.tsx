@@ -16,8 +16,9 @@ import { Check } from "@/shared/ui/check/Check";
 import { TextInput } from "@/shared/ui/input/TextInput";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type ArtistAutocompleteProps = {
   label: string;
@@ -46,6 +47,7 @@ export const ArtistAutocomplete = ({
   const artistId = useWatch({ control, name: "artistId" });
   const { query, setQuery, matches, isLoading, createArtist, creating } =
     useArtistSearch();
+  const styles = useThemeStyles(createStyles);
 
   const select = (artist: ArtistListItem) => {
     setValue("artistId", artist.id);
@@ -130,31 +132,36 @@ export const ArtistAutocomplete = ({
   );
 };
 
-const styles = StyleSheet.create({
-  field: { gap: SpacingEnum.sm },
-  dropdown: {
-    borderWidth: 1.5,
-    borderRadius: RadiusEnum.sm,
-    borderColor: ColorEnum.borderSoft,
-    backgroundColor: ColorEnum.surface2,
-    overflow: "hidden",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-    gap: SpacingEnum.md,
-  },
-  rowRight: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-  create: {
-    borderWidth: 1.5,
-    borderRadius: RadiusEnum.sm,
-    borderColor: ColorEnum.borderSoft,
-    backgroundColor: ColorEnum.surface2,
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-  },
-  createPending: { opacity: 0.5 },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    field: { gap: SpacingEnum.sm },
+    dropdown: {
+      borderWidth: 1.5,
+      borderRadius: RadiusEnum.sm,
+      borderColor: c.borderSoft,
+      backgroundColor: c.surface2,
+      overflow: "hidden",
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+      gap: SpacingEnum.md,
+    },
+    rowRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SpacingEnum.sm,
+    },
+    create: {
+      borderWidth: 1.5,
+      borderRadius: RadiusEnum.sm,
+      borderColor: c.borderSoft,
+      backgroundColor: c.surface2,
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+    },
+    createPending: { opacity: 0.5 },
+  });

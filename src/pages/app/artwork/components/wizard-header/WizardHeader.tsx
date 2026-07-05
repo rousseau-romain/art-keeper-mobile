@@ -3,8 +3,8 @@ import { StyleSheet, View } from "react-native";
 
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import { FontSizeEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type WizardHeaderProps = {
   step: number;
@@ -19,6 +19,7 @@ export type WizardHeaderProps = {
  */
 export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
   const { t: tr } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <View style={styles.header}>
@@ -32,11 +33,9 @@ export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
                 style={[
                   styles.dot,
                   {
-                    backgroundColor: done
-                      ? ColorEnum.primary
-                      : ColorEnum.transparent,
+                    backgroundColor: done ? colors.primary : colors.transparent,
                     borderColor:
-                      done || active ? ColorEnum.primary : ColorEnum.border,
+                      done || active ? colors.primary : colors.border,
                   },
                 ]}
               >
@@ -57,7 +56,7 @@ export const WizardHeader = ({ step, total }: WizardHeaderProps) => {
                   style={[
                     styles.connector,
                     {
-                      backgroundColor: done ? ColorEnum.primary : ColorEnum.border,
+                      backgroundColor: done ? colors.primary : colors.border,
                     },
                   ]}
                 />

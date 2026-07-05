@@ -15,8 +15,10 @@ import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { queryClient } from "@/lib/query";
 import { LockScreen } from "@/pages/app/auth/screens/LockScreen";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { useAppFonts } from "@/theme/hooks/useAppFonts";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 
 if (__DEV__ && Platform.OS !== "web") {
   // Conditional require (not a static import) so Reactotron and its deps are
@@ -34,15 +36,17 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={staticStyles.fill}>
       <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <I18nProvider>
-            <AuthProvider>
-              <ToastProvider>
-                <RootNavigator />
-              </ToastProvider>
-            </AuthProvider>
-          </I18nProvider>
-        </QueryClientProvider>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <I18nProvider>
+              <AuthProvider>
+                <ToastProvider>
+                  <RootNavigator />
+                </ToastProvider>
+              </AuthProvider>
+            </I18nProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
@@ -51,6 +55,11 @@ export default function RootLayout() {
 function RootNavigator() {
   const [fontsLoaded, fontError] = useAppFonts();
   const { status, locked } = useAuth();
+  const { scheme } = useTheme();
+  const styles = useThemeStyles(createStyles);
+
+  // Status-bar glyphs must contrast with the themed background.
+  const barStyle = scheme === "dark" ? "light" : "dark";
 
   const ready = (fontsLoaded || !!fontError) && status !== "loading";
 
@@ -58,27 +67,27 @@ function RootNavigator() {
     if (ready) SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
 
-  if (!ready) return <View style={staticStyles.screen} />;
+  if (!ready) return <View style={styles.screen} />;
 
   // Biometric gate: a stored session is loading behind this, but nothing is
   // shown until the user passes the Lock screen. Clearing `locked` reveals the
   // normal Stack (already in whatever state the session settled into).
   if (status === "authenticated" && locked) {
     return (
-      <View style={staticStyles.screen}>
-        <StatusBar style="dark" />
+      <View style={styles.screen}>
+        <StatusBar style={barStyle} />
         <LockScreen />
       </View>
     );
   }
 
   return (
-    <View style={staticStyles.screen}>
-      <StatusBar style="dark" />
+    <View style={styles.screen}>
+      <StatusBar style={barStyle} />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: staticStyles.bg,
+          contentStyle: styles.bg,
           animation: "fade",
         }}
       >
@@ -93,6 +102,10 @@ function RootNavigator() {
 
 const staticStyles = StyleSheet.create({
   fill: { flex: 1 },
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  bg: { backgroundColor: ColorEnum.bg },
 });
+
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    bg: { backgroundColor: c.bg },
+  });

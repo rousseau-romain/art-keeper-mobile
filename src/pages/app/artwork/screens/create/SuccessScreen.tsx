@@ -9,7 +9,8 @@ import { clearArtworkDraft } from "@/pages/app/artwork/draft-store";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { EMPTY_ARTWORK_DRAFT } from "@/pages/app/artwork/hooks/useArtworkDraft";
 import { Seo } from "@/shared/ui/seo/Seo";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type SuccessScreenProps = {
   slug?: string;
@@ -20,6 +21,7 @@ export const SuccessScreen = ({ slug }: SuccessScreenProps) => {
   const { t: tr } = useTranslation();
   const navigation = useNavigation();
   const { reset } = useFormContext<ArtworkValues>();
+  const styles = useThemeStyles(createStyles);
 
   // Reset the wizard back to a blank step 1: pop the create-artwork stack to its
   // root, wipe the collected values, and clear the persisted draft — the same
@@ -53,6 +55,7 @@ export const SuccessScreen = ({ slug }: SuccessScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+  });

@@ -18,12 +18,13 @@ import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   IconSizeEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 // Key-free OpenStreetMap raster style (no API key / billing, unlike Google Maps).
 // MapLibre renders this directly — the same OSM tiles the web map (WebMap.tsx) uses.
@@ -52,6 +53,7 @@ export const LocationStep = () => {
   const { setPin, useMyLocation, locating } = useDeviceLocation();
   const haptic = useHaptics();
   const cameraRef = useRef<CameraRef>(null);
+  const styles = useThemeStyles(createStyles);
 
   // useWatch (not the watch() fn) so the React Compiler can't memoize the live
   // pin away — the component itself re-renders when these change.
@@ -136,31 +138,32 @@ export const LocationStep = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  step: { flex: 1, gap: SpacingEnum.md },
-  title: { textTransform: "uppercase" },
-  mapWrap: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderColor: ColorEnum.primary,
-    borderRadius: RadiusEnum.sm,
-    overflow: "hidden",
-  },
-  hint: {
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-    borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.primary,
-    backgroundColor: ColorEnum.surface,
-  },
-  map: { flex: 1 },
-  pin: {
-    width: IconSizeEnum.sm,
-    height: IconSizeEnum.sm,
-    borderRadius: RadiusEnum.full,
-    backgroundColor: ColorEnum.primary,
-    borderWidth: 2,
-    borderColor: ColorEnum.text,
-  },
-  addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    step: { flex: 1, gap: SpacingEnum.md },
+    title: { textTransform: "uppercase" },
+    mapWrap: {
+      flex: 1,
+      borderWidth: 1.5,
+      borderColor: c.primary,
+      borderRadius: RadiusEnum.sm,
+      overflow: "hidden",
+    },
+    hint: {
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+      borderBottomWidth: 1.5,
+      borderBottomColor: c.primary,
+      backgroundColor: c.surface,
+    },
+    map: { flex: 1 },
+    pin: {
+      width: IconSizeEnum.sm,
+      height: IconSizeEnum.sm,
+      borderRadius: RadiusEnum.full,
+      backgroundColor: c.primary,
+      borderWidth: 2,
+      borderColor: c.text,
+    },
+    addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+  });

@@ -51,7 +51,8 @@ export const Check = ({ size = "base", ...rest }: CheckProps) => {
 };
 ```
 
-Reference: `src/shared/ui/check/Check.tsx`. The scale constants are module
-constants (not theme tokens), so values built from them stay in the static
-`StyleSheet`; only prop/state-derived sizes (like `px` above) go inline — see
+Reference: `src/shared/ui/check/Check.tsx`. The scale constants are plain module
+constants (unlike colors, they don't change with the theme), so values built
+from them live in the sheet — a static `StyleSheet` or a themed `createStyles`
+factory; only prop/state-derived sizes (like `px` above) go inline — see
 [styling-stylesheet](styling-stylesheet.md).

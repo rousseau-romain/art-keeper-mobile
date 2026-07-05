@@ -6,12 +6,13 @@ import { Pressable, StyleSheet, View } from "react-native";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { Checkbox } from "@/shared/ui/checkbox/Checkbox";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** The step routes a "Edit" jump can target (the rights step has no edit). */
 export type ReviewEditTarget = "location" | "details";
@@ -23,6 +24,7 @@ export type ReviewStepProps = {
 /** Step 4 — summary with per-section edit jumps + the rights confirmation. */
 export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
   const { t: tr } = useTranslation();
+  const styles = useThemeStyles(createStyles);
   const { control, setValue } = useFormContext<ArtworkValues>();
   // Per-field useWatch (typed, non-optional) so the rights checkbox and every
   // edited value update in place under the React Compiler, not only on remount.
@@ -89,10 +91,20 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
       <View style={styles.rows}>
         {rows.map((row) => (
           <View key={row.key} style={styles.row}>
-            <Text font="mono" size="xs" color="textMuted" style={styles.rowLabel}>
+            <Text
+              font="mono"
+              size="xs"
+              color="textMuted"
+              style={styles.rowLabel}
+            >
               {row.label}
             </Text>
-            <Text font="body" size="sm" color="textSoft" style={styles.rowValue}>
+            <Text
+              font="body"
+              size="sm"
+              color="textSoft"
+              style={styles.rowValue}
+            >
               {row.value}
             </Text>
             <Pressable onPress={() => onEdit(row.target)} hitSlop={6}>
@@ -113,20 +125,21 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  step: { gap: SpacingEnum.xl },
-  title: { textTransform: "uppercase" },
-  headerRow: { flexDirection: "row", gap: SpacingEnum.md },
-  thumb: {
-    width: ControlHeightEnum.md,
-    height: ControlHeightEnum.md,
-    borderRadius: RadiusEnum.sm,
-    backgroundColor: ColorEnum.surface2,
-  },
-  headerText: { flex: 1, gap: SpacingEnum.xs },
-  pieceTitle: { textTransform: "uppercase" },
-  rows: { gap: SpacingEnum.lg },
-  row: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.md },
-  rowLabel: { width: ControlHeightEnum.md, textTransform: "uppercase" },
-  rowValue: { flex: 1 },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    step: { gap: SpacingEnum.xl },
+    title: { textTransform: "uppercase" },
+    headerRow: { flexDirection: "row", gap: SpacingEnum.md },
+    thumb: {
+      width: ControlHeightEnum.md,
+      height: ControlHeightEnum.md,
+      borderRadius: RadiusEnum.sm,
+      backgroundColor: c.surface2,
+    },
+    headerText: { flex: 1, gap: SpacingEnum.xs },
+    pieceTitle: { textTransform: "uppercase" },
+    rows: { gap: SpacingEnum.lg },
+    row: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.md },
+    rowLabel: { width: ControlHeightEnum.md, textTransform: "uppercase" },
+    rowValue: { flex: 1 },
+  });

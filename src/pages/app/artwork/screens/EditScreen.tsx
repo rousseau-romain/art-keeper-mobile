@@ -4,14 +4,16 @@ import { useArtworkBySlug } from "@/lib/api/artworks";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type EditScreenProps = { slug: string };
 
 export const EditScreen = ({ slug }: EditScreenProps) => {
   const { t: tr } = useTranslation();
   const { data: artwork } = useArtworkBySlug(slug);
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={styles.screen}>
@@ -29,15 +31,16 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: SpacingEnum.md,
-    padding: SpacingEnum.xxl,
-    backgroundColor: ColorEnum.bg,
-  },
-  title: { textTransform: "uppercase", textAlign: "center" },
-  note: { textAlign: "center" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: SpacingEnum.md,
+      padding: SpacingEnum.xxl,
+      backgroundColor: c.bg,
+    },
+    title: { textTransform: "uppercase", textAlign: "center" },
+    note: { textAlign: "center" },
+  });

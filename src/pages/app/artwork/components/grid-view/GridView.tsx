@@ -15,8 +15,8 @@ import {
   type ArtworkView,
   ViewToggle,
 } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 // Minimum card width that decides how many columns fit on a wide screen
 // (Fold unfolded ≈ 2, tablet landscape ≈ 3, phone = 1).
@@ -47,6 +47,7 @@ export const GridView = ({
 }: GridViewProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
 
   // Responsive grid: derive a column count from the window width, then size
   // each cell to an explicit pixel width so a lone card on an odd last row
@@ -79,7 +80,7 @@ export const GridView = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={ColorEnum.primary}
+            tintColor={colors.primary}
           />
         }
         onEndReached={onEndReached}
@@ -95,7 +96,7 @@ export const GridView = ({
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator
-              color={ColorEnum.primary}
+              color={colors.primary}
               style={styles.footerSpinner}
             />
           ) : null

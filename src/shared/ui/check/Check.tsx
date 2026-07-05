@@ -2,8 +2,10 @@ import { Check as CheckIcon } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View, type ViewProps } from "react-native";
 
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { FontSizeEnum, type FontSizeEnumType } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type CheckProps = ViewProps & {
   size?: FontSizeEnumType;
@@ -11,6 +13,8 @@ export type CheckProps = ViewProps & {
 
 export const Check = ({ size = "base", style, ...rest }: CheckProps) => {
   const { t: tr } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const px = FontSizeEnum[size];
   return (
     <View
@@ -22,19 +26,16 @@ export const Check = ({ size = "base", style, ...rest }: CheckProps) => {
         style,
       ]}
     >
-      <CheckIcon
-        size={px * 0.66}
-        color={ColorEnum.primaryInk}
-        strokeWidth={2.4}
-      />
+      <CheckIcon size={px * 0.66} color={colors.primaryInk} strokeWidth={2.4} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  badge: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: ColorEnum.primary,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    badge: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: c.primary,
+    },
+  });

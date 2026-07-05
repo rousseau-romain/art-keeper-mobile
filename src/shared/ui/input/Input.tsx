@@ -5,13 +5,15 @@ import {
   StyleSheet,
 } from "react-native";
 
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   FontSizeEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
 import { FONTS } from "@/theme/fonts.constant";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type InputProps = RNTextInputProps & {
   invalid?: boolean;
@@ -31,10 +33,12 @@ export const Input = ({
   debounce = 0,
   value,
   onChangeText,
-  placeholderTextColor = ColorEnum.textMuted,
+  placeholderTextColor,
   style,
   ...input
 }: InputProps) => {
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
   const debounced = debounce > 0;
   const [text, setText] = useState(value ?? "");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -57,25 +61,26 @@ export const Input = ({
       {...input}
       value={debounced ? text : value}
       onChangeText={debounced ? handleChange : onChangeText}
-      placeholderTextColor={placeholderTextColor}
+      placeholderTextColor={placeholderTextColor ?? colors.textMuted}
       style={[
         styles.input,
-        { borderColor: invalid ? ColorEnum.danger : ColorEnum.borderSoft },
+        { borderColor: invalid ? colors.danger : colors.borderSoft },
         style,
       ]}
     />
   );
 };
 
-const styles = StyleSheet.create({
-  input: {
-    fontSize: FontSizeEnum.base,
-    borderWidth: 1.5,
-    borderRadius: RadiusEnum.sm,
-    paddingHorizontal: SpacingEnum.lg,
-    paddingVertical: SpacingEnum.md,
-    fontFamily: FONTS.body,
-    color: ColorEnum.text,
-    backgroundColor: ColorEnum.surface,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    input: {
+      fontSize: FontSizeEnum.base,
+      borderWidth: 1.5,
+      borderRadius: RadiusEnum.sm,
+      paddingHorizontal: SpacingEnum.lg,
+      paddingVertical: SpacingEnum.md,
+      fontFamily: FONTS.body,
+      color: c.text,
+      backgroundColor: c.surface,
+    },
+  });

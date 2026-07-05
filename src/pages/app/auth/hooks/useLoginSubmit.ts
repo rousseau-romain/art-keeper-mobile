@@ -48,7 +48,7 @@ export const useLoginSubmit = ({ methods, isCreate }: UseLoginSubmitParams) => {
         console.warn(
           `[login] ApiError status=${e.status} code=${e.code ?? "-"} message=${
             e.message
-          }`
+          }`,
         );
       } else {
         console.error("[login] unexpected error", e);
@@ -61,7 +61,7 @@ export const useLoginSubmit = ({ methods, isCreate }: UseLoginSubmitParams) => {
       }
       show(
         e instanceof ApiError ? e.message : tr("auth.genericError"),
-        "error"
+        "error",
       );
     }
   });

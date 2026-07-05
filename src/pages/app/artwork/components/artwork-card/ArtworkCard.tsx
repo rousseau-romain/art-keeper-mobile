@@ -4,8 +4,9 @@ import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkLikeButton } from "@/pages/app/artwork/components/artwork-like-button/ArtworkLikeButton";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type ArtworkCardProps = {
   artwork: Artwork;
@@ -16,6 +17,7 @@ export type ArtworkCardProps = {
 // react-native-web renders a real `<a href>` (crawlable, right-click-openable —
 // SEO) while native keeps the normal Pressable/View layout and navigation.
 export const ArtworkCard = ({ artwork, href }: ArtworkCardProps) => {
+  const styles = useThemeStyles(createStyles);
   return (
     <Link href={href} asChild>
       <Pressable style={styles.card}>
@@ -52,25 +54,26 @@ export const ArtworkCard = ({ artwork, href }: ArtworkCardProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: RadiusEnum.sm,
-    borderWidth: 1.5,
-    overflow: "hidden",
-    backgroundColor: ColorEnum.surface,
-    borderColor: ColorEnum.borderSoft,
-  },
-  cardImage: {
-    width: "100%",
-    height: 180,
-    backgroundColor: ColorEnum.surface2,
-  },
-  cardBody: { padding: SpacingEnum.lg, gap: SpacingEnum.md },
-  cardTitleRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: SpacingEnum.md,
-  },
-  cardTitle: { flex: 1, textTransform: "uppercase" },
-  tagRow: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: RadiusEnum.sm,
+      borderWidth: 1.5,
+      overflow: "hidden",
+      backgroundColor: c.surface,
+      borderColor: c.borderSoft,
+    },
+    cardImage: {
+      width: "100%",
+      height: 180,
+      backgroundColor: c.surface2,
+    },
+    cardBody: { padding: SpacingEnum.lg, gap: SpacingEnum.md },
+    cardTitleRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: SpacingEnum.md,
+    },
+    cardTitle: { flex: 1, textTransform: "uppercase" },
+    tagRow: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
+  });

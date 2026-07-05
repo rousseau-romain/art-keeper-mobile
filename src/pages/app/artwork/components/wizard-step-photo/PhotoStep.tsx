@@ -5,13 +5,15 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { usePhotoPicker } from "@/pages/app/artwork/hooks/usePhotoPicker";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 1 — pick a single photo (camera or library), show EXIF auto-pin. */
 export const PhotoStep = () => {
   const { t: tr } = useTranslation();
   const { photo, addPhoto, exifPinned } = usePhotoPicker();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={styles.step}>
@@ -66,36 +68,37 @@ export const PhotoStep = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  step: { gap: SpacingEnum.md },
-  gap: { gap: SpacingEnum.md },
-  title: { textTransform: "uppercase" },
-  cover: {
-    aspectRatio: 1,
-    borderRadius: RadiusEnum.lg,
-    overflow: "hidden",
-    backgroundColor: ColorEnum.surface2,
-  },
-  coverBadge: {
-    position: "absolute",
-    alignSelf: "center",
-    top: "50%",
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.xs,
-    borderRadius: RadiusEnum.sm,
-    backgroundColor: ColorEnum.surface,
-  },
-  exif: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-  empty: {
-    aspectRatio: 1,
-    borderRadius: RadiusEnum.lg,
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: ColorEnum.border,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: SpacingEnum.md,
-    backgroundColor: ColorEnum.surface,
-  },
-  emptyCta: { textTransform: "uppercase", textAlign: "center" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    step: { gap: SpacingEnum.md },
+    gap: { gap: SpacingEnum.md },
+    title: { textTransform: "uppercase" },
+    cover: {
+      aspectRatio: 1,
+      borderRadius: RadiusEnum.lg,
+      overflow: "hidden",
+      backgroundColor: c.surface2,
+    },
+    coverBadge: {
+      position: "absolute",
+      alignSelf: "center",
+      top: "50%",
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.xs,
+      borderRadius: RadiusEnum.sm,
+      backgroundColor: c.surface,
+    },
+    exif: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+    empty: {
+      aspectRatio: 1,
+      borderRadius: RadiusEnum.lg,
+      borderWidth: 1.5,
+      borderStyle: "dashed",
+      borderColor: c.border,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: SpacingEnum.md,
+      backgroundColor: c.surface,
+    },
+    emptyCta: { textTransform: "uppercase", textAlign: "center" },
+  });

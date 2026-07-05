@@ -15,8 +15,8 @@ import {
   type ToastVariant,
   useToastColors,
 } from "@/shared/ui/toast/hooks/useToastColors";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 type ToastContextValue = {
   show: (message: string, variant?: ToastVariant) => void;
@@ -50,14 +50,14 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         }).start(() => setToast(null));
       }, DURATION);
     },
-    [opacity]
+    [opacity],
   );
 
   useEffect(
     () => () => {
       if (timer.current) clearTimeout(timer.current);
     },
-    []
+    [],
   );
 
   return (
@@ -84,6 +84,7 @@ function ToastView({
   opacity: Animated.Value;
 }) {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   const { bg, accent, icon } = useToastColors(variant);
   return (
     <Animated.View
@@ -98,7 +99,7 @@ function ToastView({
       <View
         style={[
           styles.bubble,
-          { backgroundColor: ColorEnum[bg], borderColor: ColorEnum[accent] },
+          { backgroundColor: colors[bg], borderColor: colors[accent] },
         ]}
       >
         <Icon name={icon} size="sm" color={accent} />

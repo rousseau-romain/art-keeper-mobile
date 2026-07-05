@@ -8,8 +8,10 @@ import { useDeviceLocation } from "@/pages/app/artwork/hooks/useDeviceLocation";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 // react-native-maps has no web build (it calls the native-only
 // `codegenNativeComponent`, which crashes the web bundle). This `.web.tsx`
@@ -23,6 +25,8 @@ export const LocationStep = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
   const { setPin, useMyLocation, locating } = useDeviceLocation();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   // useWatch so the React Compiler re-renders this component on each pin change.
   const latitude = useWatch({ control, name: "latitude" });
@@ -54,7 +58,7 @@ export const LocationStep = () => {
               <WebMap
                 latitude={latitude}
                 longitude={longitude}
-                accent={ColorEnum.primary}
+                accent={colors.primary}
                 onPick={setPin}
               />
             </Suspense>
@@ -83,24 +87,25 @@ export const LocationStep = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  step: { flex: 1, gap: SpacingEnum.md },
-  title: { textTransform: "uppercase" },
-  mapWrap: {
-    flex: 1,
-    minHeight: 240,
-    borderWidth: 1.5,
-    borderColor: ColorEnum.primary,
-    borderRadius: RadiusEnum.sm,
-    overflow: "hidden",
-  },
-  hint: {
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-    borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.primary,
-    backgroundColor: ColorEnum.surface,
-  },
-  map: { flex: 1 },
-  addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    step: { flex: 1, gap: SpacingEnum.md },
+    title: { textTransform: "uppercase" },
+    mapWrap: {
+      flex: 1,
+      minHeight: 240,
+      borderWidth: 1.5,
+      borderColor: c.primary,
+      borderRadius: RadiusEnum.sm,
+      overflow: "hidden",
+    },
+    hint: {
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+      borderBottomWidth: 1.5,
+      borderBottomColor: c.primary,
+      backgroundColor: c.surface,
+    },
+    map: { flex: 1 },
+    addr: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+  });

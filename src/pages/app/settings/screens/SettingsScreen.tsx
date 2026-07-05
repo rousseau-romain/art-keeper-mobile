@@ -23,8 +23,14 @@ import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import {
+  ThemeModeEnum,
+  type ThemeModeEnumType,
+} from "@/theme/enums/theme-mode.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type SettingsScreenProps = Record<string, never>;
 
@@ -37,6 +43,22 @@ const LANGUAGE_LABEL_KEY: Record<
   en: "settings.languageEnglish",
   fr: "settings.languageFrench",
 };
+
+const THEME_LABEL_KEY: Record<
+  ThemeModeEnumType,
+  "settings.themeAuto" | "settings.themeLight" | "settings.themeDark"
+> = {
+  auto: "settings.themeAuto",
+  light: "settings.themeLight",
+  dark: "settings.themeDark",
+};
+
+// Picker order: the explicit schemes first, "follow the device" last.
+const THEME_MODES: ThemeModeEnumType[] = [
+  ThemeModeEnum.dark,
+  ThemeModeEnum.light,
+  ThemeModeEnum.auto,
+];
 
 // The sub-label explains *why* the toggle is off when it can't be enabled:
 // "not-enrolled" is actionable (set one up in system settings), "no-hardware"
@@ -59,10 +81,17 @@ export const SettingsScreen = () => {
   const { biometricEnabled, setBiometricEnabled, signOut } = useAuth();
   const { source, setSource } = useTagSource();
   const { language, setLanguage } = useLocale();
+  const { mode, setMode, colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   const languageOptions = SUPPORTED_LANGUAGES.map((lng) => ({
     value: lng,
     label: tr(LANGUAGE_LABEL_KEY[lng]),
+  }));
+
+  const themeOptions = THEME_MODES.map((value) => ({
+    value,
+    label: tr(THEME_LABEL_KEY[value]),
   }));
 
   const [availability, setAvailability] =
@@ -101,7 +130,7 @@ export const SettingsScreen = () => {
                   availability
                     ? HINT_KEY[availability]
                     : "settings.biometricHint",
-                  { method }
+                  { method },
                 ),
                 control: (
                   <Switch
@@ -109,10 +138,10 @@ export const SettingsScreen = () => {
                     onValueChange={onToggle}
                     disabled={busy || availability !== "available"}
                     trackColor={{
-                      false: ColorEnum.border,
-                      true: ColorEnum.primary,
+                      false: colors.border,
+                      true: colors.primary,
                     }}
-                    thumbColor={ColorEnum.text}
+                    thumbColor={colors.text}
                     accessibilityLabel={tr("a11y.biometricToggle")}
                   />
                 ),
@@ -120,6 +149,25 @@ export const SettingsScreen = () => {
             ],
           },
         ]),
+    {
+      key: "appearance",
+      title: tr("settings.appearance"),
+      rows: [
+        {
+          key: "theme",
+          label: tr("settings.appearanceLabel"),
+          hint: tr("settings.appearanceHint"),
+          control: (
+            <Picker
+              value={mode}
+              onChange={setMode}
+              options={themeOptions}
+              accessibilityLabel={tr("a11y.appearance")}
+            />
+          ),
+        },
+      ],
+    },
     {
       key: "language",
       title: tr("settings.language"),
@@ -197,18 +245,19 @@ export const SettingsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: ColorEnum.bg,
-    paddingHorizontal: SpacingEnum.xl,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SpacingEnum.md,
-    marginBottom: SpacingEnum.xxl,
-  },
-  sections: { gap: SpacingEnum.md },
-  footer: { marginTop: "auto" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: c.bg,
+      paddingHorizontal: SpacingEnum.xl,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SpacingEnum.md,
+      marginBottom: SpacingEnum.xxl,
+    },
+    sections: { gap: SpacingEnum.md },
+    footer: { marginTop: "auto" },
+  });

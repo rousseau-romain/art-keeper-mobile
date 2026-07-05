@@ -9,16 +9,20 @@ import { Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { WebHeader } from "@/shared/navigation/web-header/WebHeader";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { ControlHeightEnum, FontSizeEnum } from "@/theme/enums/scale.enums";
 import { FONTS } from "@/theme/fonts.constant";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export default function TabsLayout() {
   const { t: tr } = useTranslation();
   const { status } = useAuth();
   const insets = useSafeAreaInsets();
   const { wide } = useBreakpoint();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   // Desktop web swaps the bottom tab bar for a top brand header; native and
   // narrow / mobile web keep the default bottom bar.
@@ -35,8 +39,8 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarPosition: webHeader ? "top" : "bottom",
-        tabBarActiveTintColor: ColorEnum.primary,
-        tabBarInactiveTintColor: ColorEnum.textMuted,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: [
           styles.tabBar,
           Platform.OS === "web" && {
@@ -81,11 +85,12 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  tabBar: {
-    borderTopWidth: 1.5,
-    backgroundColor: ColorEnum.surface,
-    borderTopColor: ColorEnum.borderSoft,
-  },
-  tabLabel: { fontSize: FontSizeEnum.xs, fontFamily: FONTS.mono },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    tabBar: {
+      borderTopWidth: 1.5,
+      backgroundColor: c.surface,
+      borderTopColor: c.borderSoft,
+    },
+    tabLabel: { fontSize: FontSizeEnum.xs, fontFamily: FONTS.mono },
+  });

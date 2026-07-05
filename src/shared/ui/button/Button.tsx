@@ -14,6 +14,7 @@ import {
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 import { type ButtonVariant, useButtonColors } from "./hooks/useButtonColors";
 
 type Size = "sm" | "normal";
@@ -41,7 +42,10 @@ export const Button = ({
   style,
   ...rest
 }: ButtonProps) => {
-  const { bg, fg, border } = useButtonColors(variant);
+  const { colors } = useTheme();
+  const buttonColor = useButtonColors(variant);
+  const { bg, fg, border } = buttonColor;
+
   const sm = size === "sm";
 
   return (
@@ -55,32 +59,32 @@ export const Button = ({
         {
           minHeight: sm ? ControlHeightEnum.sm : ControlHeightEnum.md,
           paddingHorizontal: sm ? SpacingEnum.md : SpacingEnum.lg,
-          borderColor: border,
-          backgroundColor: bg,
+          borderColor: colors[border],
+          backgroundColor: colors[bg],
           alignSelf: block ? "stretch" : "flex-start",
           opacity: disabled ? 0.5 : state.pressed ? 0.85 : 1,
         },
         style,
       ]}
     >
-      {loading && <ActivityIndicator color={fg} size="small" />}
+      {loading && <ActivityIndicator color={colors[fg]} size="small" />}
 
       <View style={styles.row}>
         {iconBefore && (
           <Icon
             size={sm ? "xs" : "sm"}
-            color={"bg"}
+            color={fg}
             strokeWidth={1.8}
             {...iconBefore}
           />
         )}
-        <Text size={sm ? "md" : "base"} style={{ color: fg }}>
+        <Text size={sm ? "md" : "base"} color={fg}>
           {label}
         </Text>
         {iconAfter && (
           <Icon
             size={sm ? "xs" : "sm"}
-            color={"bg"}
+            color={fg}
             strokeWidth={1.8}
             {...iconAfter}
           />

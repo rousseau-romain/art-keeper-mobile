@@ -17,8 +17,10 @@ import { Icon } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type DetailScreenProps = { slug: string };
 
@@ -28,11 +30,13 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
   const router = useRouter();
   const { data: artwork, isLoading, isError, error } = useArtworkBySlug(slug);
   const { data: artist } = useArtist(artwork?.artistId);
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={ColorEnum.primary} />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -115,30 +119,31 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  content: { padding: SpacingEnum.lg, gap: SpacingEnum.lg },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: SpacingEnum.xxl,
-    backgroundColor: ColorEnum.bg,
-  },
-  centerText: { textAlign: "center" },
-  errorText: { marginVertical: SpacingEnum.md },
-  image: {
-    width: "100%",
-    height: 240,
-    borderRadius: RadiusEnum.sm,
-    backgroundColor: ColorEnum.surface2,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: SpacingEnum.md,
-  },
-  titleCol: { flex: 1, gap: SpacingEnum.xs },
-  title: { textTransform: "uppercase" },
-  tagRow: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    content: { padding: SpacingEnum.lg, gap: SpacingEnum.lg },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: SpacingEnum.xxl,
+      backgroundColor: c.bg,
+    },
+    centerText: { textAlign: "center" },
+    errorText: { marginVertical: SpacingEnum.md },
+    image: {
+      width: "100%",
+      height: 240,
+      borderRadius: RadiusEnum.sm,
+      backgroundColor: c.surface2,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: SpacingEnum.md,
+    },
+    titleCol: { flex: 1, gap: SpacingEnum.xs },
+    title: { textTransform: "uppercase" },
+    tagRow: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
+  });

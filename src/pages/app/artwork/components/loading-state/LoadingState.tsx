@@ -2,16 +2,17 @@ import { useTranslation } from "react-i18next";
 import { ActivityIndicator } from "react-native";
 import { Centered } from "@/shared/ui/centered/Centered";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type LoadingStateProps = Record<string, never>;
 
 export const LoadingState = () => {
   const { t: tr } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <Centered>
-      <ActivityIndicator color={ColorEnum.primary} />
+      <ActivityIndicator color={colors.primary} />
       <Text font="mono" size="sm">
         {tr("artwork.loading")}
       </Text>

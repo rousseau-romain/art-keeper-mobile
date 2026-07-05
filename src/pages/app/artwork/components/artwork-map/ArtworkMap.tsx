@@ -12,8 +12,9 @@ import type { Artwork } from "@/lib/api/artworks";
 import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
 import type { MapViewProps } from "@/pages/app/artwork/components/map-view/MapView";
 import { Icon } from "@/shared/ui/icon/Icon";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import { IconSizeEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import type { ThemeScheme } from "@/theme/enums/theme-mode.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type ArtworkMapProps = {
   artworks: Artwork[];
@@ -23,24 +24,31 @@ export type ArtworkMapProps = {
   style?: MapViewProps["style"];
 };
 
-// Key-free CARTO dark basemap — matches the brutalist dark theme (the create
-// flow's light OSM tiles would clash with the browse map). Same tiles, dark skin.
-const DARK_STYLE: StyleSpecification = {
+// Key-free CARTO basemap, skinned per theme — dark tiles under the dark theme,
+// light tiles under the light one, so the browse map never clashes with the UI.
+// A `background` layer under the raster fills the area exposed when the map is
+// over-panned past the world edge (otherwise MapLibre paints its default black).
+const basemapStyle = (
+  scheme: ThemeScheme,
+  background: string,
+): StyleSpecification => ({
   version: 8,
   sources: {
     carto: {
       type: "raster",
-      tiles: [
-        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-      ],
+      tiles: ["a", "b", "c"].map(
+        (s) =>
+          `https://${s}.basemaps.cartocdn.com/${scheme}_all/{z}/{x}/{y}.png`,
+      ),
       tileSize: 256,
       attribution: "© OpenStreetMap contributors © CARTO",
     },
   },
-  layers: [{ id: "carto", type: "raster", source: "carto" }],
-};
+  layers: [
+    { id: "bg", type: "background", paint: { "background-color": background } },
+    { id: "carto", type: "raster", source: "carto" },
+  ],
+});
 
 // MapLibre coords are [lng, lat] — the reverse of the artwork's { lat, lng }.
 const FALLBACK: [number, number] = [2.3522, 48.8566]; // Paris
@@ -72,6 +80,7 @@ export const ArtworkMap = ({
   style,
 }: ArtworkMapProps) => {
   const cameraRef = useRef<CameraRef>(null);
+  const { scheme, colors } = useTheme();
 
   // `useArtworks` flatMaps a fresh array each render, so we key the camera
   // effects off a stable id signature — fitting only when the *set* of pins
@@ -117,7 +126,7 @@ export const ArtworkMap = ({
   }, [selectedId]);
 
   return (
-    <MapView style={[styles.map, style]} mapStyle={DARK_STYLE}>
+    <MapView style={[styles.map, style]} mapStyle={basemapStyle(scheme, colors.bg)}>
       <Camera ref={cameraRef} initialViewState={initialViewState} />
       {artworks.map((artwork) => {
         const active = artwork.id === selectedId;
@@ -133,7 +142,7 @@ export const ArtworkMap = ({
                   name="MapPin"
                   size={active ? "xxl" : "lg"}
                   color="primary"
-                  fill={ColorEnum.primary}
+                  fill={colors.primary}
                   strokeWidth={1.5}
                 />
               </View>

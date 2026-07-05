@@ -30,7 +30,7 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
 
   const toggle = (tag: string) =>
     onChange(
-      value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag]
+      value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag],
     );
 
   const addDraft = () => {

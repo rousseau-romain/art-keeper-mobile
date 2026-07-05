@@ -1,12 +1,16 @@
 /**
- * The app's color palette — the former "gritty · dark" default, with values
- * ported from the prototype (promt/02-design-system.md). The one resolved set of
- * semantic color tokens; read them straight off `ColorEnum`, never hard-code a color.
+ * The app's color palettes — semantic tokens resolved per scheme. `DarkColorEnum`
+ * is the original "gritty · dark" set (values ported from the prototype,
+ * promt/02-design-system.md); `LightColorEnum` mirrors every key for the light
+ * scheme. Components never read a palette object directly: the active one is
+ * handed out as `colors` by `useTheme()` (see `@/theme/ThemeProvider`), and
+ * StyleSheets receive it through `useThemeStyles` factories.
  *
- * Modeled as an `as const` object (like the design scales in scale.enums.ts) so
- * the keys are a literal union (`ColorEnumType`) and the values stay plain hex strings.
+ * Modeled as `as const` objects (like the design scales in scale.enums.ts) so
+ * the keys are a literal union (`ColorEnumType`) and the values stay plain hex
+ * strings; `satisfies` enforces key parity between the two palettes.
  */
-export const ColorEnum = {
+export const DarkColorEnum = {
   transparent: "transparent",
   bg: "#0e0e0f",
   surface: "#19191b",
@@ -30,6 +34,36 @@ export const ColorEnum = {
   scrim: "rgba(14,14,15,0.72)",
 } as const;
 
-export type ColorEnumType = keyof typeof ColorEnum;
+export type ColorEnumType = keyof typeof DarkColorEnum;
 
-export type ColorEnumValue = (typeof ColorEnum)[ColorEnumType];
+export const LightColorEnum = {
+  transparent: "transparent",
+  bg: "#faf9f6",
+  surface: "#ffffff",
+  surface2: "#efede7",
+  text: "#17171a",
+  textSoft: "#55524b",
+  textMuted: "#8b8880",
+  border: "#d8d5cd",
+  borderSoft: "#e7e4dc",
+  primary: "#ff5b1f",
+  primaryInk: "#0e0e0f",
+  primarySoft: "#ffe6da",
+  successBg: "#e4f4ea",
+  success: "#1f8a4c",
+  dangerBg: "#fbe9e4",
+  danger: "#d43d1f",
+  info: "#2f6fd0",
+  infoBg: "#e7f0fc",
+  warn: "#a97b12",
+  warnBg: "#f8efd8",
+  scrim: "rgba(23,23,26,0.45)",
+} as const satisfies Record<ColorEnumType, string>;
+
+/** The resolved color values (hex strings) — what the palettes resolve to. */
+export type ColorEnumValue =
+  | (typeof DarkColorEnum)[ColorEnumType]
+  | (typeof LightColorEnum)[ColorEnumType];
+
+/** The active palette shape handed out by `useTheme()` / `useThemeStyles`. */
+export type Palette = Record<ColorEnumType, ColorEnumValue>;

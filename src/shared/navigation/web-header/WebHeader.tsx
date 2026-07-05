@@ -6,8 +6,10 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type WebHeaderProps = BottomTabBarProps;
 
@@ -26,11 +28,13 @@ export const WebHeader = ({
 }: WebHeaderProps) => {
   const router = useRouter();
   const { t: tr } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={styles.header}>
       <View style={styles.brand}>
-        <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
+        <Icon name="Star" size="xl" color="primary" fill={colors.primary} />
         <Text font="display" size="xl">
           ArtKeeper
         </Text>
@@ -88,19 +92,20 @@ export const WebHeader = ({
   );
 };
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: SpacingEnum.xl,
-    paddingVertical: SpacingEnum.lg,
-    backgroundColor: ColorEnum.surface,
-    borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.borderSoft,
-  },
-  brand: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-  right: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xl },
-  links: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xl },
-  link: { paddingVertical: SpacingEnum.xs },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: SpacingEnum.xl,
+      paddingVertical: SpacingEnum.lg,
+      backgroundColor: c.surface,
+      borderBottomWidth: 1.5,
+      borderBottomColor: c.borderSoft,
+    },
+    brand: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+    right: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xl },
+    links: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xl },
+    link: { paddingVertical: SpacingEnum.xs },
+  });

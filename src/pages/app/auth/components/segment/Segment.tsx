@@ -1,32 +1,35 @@
 import { Pressable, type PressableProps, StyleSheet } from "react-native";
 
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type SegmentProps = PressableProps & {
   label: string;
   active: boolean;
 };
 
-export const Segment = ({ label, active, ...rest }: SegmentProps) => (
-  <Pressable
-    {...rest}
-    style={[
-      styles.segment,
-      { backgroundColor: active ? ColorEnum.primary : ColorEnum.transparent },
-    ]}
-  >
-    <Text
-      font="body"
-      size="md"
-      color={active ? "primaryInk" : "textSoft"}
-      style={styles.segmentLabel}
+export const Segment = ({ label, active, ...rest }: SegmentProps) => {
+  const { colors } = useTheme();
+  return (
+    <Pressable
+      {...rest}
+      style={[
+        styles.segment,
+        { backgroundColor: active ? colors.primary : colors.transparent },
+      ]}
     >
-      {label}
-    </Text>
-  </Pressable>
-);
+      <Text
+        font="body"
+        size="md"
+        color={active ? "primaryInk" : "textSoft"}
+        style={styles.segmentLabel}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   segment: {

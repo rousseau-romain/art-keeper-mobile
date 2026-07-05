@@ -14,12 +14,14 @@ import { Button } from "@/shared/ui/button/Button";
 import { Icon, type IconName } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type LockScreenProps = Record<string, never>;
 
@@ -42,6 +44,8 @@ export const LockScreen = () => {
   const insets = useSafeAreaInsets();
   const haptic = useHaptics();
   const { unlock, signOut } = useAuth();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   const [kind, setKind] = useState<BiometricKind>("biometric");
   const [pending, setPending] = useState(false);
@@ -76,7 +80,7 @@ export const LockScreen = () => {
 
       <View style={styles.center}>
         <View style={styles.brand}>
-          <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
+          <Icon name="Star" size="xl" color="primary" fill={colors.primary} />
           <Text font="display" size="xl" style={styles.brandText}>
             ArtKeeper
           </Text>
@@ -119,35 +123,36 @@ export const LockScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: ColorEnum.bg,
-    paddingHorizontal: SpacingEnum.xl,
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: SpacingEnum.md,
-  },
-  brand: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SpacingEnum.sm,
-    marginBottom: SpacingEnum.xxl,
-  },
-  brandText: { letterSpacing: 0.5 },
-  lockIcon: {
-    width: ControlHeightEnum.lg,
-    height: ControlHeightEnum.lg,
-    borderRadius: RadiusEnum.full,
-    backgroundColor: ColorEnum.surface,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: SpacingEnum.sm,
-  },
-  title: { textAlign: "center" },
-  subtitle: { textAlign: "center" },
-  actions: { gap: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: c.bg,
+      paddingHorizontal: SpacingEnum.xl,
+    },
+    center: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: SpacingEnum.md,
+    },
+    brand: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SpacingEnum.sm,
+      marginBottom: SpacingEnum.xxl,
+    },
+    brandText: { letterSpacing: 0.5 },
+    lockIcon: {
+      width: ControlHeightEnum.lg,
+      height: ControlHeightEnum.lg,
+      borderRadius: RadiusEnum.full,
+      backgroundColor: c.surface,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: SpacingEnum.sm,
+    },
+    title: { textAlign: "center" },
+    subtitle: { textAlign: "center" },
+    actions: { gap: SpacingEnum.sm },
+  });

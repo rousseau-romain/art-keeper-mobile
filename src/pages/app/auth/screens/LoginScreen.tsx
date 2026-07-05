@@ -21,13 +21,15 @@ import { Icon } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 type Mode = "sign-in" | "create";
 
@@ -36,8 +38,8 @@ type Mode = "sign-in" | "create";
 // `__DEV__` guards them out of release builds anyway).
 const DEFAULT_VALUES: LoginValues = {
   name: "",
-  email: __DEV__ ? process.env.EXPO_PUBLIC_DEV_EMAIL ?? "" : "",
-  password: __DEV__ ? process.env.EXPO_PUBLIC_DEV_PASSWORD ?? "" : "",
+  email: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_EMAIL ?? "") : "",
+  password: __DEV__ ? (process.env.EXPO_PUBLIC_DEV_PASSWORD ?? "") : "",
 };
 
 export const LoginScreen = () => {
@@ -45,6 +47,8 @@ export const LoginScreen = () => {
   const { wide } = useBreakpoint();
   const insets = useSafeAreaInsets();
   const { show } = useToast();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   const [mode, setMode] = useState<Mode>("sign-in");
 
@@ -70,7 +74,7 @@ export const LoginScreen = () => {
 
   const brand = (
     <View style={styles.brand}>
-      <Icon name="Star" size="xl" color="primary" fill={ColorEnum.primary} />
+      <Icon name="Star" size="xl" color="primary" fill={colors.primary} />
       <Text font="display" size="xl" style={styles.brandText}>
         ArtKeeper
       </Text>
@@ -223,8 +227,8 @@ export const LoginScreen = () => {
               ? tr("auth.switchToSignIn")
               : tr("auth.switchToCreate")
             : isCreate
-            ? tr("auth.footerHaveAccount")
-            : tr("auth.footerNewHere")}
+              ? tr("auth.footerHaveAccount")
+              : tr("auth.footerNewHere")}
         </Text>
       </Pressable>
     </View>
@@ -255,87 +259,88 @@ export const LoginScreen = () => {
   );
 };
 
-// All static values (layout + ColorEnum/FONTS). Only prop/state-driven values
-// (insets, `wide`, `active`) and display/body/mono calls stay inline above.
-const styles = StyleSheet.create({
-  flex1: { flex: 1 },
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  row: { flexDirection: "row" },
-  col: { flexDirection: "column" },
-  dividerLine: { flex: 1, height: 1.5, backgroundColor: ColorEnum.borderSoft },
-  verifyIcon: {
-    width: ControlHeightEnum.md,
-    height: ControlHeightEnum.md,
-    borderRadius: RadiusEnum.sm,
-    borderWidth: 1.5,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: ColorEnum.surface2,
-    borderColor: ColorEnum.borderSoft,
-  },
-  verifyTitle: { textTransform: "uppercase" },
-  verifyText: { lineHeight: 21 },
-  verifyEmail: { fontWeight: "600" },
-  hero: { backgroundColor: ColorEnum.surface2 },
-  heroWide: {
-    flex: 1,
-    overflow: "hidden",
-    padding: SpacingEnum.md,
-    justifyContent: "center",
-    borderRightWidth: 1,
-    borderRightColor: ColorEnum.border,
-  },
-  heroContentWide: { position: "relative" },
-  scrim: { backgroundColor: ColorEnum.scrim },
-  heroNarrow: {
-    paddingBottom: SpacingEnum.xxl,
-    paddingHorizontal: SpacingEnum.xl,
-    borderBottomWidth: 1.5,
-    borderBottomColor: ColorEnum.border,
-  },
-  heroHeading: { marginTop: SpacingEnum.lg, textTransform: "uppercase" },
-  formScrollWide: { flexGrow: 0, flexShrink: 0, alignSelf: "center" },
-  scrollContentWide: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: SpacingEnum.xl,
-  },
-  formWide: {
-    width: "100%",
-    maxWidth: 440,
-    alignSelf: "center",
-    gap: SpacingEnum.lg,
-  },
-  formNarrow: { padding: SpacingEnum.xl, gap: SpacingEnum.lg },
-  brand: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.md },
-  brandText: { textTransform: "uppercase" },
-  heroBrandWrap: { marginBottom: SpacingEnum.xl },
-  heroHeadingWide: { lineHeight: 56 },
-  heroHeadingNarrow: { lineHeight: 36 },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SpacingEnum.md,
-    marginVertical: SpacingEnum.xs,
-  },
-  verify: { gap: SpacingEnum.lg, alignItems: "flex-start" },
-  spacer: { height: SpacingEnum.xs },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: SpacingEnum.sm,
-  },
-  footerCol: {
-    alignItems: "center",
-    gap: SpacingEnum.md,
-    marginTop: SpacingEnum.sm,
-  },
-  toggle: {
-    flexDirection: "row",
-    borderWidth: 1.5,
-    borderRadius: RadiusEnum.sm,
-    padding: SpacingEnum.xs,
-    backgroundColor: ColorEnum.surface2,
-    borderColor: ColorEnum.borderSoft,
-  },
-});
+// All theme-independent values (layout + scales) plus the palette colors live
+// here; only prop/state-driven values (insets, `wide`, `active`) stay inline.
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    flex1: { flex: 1 },
+    screen: { flex: 1, backgroundColor: c.bg },
+    row: { flexDirection: "row" },
+    col: { flexDirection: "column" },
+    dividerLine: { flex: 1, height: 1.5, backgroundColor: c.borderSoft },
+    verifyIcon: {
+      width: ControlHeightEnum.md,
+      height: ControlHeightEnum.md,
+      borderRadius: RadiusEnum.sm,
+      borderWidth: 1.5,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: c.surface2,
+      borderColor: c.borderSoft,
+    },
+    verifyTitle: { textTransform: "uppercase" },
+    verifyText: { lineHeight: 21 },
+    verifyEmail: { fontWeight: "600" },
+    hero: { backgroundColor: c.surface2 },
+    heroWide: {
+      flex: 1,
+      overflow: "hidden",
+      padding: SpacingEnum.md,
+      justifyContent: "center",
+      borderRightWidth: 1,
+      borderRightColor: c.border,
+    },
+    heroContentWide: { position: "relative" },
+    scrim: { backgroundColor: c.scrim },
+    heroNarrow: {
+      paddingBottom: SpacingEnum.xxl,
+      paddingHorizontal: SpacingEnum.xl,
+      borderBottomWidth: 1.5,
+      borderBottomColor: c.border,
+    },
+    heroHeading: { marginTop: SpacingEnum.lg, textTransform: "uppercase" },
+    formScrollWide: { flexGrow: 0, flexShrink: 0, alignSelf: "center" },
+    scrollContentWide: {
+      flexGrow: 1,
+      justifyContent: "center",
+      padding: SpacingEnum.xl,
+    },
+    formWide: {
+      width: "100%",
+      maxWidth: 440,
+      alignSelf: "center",
+      gap: SpacingEnum.lg,
+    },
+    formNarrow: { padding: SpacingEnum.xl, gap: SpacingEnum.lg },
+    brand: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.md },
+    brandText: { textTransform: "uppercase" },
+    heroBrandWrap: { marginBottom: SpacingEnum.xl },
+    heroHeadingWide: { lineHeight: 56 },
+    heroHeadingNarrow: { lineHeight: 36 },
+    divider: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SpacingEnum.md,
+      marginVertical: SpacingEnum.xs,
+    },
+    verify: { gap: SpacingEnum.lg, alignItems: "flex-start" },
+    spacer: { height: SpacingEnum.xs },
+    footerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: SpacingEnum.sm,
+    },
+    footerCol: {
+      alignItems: "center",
+      gap: SpacingEnum.md,
+      marginTop: SpacingEnum.sm,
+    },
+    toggle: {
+      flexDirection: "row",
+      borderWidth: 1.5,
+      borderRadius: RadiusEnum.sm,
+      padding: SpacingEnum.xs,
+      backgroundColor: c.surface2,
+      borderColor: c.borderSoft,
+    },
+  });

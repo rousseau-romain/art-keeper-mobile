@@ -6,12 +6,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
   RadiusEnum,
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type SuccessStepProps = {
   slug?: string;
@@ -23,6 +24,7 @@ export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View
@@ -73,29 +75,34 @@ export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  success: {
-    flex: 1,
-    alignItems: "center",
-    gap: SpacingEnum.lg,
-    paddingHorizontal: SpacingEnum.xl,
-  },
-  icon: {
-    width: ControlHeightEnum.md,
-    height: ControlHeightEnum.md,
-    borderRadius: RadiusEnum.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: ColorEnum.primary,
-  },
-  title: { textTransform: "uppercase" },
-  body: { textAlign: "center" },
-  statusPill: {
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.xs,
-    borderRadius: RadiusEnum.sm,
-    backgroundColor: ColorEnum.surface2,
-  },
-  actions: { alignSelf: "stretch", gap: SpacingEnum.md, alignItems: "center" },
-  backLink: { paddingVertical: SpacingEnum.sm },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    success: {
+      flex: 1,
+      alignItems: "center",
+      gap: SpacingEnum.lg,
+      paddingHorizontal: SpacingEnum.xl,
+    },
+    icon: {
+      width: ControlHeightEnum.md,
+      height: ControlHeightEnum.md,
+      borderRadius: RadiusEnum.full,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: c.primary,
+    },
+    title: { textTransform: "uppercase" },
+    body: { textAlign: "center" },
+    statusPill: {
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.xs,
+      borderRadius: RadiusEnum.sm,
+      backgroundColor: c.surface2,
+    },
+    actions: {
+      alignSelf: "stretch",
+      gap: SpacingEnum.md,
+      alignItems: "center",
+    },
+    backLink: { paddingVertical: SpacingEnum.sm },
+  });

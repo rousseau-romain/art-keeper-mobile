@@ -9,8 +9,9 @@ import { PhotoStep } from "@/pages/app/artwork/components/wizard-step-photo/Phot
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useNewArtwork } from "@/pages/app/artwork/new-artwork-context";
 import { Seo } from "@/shared/ui/seo/Seo";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 1 — pick the photo; restored-draft banner lives here, on the first step. */
 export const PhotoStepScreen = () => {
@@ -19,6 +20,7 @@ export const PhotoStepScreen = () => {
   const { control } = useFormContext<ArtworkValues>();
   const { restored, discardDraft } = useNewArtwork();
   const photo = useWatch({ control, name: "photo" });
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={styles.screen}>
@@ -44,8 +46,9 @@ export const PhotoStepScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: ColorEnum.bg },
-  scrollView: { flex: 1 },
-  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    screen: { flex: 1, backgroundColor: c.bg },
+    scrollView: { flex: 1 },
+    scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
+  });

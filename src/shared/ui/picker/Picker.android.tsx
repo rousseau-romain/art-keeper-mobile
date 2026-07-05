@@ -9,7 +9,10 @@ import { useState } from "react";
 
 import type { PickerProps } from "@/shared/ui/picker/picker.types";
 
-export type { PickerOption, PickerProps } from "@/shared/ui/picker/picker.types";
+export type {
+  PickerOption,
+  PickerProps,
+} from "@/shared/ui/picker/picker.types";
 
 /**
  * Android variant of {@link Picker}. The universal `@expo/ui` picker anchors on

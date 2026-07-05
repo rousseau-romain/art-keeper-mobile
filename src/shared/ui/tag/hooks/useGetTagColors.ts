@@ -1,4 +1,5 @@
-import { ColorEnum, type ColorEnumValue } from "@/theme/enums/color.enums";
+import type { ColorEnumValue } from "@/theme/enums/color.enums";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export type TagState = "active" | "muted" | "solid";
 
@@ -13,24 +14,25 @@ type TagColors = {
 
 /** Resolve a tag's background + foreground + border from its state. */
 export const useGetTagColors = (state: TagState): TagColors => {
+  const { colors } = useTheme();
   switch (state) {
     case "solid":
       return {
-        bg: ColorEnum.primary,
-        fg: ColorEnum.primaryInk,
-        borderColor: ColorEnum.borderSoft,
+        bg: colors.primary,
+        fg: colors.primaryInk,
+        borderColor: colors.borderSoft,
       };
     case "active":
       return {
-        bg: ColorEnum.primarySoft,
-        fg: ColorEnum.primary,
-        borderColor: ColorEnum.primary,
+        bg: colors.primarySoft,
+        fg: colors.primary,
+        borderColor: colors.primary,
       };
     default:
       return {
-        bg: ColorEnum.surface2,
-        fg: ColorEnum.textSoft,
-        borderColor: ColorEnum.borderSoft,
+        bg: colors.surface2,
+        fg: colors.textSoft,
+        borderColor: colors.borderSoft,
       };
   }
 };

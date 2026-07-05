@@ -2,8 +2,10 @@ import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, View, type ViewProps } from "react-native";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 /** Which face of the browse screen is showing — the map or the card grid. */
 export type ArtworkView = "map" | "grid";
@@ -21,6 +23,8 @@ export const ViewToggle = ({
   ...rest
 }: ViewToggleProps) => {
   const { t: tr } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemeStyles(createStyles);
 
   return (
     <View style={[styles.group, style]} {...rest}>
@@ -33,7 +37,7 @@ export const ViewToggle = ({
           styles.segment,
           {
             backgroundColor:
-              view === "map" ? ColorEnum.primary : ColorEnum.transparent,
+              view === "map" ? colors.primary : colors.transparent,
           },
         ]}
       >
@@ -59,7 +63,7 @@ export const ViewToggle = ({
           styles.segment,
           {
             backgroundColor:
-              view === "grid" ? ColorEnum.primary : ColorEnum.transparent,
+              view === "grid" ? colors.primary : colors.transparent,
           },
         ]}
       >
@@ -80,20 +84,21 @@ export const ViewToggle = ({
   );
 };
 
-const styles = StyleSheet.create({
-  group: {
-    flexDirection: "row",
-    borderWidth: 1.5,
-    borderColor: ColorEnum.borderSoft,
-    borderRadius: RadiusEnum.sm,
-    backgroundColor: ColorEnum.surface,
-    overflow: "hidden",
-  },
-  segment: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SpacingEnum.xs,
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    group: {
+      flexDirection: "row",
+      borderWidth: 1.5,
+      borderColor: c.borderSoft,
+      borderRadius: RadiusEnum.sm,
+      backgroundColor: c.surface,
+      overflow: "hidden",
+    },
+    segment: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SpacingEnum.xs,
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+    },
+  });

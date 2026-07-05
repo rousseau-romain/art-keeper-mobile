@@ -13,8 +13,9 @@ import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 // Widened view of the preset tuple so `.includes(aString)` type-checks.
 const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
@@ -51,6 +52,7 @@ export const FilterFormSheetScreen = () => {
   } = useArtworkFilters();
   const { applied: appliedLabel } = useFilterLabel(count);
   const [draft, setDraft] = useState("");
+  const styles = useThemeStyles(createStyles);
 
   // Custom tags = active filters that aren't preset chips; shown after the
   // presets so a free-form filter stays visible and removable (tap to remove).
@@ -168,26 +170,27 @@ export const FilterFormSheetScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  sheet: {
-    backgroundColor: ColorEnum.bg,
-    paddingTop: SpacingEnum.xl,
-    paddingHorizontal: SpacingEnum.xl,
-    gap: SpacingEnum.lg,
-    flex: 1,
-  },
-  header: { gap: SpacingEnum.xs },
-  title: { textTransform: "uppercase" },
-  section: { gap: SpacingEnum.sm },
-  label: { textTransform: "uppercase" },
-  tags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: SpacingEnum.sm,
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    sheet: {
+      backgroundColor: c.bg,
+      paddingTop: SpacingEnum.xl,
+      paddingHorizontal: SpacingEnum.xl,
+      gap: SpacingEnum.lg,
+      flex: 1,
+    },
+    header: { gap: SpacingEnum.xs },
+    title: { textTransform: "uppercase" },
+    section: { gap: SpacingEnum.sm },
+    label: { textTransform: "uppercase" },
+    tags: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: SpacingEnum.sm,
+    },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+  });

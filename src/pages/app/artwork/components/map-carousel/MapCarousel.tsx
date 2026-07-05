@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { ScrollView, type ScrollViewProps, StyleSheet } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { ControlHeightEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type MapCarouselProps = ScrollViewProps & {
   artworks: Artwork[];
@@ -19,6 +20,7 @@ const STRIDE = THUMB + SpacingEnum.md;
 export const MapCarousel = ({ artworks, selectedId }: MapCarouselProps) => {
   const scrollRef = useRef<ScrollView>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
+  const styles = useThemeStyles(createStyles);
 
   // Center the selected thumb when the selection changes — e.g. tapping its pin
   // on the map. Keyed by id, not the artwork object, so an unrelated re-render
@@ -51,12 +53,13 @@ export const MapCarousel = ({ artworks, selectedId }: MapCarouselProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  strip: {
-    backgroundColor: ColorEnum.bg,
-    borderTopWidth: 1.5,
-    borderTopColor: ColorEnum.borderSoft,
-    gap: SpacingEnum.md,
-    padding: SpacingEnum.sm,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    strip: {
+      backgroundColor: c.bg,
+      borderTopWidth: 1.5,
+      borderTopColor: c.borderSoft,
+      gap: SpacingEnum.md,
+      padding: SpacingEnum.sm,
+    },
+  });

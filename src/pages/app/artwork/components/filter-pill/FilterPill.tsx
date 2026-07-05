@@ -3,8 +3,9 @@ import { Pressable, type PressableProps, StyleSheet } from "react-native";
 import { useFilterLabel } from "@/pages/app/artwork/hooks/useFilterLabel";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type FilterPillProps = PressableProps & {
   /** Number of active filters; drives the label (count vs. "Filters"). */
@@ -25,6 +26,7 @@ export const FilterPill = ({
 }: FilterPillProps) => {
   const { t: tr } = useTranslation();
   const { label } = useFilterLabel(count);
+  const styles = useThemeStyles(createStyles);
   return (
     <Pressable
       onPress={onPress}
@@ -44,17 +46,18 @@ export const FilterPill = ({
   );
 };
 
-const styles = StyleSheet.create({
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-    gap: SpacingEnum.sm,
-    paddingHorizontal: SpacingEnum.md,
-    paddingVertical: SpacingEnum.sm,
-    borderWidth: 1.5,
-    borderColor: ColorEnum.borderSoft,
-    borderRadius: RadiusEnum.full,
-    backgroundColor: ColorEnum.surface,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    pill: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      gap: SpacingEnum.sm,
+      paddingHorizontal: SpacingEnum.md,
+      paddingVertical: SpacingEnum.sm,
+      borderWidth: 1.5,
+      borderColor: c.borderSoft,
+      borderRadius: RadiusEnum.full,
+      backgroundColor: c.surface,
+    },
+  });

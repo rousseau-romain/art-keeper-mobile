@@ -2,7 +2,8 @@ import { Image } from "expo-image";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Platform, StyleSheet, View } from "react-native";
 import { useArtworks } from "@/lib/api/artworks";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type HeroGridProps = Record<string, never>;
 
@@ -17,6 +18,7 @@ const SCROLL_SPEED = 20;
 
 export const HeroGrid = () => {
   const { artworks } = useArtworks();
+  const styles = useThemeStyles(createStyles);
   const translateY = useRef(new Animated.Value(0)).current;
   const [copyHeight, setCopyHeight] = useState(0);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
@@ -93,13 +95,14 @@ export const HeroGrid = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  viewport: { overflow: "hidden" },
-  copy: { flexDirection: "row", flexWrap: "wrap" },
-  tile: {
-    width: "33.333%",
-    aspectRatio: 1,
-    backgroundColor: ColorEnum.surface2,
-  },
-  image: { width: "100%", height: "100%" },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    viewport: { overflow: "hidden" },
+    copy: { flexDirection: "row", flexWrap: "wrap" },
+    tile: {
+      width: "33.333%",
+      aspectRatio: 1,
+      backgroundColor: c.surface2,
+    },
+    image: { width: "100%", height: "100%" },
+  });

@@ -41,7 +41,10 @@ export default function Layout() {
             options={{
               title: tr("artwork.new.title.index"),
               headerTitle: () => (
-                <WizardHeader step={STEP_BY_ROUTE.index} total={DISPLAY_TOTAL} />
+                <WizardHeader
+                  step={STEP_BY_ROUTE.index}
+                  total={DISPLAY_TOTAL}
+                />
               ),
             }}
           />

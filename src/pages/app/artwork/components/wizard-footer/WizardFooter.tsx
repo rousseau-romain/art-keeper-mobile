@@ -2,8 +2,9 @@ import { StyleSheet, View } from "react-native";
 
 import { type HapticName, useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
-import { ColorEnum } from "@/theme/enums/color.enums";
+import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
+import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type WizardFooterProps = {
   label: string;
@@ -28,6 +29,7 @@ export const WizardFooter = ({
   onPress,
 }: WizardFooterProps) => {
   const trigger = useHaptics();
+  const styles = useThemeStyles(createStyles);
   const onPressWithHaptic = () => {
     if (haptic) trigger(haptic);
     onPress();
@@ -47,12 +49,13 @@ export const WizardFooter = ({
   );
 };
 
-const styles = StyleSheet.create({
-  footer: {
-    paddingHorizontal: SpacingEnum.xl,
-    paddingVertical: SpacingEnum.md,
-    borderTopWidth: 1.5,
-    borderTopColor: ColorEnum.borderSoft,
-    backgroundColor: ColorEnum.bg,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    footer: {
+      paddingHorizontal: SpacingEnum.xl,
+      paddingVertical: SpacingEnum.md,
+      borderTopWidth: 1.5,
+      borderTopColor: c.borderSoft,
+      backgroundColor: c.bg,
+    },
+  });
