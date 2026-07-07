@@ -142,7 +142,7 @@ export const getArtworksChangesQueryKey = (options?: Options<GetArtworksChangesD
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artworks, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artworks, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtworksChangesOptions = (options?: Options<GetArtworksChangesData>) => queryOptions<GetArtworksChangesResponse, GetArtworksChangesError, GetArtworksChangesResponse, ReturnType<typeof getArtworksChangesQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -162,7 +162,7 @@ export const getArtworksChangesInfiniteQueryKey = (options?: Options<GetArtworks
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artworks, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artworks, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtworksChangesInfiniteOptions = (options?: Options<GetArtworksChangesData>) => infiniteQueryOptions<GetArtworksChangesResponse, GetArtworksChangesError, InfiniteData<GetArtworksChangesResponse>, QueryKey<Options<GetArtworksChangesData>>, string | Pick<QueryKey<Options<GetArtworksChangesData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore
@@ -189,7 +189,7 @@ export const getArtworksChangesInfiniteOptions = (options?: Options<GetArtworksC
 /**
  * Review a change proposal
  *
- * Approve or reject a pending change proposal. Admin only. Approving applies the still-relevant fields to the artwork and records old + new values in its history; a title that collides with another artwork's slug returns 409, and a proposed artist that no longer exists returns 400. Rejecting discards the proposal (its uploaded image is deleted from storage). Reviewing a proposal twice returns 409.
+ * Approve or reject a pending change proposal. Admin or reviewer only. Approving applies the still-relevant fields to the artwork and records old + new values in its history; a title that collides with another artwork's slug returns 409, and a proposed artist that no longer exists returns 400. Rejecting discards the proposal (its uploaded image is deleted from storage). Reviewing a proposal twice returns 409.
  */
 export const patchArtworksByIdChangesByChangeIdMutation = (options?: Partial<Options<PatchArtworksByIdChangesByChangeIdData>>): UseMutationOptions<PatchArtworksByIdChangesByChangeIdResponse, PatchArtworksByIdChangesByChangeIdError, Options<PatchArtworksByIdChangesByChangeIdData>> => {
     const mutationOptions: UseMutationOptions<PatchArtworksByIdChangesByChangeIdResponse, PatchArtworksByIdChangesByChangeIdError, Options<PatchArtworksByIdChangesByChangeIdData>> = {
@@ -511,7 +511,7 @@ export const getArtistsChangesQueryKey = (options?: Options<GetArtistsChangesDat
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artists, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artists, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtistsChangesOptions = (options?: Options<GetArtistsChangesData>) => queryOptions<GetArtistsChangesResponse, GetArtistsChangesError, GetArtistsChangesResponse, ReturnType<typeof getArtistsChangesQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -531,7 +531,7 @@ export const getArtistsChangesInfiniteQueryKey = (options?: Options<GetArtistsCh
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artists, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artists, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtistsChangesInfiniteOptions = (options?: Options<GetArtistsChangesData>) => infiniteQueryOptions<GetArtistsChangesResponse, GetArtistsChangesError, InfiniteData<GetArtistsChangesResponse>, QueryKey<Options<GetArtistsChangesData>>, string | Pick<QueryKey<Options<GetArtistsChangesData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore
@@ -558,7 +558,7 @@ export const getArtistsChangesInfiniteOptions = (options?: Options<GetArtistsCha
 /**
  * Review a change proposal
  *
- * Approve or reject a pending change proposal. Admin only. Approving applies the still-relevant fields to the artist and records old + new values in its history; a name that collides with another artist's slug returns 409. Rejecting discards the proposal (its uploaded avatar is deleted from storage). Reviewing a proposal twice returns 409.
+ * Approve or reject a pending change proposal. Admin or reviewer only. Approving applies the still-relevant fields to the artist and records old + new values in its history; a name that collides with another artist's slug returns 409. Rejecting discards the proposal (its uploaded avatar is deleted from storage). Reviewing a proposal twice returns 409.
  */
 export const patchArtistsByIdChangesByChangeIdMutation = (options?: Partial<Options<PatchArtistsByIdChangesByChangeIdData>>): UseMutationOptions<PatchArtistsByIdChangesByChangeIdResponse, PatchArtistsByIdChangesByChangeIdError, Options<PatchArtistsByIdChangesByChangeIdData>> => {
     const mutationOptions: UseMutationOptions<PatchArtistsByIdChangesByChangeIdResponse, PatchArtistsByIdChangesByChangeIdError, Options<PatchArtistsByIdChangesByChangeIdData>> = {

@@ -2,6 +2,7 @@ import { Redirect, Tabs } from "expo-router";
 import {
   Map as MapIcon,
   Plus as PlusIcon,
+  Shield as ShieldIcon,
   Vibrate as VibrateIcon,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -18,7 +19,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 
 export default function TabsLayout() {
   const { t: tr } = useTranslation();
-  const { status } = useAuth();
+  const { status, isReviewer, isAdmin } = useAuth();
   const insets = useSafeAreaInsets();
   const { wide } = useBreakpoint();
   const { colors } = useTheme();
@@ -66,6 +67,18 @@ export default function TabsLayout() {
           title: tr("artwork.createTab"),
           tabBarIcon: ({ color, size }) => (
             <PlusIcon size={size} color={color} strokeWidth={1.8} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="admin"
+        options={{
+          // Reviewer/admin-only moderation queue — `href: null` hides the tab
+          // (and its route) from everyone else, mirroring the dev-tab pattern.
+          href: isReviewer || isAdmin ? undefined : null,
+          title: tr("moderation.tab"),
+          tabBarIcon: ({ color, size }) => (
+            <ShieldIcon size={size} color={color} strokeWidth={1.8} />
           ),
         }}
       />

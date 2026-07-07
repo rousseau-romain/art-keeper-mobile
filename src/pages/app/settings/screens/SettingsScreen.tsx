@@ -16,6 +16,8 @@ import { useLocale } from "@/lib/i18n/I18nProvider";
 import { type Language, SUPPORTED_LANGUAGES } from "@/lib/i18n/index";
 import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
 import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
+import { ReviewModePicker } from "@/pages/app/moderation/components/review-mode-picker/ReviewModePicker";
+import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { SectionTitle } from "@/pages/app/settings/components/section-title/SectionTitle";
 import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingRow";
 import { Button } from "@/shared/ui/button/Button";
@@ -78,8 +80,10 @@ export const SettingsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { biometricEnabled, setBiometricEnabled, signOut } = useAuth();
+  const { biometricEnabled, setBiometricEnabled, signOut, isReviewer, isAdmin } =
+    useAuth();
   const { source, setSource } = useTagSource();
+  const { reviewMode, setReviewMode } = useReviewMode();
   const { language, setLanguage } = useLocale();
   const { mode, setMode, colors } = useTheme();
   const styles = useThemeStyles(createStyles);
@@ -199,6 +203,29 @@ export const SettingsScreen = () => {
         },
       ],
     },
+    // The review-mode preference only matters to someone who sees the moderation
+    // queue — hide the section from regular users, like the Admin tab itself.
+    ...(isReviewer || isAdmin
+      ? [
+          {
+            key: "moderation",
+            title: tr("settings.moderation"),
+            rows: [
+              {
+                key: "reviewMode",
+                label: tr("settings.reviewModeLabel"),
+                hint: tr("settings.reviewModeHint"),
+                control: (
+                  <ReviewModePicker
+                    value={reviewMode}
+                    onChange={setReviewMode}
+                  />
+                ),
+              },
+            ],
+          },
+        ]
+      : []),
   ];
 
   return (

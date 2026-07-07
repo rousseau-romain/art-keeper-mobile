@@ -1,6 +1,5 @@
 import "leaflet/dist/leaflet.css";
 
-import L from "leaflet";
 import { useEffect } from "react";
 import {
   MapContainer,
@@ -9,6 +8,13 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+
+import {
+  OSM_TILE_ATTRIBUTION,
+  OSM_TILE_URL,
+} from "@/shared/map/osm-style.constant";
+import { mapDotIcon } from "@/shared/map/pin-icon";
+import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
 
 // Paris fallback when no pin has been set yet — mirrors LocationStep (native).
 const FALLBACK = { latitude: 48.8566, longitude: 2.3522 };
@@ -22,18 +28,7 @@ type WebMapProps = {
   onPick: (latitude: number, longitude: number) => void;
 };
 
-// A simple accent dot instead of Leaflet's default PNG marker — avoids the
-// well-known bundler issue with leaflet's image assets and matches the app pin.
-const pinIcon = (accent: string) =>
-  L.divIcon({
-    className: "",
-    html: `<div style="width:18px;height:18px;border-radius:50%;background:${accent};border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)"></div>`,
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
-  });
-
-// Recenters the map when the pin moves (EXIF auto-pin, "use my location") and
-// fixes Leaflet's initial 0-height race inside a flex container.
+// Recenters the map when the pin moves (EXIF auto-pin, "use my location").
 const MapController = ({
   latitude,
   longitude,
@@ -42,23 +37,7 @@ const MapController = ({
   longitude?: number | null;
 }) => {
   const map = useMap();
-
-  useEffect(() => {
-    // Leaflet maps the click point against the container's measured size. Inside
-    // a flex parent the map often mounts at 0-height, so without re-measuring,
-    // clicks are ignored or land at the wrong lat/lng. Re-measure on mount, on a
-    // couple of delayed ticks, and on every container resize.
-    map.invalidateSize();
-    const t1 = setTimeout(() => map.invalidateSize(), 150);
-    const t2 = setTimeout(() => map.invalidateSize(), 500);
-    const ro = new ResizeObserver(() => map.invalidateSize());
-    ro.observe(map.getContainer());
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      ro.disconnect();
-    };
-  }, [map]);
+  useLeafletAutosize(map);
 
   useEffect(() => {
     if (latitude != null && longitude != null) {
@@ -94,16 +73,13 @@ const WebMap = ({ latitude, longitude, accent, onPick }: WebMapProps) => {
       zoom={ZOOM}
       style={{ height: "100%", width: "100%" }}
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+      <TileLayer attribution={OSM_TILE_ATTRIBUTION} url={OSM_TILE_URL} />
       <ClickToPick onPick={onPick} />
       <MapController latitude={latitude} longitude={longitude} />
       {hasPin && (
         <Marker
           position={[latitude, longitude]}
-          icon={pinIcon(accent)}
+          icon={mapDotIcon(accent)}
           draggable
           eventHandlers={{
             dragend: (e) => {

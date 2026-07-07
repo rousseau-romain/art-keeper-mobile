@@ -55,6 +55,8 @@ type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
   isAdmin: boolean;
+  /** True when the user can moderate — carries the `reviewer` role. */
+  isReviewer: boolean;
   /** True when a session exists but the user hasn't passed the biometric gate. */
   locked: boolean;
   /** Prompt for biometrics; on success clears `locked`. Resolves the outcome. */
@@ -368,6 +370,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       status,
       user,
       isAdmin: user?.role === "admin",
+      isReviewer: user?.role === "reviewer",
       locked,
       unlock,
       biometricEnabled,

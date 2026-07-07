@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { SearchScope } from "@/lib/api/artworks";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
@@ -13,9 +12,8 @@ import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperFormSheet } from "@/shared/ui/wrapper-form-sheet/WrapperFormSheet";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 // Widened view of the preset tuple so `.includes(aString)` type-checks.
 const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
@@ -37,7 +35,6 @@ const SEARCH_SCOPES = [
 export const FilterFormSheetScreen = () => {
   const { t: tr } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const haptic = useHaptics();
   const {
     selectedTags,
@@ -52,7 +49,6 @@ export const FilterFormSheetScreen = () => {
   } = useArtworkFilters();
   const { applied: appliedLabel } = useFilterLabel(count);
   const [draft, setDraft] = useState("");
-  const styles = useThemeStyles(createStyles);
 
   // Custom tags = active filters that aren't preset chips; shown after the
   // presets so a free-form filter stays visible and removable (tap to remove).
@@ -68,9 +64,7 @@ export const FilterFormSheetScreen = () => {
   };
 
   return (
-    <View
-      style={[styles.sheet, { paddingBottom: insets.bottom + SpacingEnum.xl }]}
-    >
+    <WrapperFormSheet>
       <View style={styles.header}>
         <Text font="display" size="xl" style={styles.title}>
           {tr("artwork.filters.title")}
@@ -166,31 +160,23 @@ export const FilterFormSheetScreen = () => {
           onPress={() => router.back()}
         />
       </View>
-    </View>
+    </WrapperFormSheet>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    sheet: {
-      backgroundColor: c.bg,
-      paddingTop: SpacingEnum.xl,
-      paddingHorizontal: SpacingEnum.xl,
-      gap: SpacingEnum.lg,
-      flex: 1,
-    },
-    header: { gap: SpacingEnum.xs },
-    title: { textTransform: "uppercase" },
-    section: { gap: SpacingEnum.sm },
-    label: { textTransform: "uppercase" },
-    tags: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: SpacingEnum.sm,
-    },
-    actions: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-  });
+const styles = StyleSheet.create({
+  header: { gap: SpacingEnum.xs },
+  title: { textTransform: "uppercase" },
+  section: { gap: SpacingEnum.sm },
+  label: { textTransform: "uppercase" },
+  tags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SpacingEnum.sm,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+});

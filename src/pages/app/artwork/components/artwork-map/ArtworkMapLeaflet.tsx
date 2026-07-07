@@ -1,10 +1,11 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkLeafletMarker } from "@/pages/app/artwork/components/artwork-map/ArtworkLeafletMarker";
+import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
 import { useTheme } from "@/theme/ThemeProvider";
 
 type ArtworkMapLeafletProps = {
@@ -15,6 +16,8 @@ type ArtworkMapLeafletProps = {
 
 const FALLBACK: [number, number] = [48.8566, 2.3522]; // Paris [lat, lng]
 const FALLBACK_ZOOM = 11;
+// [SW, NE] of the whole Mercator world — panning + min zoom are locked to this.
+const WORLD = L.latLngBounds([-85, -180], [85, 180]);
 
 // Fit all pins on mount / when the set changes, and re-measure (leaflet's
 // 0-height-in-flex race). Ease to the selected pin when one is picked.
@@ -30,28 +33,17 @@ const MapController = ({
   // (react-leaflet re-renders, and the artworks array identity is unstable).
   const signature = artworks.map((a) => a.id).join("|");
 
-  // Keep the tiles filling the viewport: re-measure (leaflet's 0-height-in-flex
-  // race) and pin the min zoom to "the whole world fits inside the view", so
-  // globally-scattered pins can't zoom out past the point where dark bands
-  // appear above/below the Mercator world. Lock panning to the world too.
-  useEffect(() => {
-    const WORLD = L.latLngBounds([-85, -180], [85, 180]);
+  // Keep the tiles filling the viewport: after each re-measure, pin the min zoom
+  // to "the whole world fits inside the view" so globally-scattered pins can't
+  // zoom out past the point where dark bands appear above/below the Mercator
+  // world, and lock panning to the world too.
+  const clampToWorld = useCallback(() => {
     map.options.maxBoundsViscosity = 1;
-    const apply = () => {
-      map.invalidateSize();
-      // inside=true → the lowest zoom at which the view fits *inside* the world.
-      map.setMinZoom(map.getBoundsZoom(WORLD, true));
-      map.setMaxBounds(WORLD);
-    };
-    apply();
-    const t = setTimeout(apply, 200);
-    const ro = new ResizeObserver(apply);
-    ro.observe(map.getContainer());
-    return () => {
-      clearTimeout(t);
-      ro.disconnect();
-    };
+    // inside=true → the lowest zoom at which the view fits *inside* the world.
+    map.setMinZoom(map.getBoundsZoom(WORLD, true));
+    map.setMaxBounds(WORLD);
   }, [map]);
+  useLeafletAutosize(map, clampToWorld);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: signature stands in for `artworks`.
   useEffect(() => {

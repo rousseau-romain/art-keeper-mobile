@@ -11,13 +11,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HeroGrid } from "@/pages/app/auth/components/hero-grid/HeroGrid";
-import { Segment } from "@/pages/app/auth/components/segment/Segment";
 import { LoginForm, type LoginValues } from "@/pages/app/auth/form/LoginForm";
 import { useGoogleSignIn } from "@/pages/app/auth/hooks/useGoogleSignIn";
 import { useLoginSubmit } from "@/pages/app/auth/hooks/useLoginSubmit";
 import { useResendVerification } from "@/pages/app/auth/hooks/useResendVerification";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { Segment } from "@/shared/ui/segment/Segment";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";

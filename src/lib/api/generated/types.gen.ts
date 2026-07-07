@@ -32,6 +32,15 @@ export type ArtworkChangeProposal = {
         imageUrl?: string;
         artistId?: string | null;
     };
+    previous: {
+        title?: string;
+        description?: string | null;
+        tags?: Array<string>;
+        latitude?: number;
+        longitude?: number;
+        imageUrl?: string;
+        artistId?: string | null;
+    };
     status: 'pending' | 'approved' | 'rejected';
     reviewedByUserId: string | null;
     reviewedAt: string | null;
@@ -71,6 +80,15 @@ export type ArtworkChangeProposalPage = {
         artworkId: string;
         userId: string;
         changes: {
+            title?: string;
+            description?: string | null;
+            tags?: Array<string>;
+            latitude?: number;
+            longitude?: number;
+            imageUrl?: string;
+            artistId?: string | null;
+        };
+        previous: {
             title?: string;
             description?: string | null;
             tags?: Array<string>;
@@ -191,6 +209,19 @@ export type ArtistChangeProposal = {
         };
         avatarUrl?: string;
     };
+    previous: {
+        name?: string;
+        description?: string | null;
+        tags?: Array<string>;
+        socialLinks?: {
+            instagram?: string;
+            twitter?: string;
+            facebook?: string;
+            tiktok?: string;
+            website?: string;
+        };
+        avatarUrl?: string;
+    };
     status: 'pending' | 'approved' | 'rejected';
     reviewedByUserId: string | null;
     reviewedAt: string | null;
@@ -238,6 +269,19 @@ export type ArtistChangeProposalPage = {
         artistId: string;
         userId: string;
         changes: {
+            name?: string;
+            description?: string | null;
+            tags?: Array<string>;
+            socialLinks?: {
+                instagram?: string;
+                twitter?: string;
+                facebook?: string;
+                tiktok?: string;
+                website?: string;
+            };
+            avatarUrl?: string;
+        };
+        previous: {
             name?: string;
             description?: string | null;
             tags?: Array<string>;

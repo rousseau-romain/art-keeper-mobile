@@ -35,14 +35,14 @@ export const getArtworksByIdHistory = <ThrowOnError extends boolean = false>(opt
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artworks, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artworks, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artworkId` narrows to one artwork. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtworksChanges = <ThrowOnError extends boolean = false>(options?: Options<GetArtworksChangesData, ThrowOnError>): RequestResult<GetArtworksChangesResponses, GetArtworksChangesErrors, ThrowOnError> => (options?.client ?? client).get<GetArtworksChangesResponses, GetArtworksChangesErrors, ThrowOnError>({ url: '/artworks/changes', ...options });
 
 /**
  * Review a change proposal
  *
- * Approve or reject a pending change proposal. Admin only. Approving applies the still-relevant fields to the artwork and records old + new values in its history; a title that collides with another artwork's slug returns 409, and a proposed artist that no longer exists returns 400. Rejecting discards the proposal (its uploaded image is deleted from storage). Reviewing a proposal twice returns 409.
+ * Approve or reject a pending change proposal. Admin or reviewer only. Approving applies the still-relevant fields to the artwork and records old + new values in its history; a title that collides with another artwork's slug returns 409, and a proposed artist that no longer exists returns 400. Rejecting discards the proposal (its uploaded image is deleted from storage). Reviewing a proposal twice returns 409.
  */
 export const patchArtworksByIdChangesByChangeId = <ThrowOnError extends boolean = false>(options: Options<PatchArtworksByIdChangesByChangeIdData, ThrowOnError>): RequestResult<PatchArtworksByIdChangesByChangeIdResponses, PatchArtworksByIdChangesByChangeIdErrors, ThrowOnError> => (options.client ?? client).patch<PatchArtworksByIdChangesByChangeIdResponses, PatchArtworksByIdChangesByChangeIdErrors, ThrowOnError>({
     url: '/artworks/{id}/changes/{changeId}',
@@ -154,14 +154,14 @@ export const getArtistsByIdHistory = <ThrowOnError extends boolean = false>(opti
 /**
  * List change proposals (review queue)
  *
- * Return change proposals across all artists, newest first. Admin only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
+ * Return change proposals across all artists, newest first. Admin or reviewer only. `status` filters the queue and defaults to `pending`; `artistId` narrows to one artist. Paginate with `limit` (default 20, max 100) and `cursor` (opaque string from `nextCursor`).
  */
 export const getArtistsChanges = <ThrowOnError extends boolean = false>(options?: Options<GetArtistsChangesData, ThrowOnError>): RequestResult<GetArtistsChangesResponses, GetArtistsChangesErrors, ThrowOnError> => (options?.client ?? client).get<GetArtistsChangesResponses, GetArtistsChangesErrors, ThrowOnError>({ url: '/artists/changes', ...options });
 
 /**
  * Review a change proposal
  *
- * Approve or reject a pending change proposal. Admin only. Approving applies the still-relevant fields to the artist and records old + new values in its history; a name that collides with another artist's slug returns 409. Rejecting discards the proposal (its uploaded avatar is deleted from storage). Reviewing a proposal twice returns 409.
+ * Approve or reject a pending change proposal. Admin or reviewer only. Approving applies the still-relevant fields to the artist and records old + new values in its history; a name that collides with another artist's slug returns 409. Rejecting discards the proposal (its uploaded avatar is deleted from storage). Reviewing a proposal twice returns 409.
  */
 export const patchArtistsByIdChangesByChangeId = <ThrowOnError extends boolean = false>(options: Options<PatchArtistsByIdChangesByChangeIdData, ThrowOnError>): RequestResult<PatchArtistsByIdChangesByChangeIdResponses, PatchArtistsByIdChangesByChangeIdErrors, ThrowOnError> => (options.client ?? client).patch<PatchArtistsByIdChangesByChangeIdResponses, PatchArtistsByIdChangesByChangeIdErrors, ThrowOnError>({
     url: '/artists/{id}/changes/{changeId}',

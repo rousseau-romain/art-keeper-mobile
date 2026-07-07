@@ -78,7 +78,7 @@ export const Button = ({
             {...iconBefore}
           />
         )}
-        <Text size={sm ? "md" : "base"} color={fg}>
+        <Text size={sm ? "md" : "base"} color={fg} style={styles.label}>
           {label}
         </Text>
         {iconAfter && (
@@ -103,5 +103,15 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: RadiusEnum.sm,
   },
-  row: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
+  row: {
+    flexShrink: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: SpacingEnum.sm,
+  },
+  label: {
+    flexShrink: 1,
+    textAlign: "center",
+  },
 });

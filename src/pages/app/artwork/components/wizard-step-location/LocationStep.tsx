@@ -5,7 +5,6 @@ import {
   Marker,
   type PressEvent,
   type PressEventWithFeatures,
-  type StyleSpecification,
 } from "@maplibre/maplibre-react-native";
 import { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -15,6 +14,7 @@ import { type NativeSyntheticEvent, StyleSheet, View } from "react-native";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useDeviceLocation } from "@/pages/app/artwork/hooks/useDeviceLocation";
 import { useHaptics } from "@/shared/hooks/useHaptics";
+import { OSM_STYLE } from "@/shared/map/osm-style.constant";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Text } from "@/shared/ui/text/Text";
@@ -25,21 +25,6 @@ import {
   SpacingEnum,
 } from "@/theme/enums/scale.enums";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
-
-// Key-free OpenStreetMap raster style (no API key / billing, unlike Google Maps).
-// MapLibre renders this directly — the same OSM tiles the web map (WebMap.tsx) uses.
-const OSM_STYLE: StyleSpecification = {
-  version: 8,
-  sources: {
-    osm: {
-      type: "raster",
-      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-      attribution: "© OpenStreetMap contributors",
-    },
-  },
-  layers: [{ id: "osm", type: "raster", source: "osm" }],
-};
 
 // Paris fallback when no pin is set yet. MapLibre coords are [lng, lat] — the
 // reverse of react-native-maps / the form's { latitude, longitude }.
