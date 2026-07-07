@@ -11,6 +11,7 @@ import {
   getArtworksInfiniteOptions,
   getArtworksInfiniteQueryKey,
   getArtworksSlugBySlugOptions,
+  getArtworksSlugBySlugQueryKey,
 } from "./generated/@tanstack/react-query.gen";
 import {
   deleteArtworksByIdLike,
@@ -58,6 +59,13 @@ async function setLike(id: string, liked: boolean): Promise<Artwork> {
     : await deleteArtworksByIdLike({ path: { id } });
   return data as Artwork;
 }
+
+// The detail is also cached by slug (DetailScreen → useArtworkBySlug), but a
+// like only knows the id — so match every slug-detail query by its endpoint id
+// (partial key) and patch the one whose artwork `.id` matches.
+const slugDetailKey = [
+  { _id: getArtworksSlugBySlugQueryKey({ path: { slug: "" } })[0]._id },
+];
 
 /** Apply a like/unlike to a cached artwork (count + flag stay in sync). */
 function withLike(a: Artwork, liked: boolean): Artwork {
@@ -252,14 +260,23 @@ export const useToggleArtworkLike = () => {
       await qc.cancelQueries({ queryKey: detailKey });
       await qc.cancelQueries({ queryKey: listsKey });
 
+      await qc.cancelQueries({ queryKey: slugDetailKey });
+
       const previousDetail = qc.getQueryData<Artwork>(detailKey);
       const previousLists = qc.getQueriesData<InfiniteData<ArtworkPage>>({
         queryKey: listsKey,
+      });
+      const previousBySlug = qc.getQueriesData<Artwork>({
+        queryKey: slugDetailKey,
       });
 
       if (previousDetail) {
         qc.setQueryData(detailKey, withLike(previousDetail, liked));
       }
+      qc.setQueriesData<Artwork>(
+        { queryKey: slugDetailKey },
+        (old) => (old && old.id === id ? withLike(old, liked) : old),
+      );
       qc.setQueriesData<InfiniteData<ArtworkPage>>(
         { queryKey: listsKey },
         (old) =>
@@ -274,7 +291,7 @@ export const useToggleArtworkLike = () => {
           },
       );
 
-      return { previousDetail, previousLists };
+      return { previousDetail, previousLists, previousBySlug };
     },
 
     onError: (_err, { id }, ctx) => {
@@ -287,6 +304,9 @@ export const useToggleArtworkLike = () => {
       ctx?.previousLists?.forEach(([key, data]) => {
         qc.setQueryData(key, data);
       });
+      ctx?.previousBySlug?.forEach(([key, data]) => {
+        qc.setQueryData(key, data);
+      });
     },
 
     onSettled: (_data, _err, { id }) => {
@@ -295,6 +315,7 @@ export const useToggleArtworkLike = () => {
         queryKey: getArtworksByIdQueryKey({ path: { id } }),
       });
       qc.invalidateQueries({ queryKey: getArtworksInfiniteQueryKey() });
+      qc.invalidateQueries({ queryKey: slugDetailKey });
     },
   });
 };
