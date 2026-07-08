@@ -1,6 +1,6 @@
+import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
 import { WizardHeader } from "@/pages/app/artwork/components/wizard-header/WizardHeader";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import {
@@ -12,6 +12,7 @@ import {
   DISPLAY_TOTAL,
   STEP_BY_ROUTE,
 } from "@/pages/app/artwork/wizard-steps.constant";
+import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
 
 export const unstable_settings = {
@@ -31,11 +32,22 @@ export default function Layout() {
     defaultValues: EMPTY_ARTWORK_DRAFT,
   });
   const draft = useArtworkDraft({ methods });
+  const router = useRouter();
 
   return (
     <FormProvider {...methods}>
       <NewArtworkContext.Provider value={draft}>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerRight: () => (
+              <IconButton
+                name="Settings"
+                onPress={() => router.push("/settings")}
+                accessibilityLabel={tr("a11y.settings")}
+              />
+            ),
+          }}
+        >
           <Stack.Screen
             name="index"
             options={{
