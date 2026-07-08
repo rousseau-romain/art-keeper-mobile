@@ -11,10 +11,12 @@ import {
  * (`name` param) and orders verified artists first (`sort`), so we just forward
  * the user's query and skip the fetch while it's empty. Verified artists are
  * kept client-side to match the dropdown's "verified only" rule. When nothing
- * matches, `createArtist` quick-creates one from the typed name.
+ * matches, `createArtist` quick-creates one from the typed name. `initialQuery`
+ * seeds the visible input (e.g. the current `@handle` when editing) — the create
+ * wizard leaves it empty.
  */
-export const useArtistSearch = () => {
-  const [query, setQuery] = useState("");
+export const useArtistSearch = (initialQuery = "") => {
+  const [query, setQuery] = useState(initialQuery);
 
   const normalized = query.trim().replace(/^@/, "").toLowerCase();
 

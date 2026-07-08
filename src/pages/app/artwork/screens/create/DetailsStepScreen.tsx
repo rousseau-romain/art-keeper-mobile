@@ -2,13 +2,7 @@ import { useRouter } from "expo-router";
 import { useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
 import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
 import {
@@ -19,6 +13,7 @@ import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
+import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
 import type { Palette } from "@/theme/enums/color.enums";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
@@ -54,11 +49,9 @@ export const DetailsStepScreen = () => {
       keyboardVerticalOffset={headerHeight}
     >
       <Seo title={tr("artwork.new.title.details")} />
-      <ScrollView
-        style={styles.scrollView}
+      <WrapperScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
       >
         <View style={styles.details}>
           <Text font="display" size="xxl" style={styles.detailsTitle}>
@@ -66,7 +59,7 @@ export const DetailsStepScreen = () => {
           </Text>
           <ArtworkForm />
         </View>
-      </ScrollView>
+      </WrapperScrollView>
 
       <WizardFooter
         label={tr("artwork.new.reviewCta")}
@@ -80,7 +73,6 @@ export const DetailsStepScreen = () => {
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: c.bg },
-    scrollView: { flex: 1 },
     scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
     details: { gap: SpacingEnum.xl },
     detailsTitle: { textTransform: "uppercase" },

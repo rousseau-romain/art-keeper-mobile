@@ -42,6 +42,9 @@ Open these when the trigger applies (they are intentionally not imported):
 - **`.claude/rules/router-navigation-paths.md`** — when writing a navigation
   target (`router.push`/`replace`/`navigate`, `<Redirect href>`, `<Link href>`);
   strip route-group parens from the URL.
+- **`.claude/rules/link-aschild-pressable.md`** — when wrapping a component that
+  renders its own touchable box (`Tag`, `Button`, a padded `Pressable`) in a
+  `<Link>`; use `asChild` so the padded area is the tap target, not a bare Link.
 - **`.claude/rules/enums-as-const.md`** — when defining a new "enum" (`as const`
   object + derived `keyof typeof` union), e.g. a new `*.enums.ts`.
 - **`.claude/rules/control-flow-switch.md`** — when branching on a discriminant

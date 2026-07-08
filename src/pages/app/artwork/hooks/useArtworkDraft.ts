@@ -22,7 +22,7 @@ export const EMPTY_ARTWORK_DRAFT: ArtworkValues = {
   artistId: null,
   artistHandle: "",
   tags: [],
-  note: "",
+  description: "",
   rightsConfirmed: false,
 };
 
@@ -43,7 +43,7 @@ const isPristineDraft = (v: ArtworkValues): boolean =>
   !v.artistId &&
   !v.artistHandle &&
   v.tags.length === 0 &&
-  !v.note &&
+  !v.description &&
   !v.rightsConfirmed;
 
 /**

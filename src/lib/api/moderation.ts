@@ -67,6 +67,15 @@ export const useReviewChange = () => {
         qc.invalidateQueries({
           queryKey: getArtworksByIdQueryKey({ path: { id: artworkId } }),
         });
+        // Detail/edit screens read the artwork by slug (`useArtworkBySlug`), and
+        // an approved title change can even alter the slug itself — so the id
+        // key above never matches those entries. Drop every slug-detail query so
+        // the accepted edit is refetched.
+        qc.invalidateQueries({
+          predicate: (q) =>
+            (q.queryKey[0] as { _id?: string })?._id ===
+            "getArtworksSlugBySlug",
+        });
         qc.invalidateQueries({ queryKey: getArtworksInfiniteQueryKey() });
       }
     },

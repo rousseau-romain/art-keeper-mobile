@@ -25,13 +25,12 @@ import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 import {
   ThemeModeEnum,
   type ThemeModeEnumType,
 } from "@/theme/enums/theme-mode.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type SettingsScreenProps = Record<string, never>;
@@ -80,13 +79,17 @@ export const SettingsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { biometricEnabled, setBiometricEnabled, signOut, isReviewer, isAdmin } =
-    useAuth();
+  const {
+    biometricEnabled,
+    setBiometricEnabled,
+    signOut,
+    isReviewer,
+    isAdmin,
+  } = useAuth();
   const { source, setSource } = useTagSource();
   const { reviewMode, setReviewMode } = useReviewMode();
   const { language, setLanguage } = useLocale();
   const { mode, setMode, colors } = useTheme();
-  const styles = useThemeStyles(createStyles);
 
   const languageOptions = SUPPORTED_LANGUAGES.map((lng) => ({
     value: lng,
@@ -229,7 +232,9 @@ export const SettingsScreen = () => {
   ];
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}>
+    <WrapperView
+      style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}
+    >
       <Seo title={tr("settings.title.index")} />
 
       <View style={styles.header}>
@@ -268,23 +273,20 @@ export const SettingsScreen = () => {
           iconBefore={{ name: "LogOut" }}
         />
       </View>
-    </View>
+    </WrapperView>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: {
-      flex: 1,
-      backgroundColor: c.bg,
-      paddingHorizontal: SpacingEnum.xl,
-    },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: SpacingEnum.md,
-      marginBottom: SpacingEnum.xxl,
-    },
-    sections: { gap: SpacingEnum.md },
-    footer: { marginTop: "auto" },
-  });
+const styles = StyleSheet.create({
+  screen: {
+    paddingHorizontal: SpacingEnum.xl,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SpacingEnum.md,
+    marginBottom: SpacingEnum.xxl,
+  },
+  sections: { gap: SpacingEnum.md },
+  footer: { marginTop: "auto" },
+});

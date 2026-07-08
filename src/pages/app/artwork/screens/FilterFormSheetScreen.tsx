@@ -12,7 +12,7 @@ import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
-import { WrapperFormSheet } from "@/shared/ui/wrapper-form-sheet/WrapperFormSheet";
+import { WrapperFormSheet } from "@/shared/ui/wrapper/wrapper-form-sheet/WrapperFormSheet";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 // Widened view of the preset tuple so `.includes(aString)` type-checks.

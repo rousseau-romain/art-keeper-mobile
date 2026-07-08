@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { useAuth } from "@/lib/auth/AuthProvider";
 import {
   type BiometricKind,
@@ -14,6 +13,7 @@ import { Button } from "@/shared/ui/button/Button";
 import { Icon, type IconName } from "@/shared/ui/icon/Icon";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
@@ -73,7 +73,7 @@ export const LockScreen = () => {
   const method = tr(getBiometricLabelKey(kind));
 
   return (
-    <View
+    <WrapperView
       style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xxxl }]}
     >
       <Seo title={tr("auth.title.lock")} />
@@ -119,15 +119,13 @@ export const LockScreen = () => {
           onPress={signOut}
         />
       </View>
-    </View>
+    </WrapperView>
   );
 };
 
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     screen: {
-      flex: 1,
-      backgroundColor: c.bg,
       paddingHorizontal: SpacingEnum.xl,
     },
     center: {

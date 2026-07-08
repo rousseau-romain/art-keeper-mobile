@@ -6,9 +6,8 @@ import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/Wizar
 import { LocationStep } from "@/pages/app/artwork/components/wizard-step-location/LocationStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { Seo } from "@/shared/ui/seo/Seo";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 2 — confirm the pin. The map can't sit in a ScrollView (gesture conflict). */
 export const LocationStepScreen = () => {
@@ -18,10 +17,9 @@ export const LocationStepScreen = () => {
   const latitude = useWatch({ control, name: "latitude" });
   const longitude = useWatch({ control, name: "longitude" });
   const hasPin = latitude != null && longitude != null;
-  const styles = useThemeStyles(createStyles);
 
   return (
-    <View style={styles.screen}>
+    <WrapperView>
       <Seo title={tr("artwork.new.title.location")} />
       <View style={styles.mapBody}>
         <LocationStep />
@@ -33,12 +31,10 @@ export const LocationStepScreen = () => {
         showArrow
         onPress={() => router.push("/create-artwork/details")}
       />
-    </View>
+    </WrapperView>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: { flex: 1, backgroundColor: c.bg },
-    mapBody: { flex: 1, padding: SpacingEnum.xl },
-  });
+const styles = StyleSheet.create({
+  mapBody: { flex: 1, padding: SpacingEnum.xl },
+});

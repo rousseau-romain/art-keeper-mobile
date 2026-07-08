@@ -2,11 +2,11 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
-import { LocationMap } from "@/pages/app/moderation/components/location-map/LocationMap";
+import { LocationMap } from "@/shared/map/location-map/LocationMap";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Text } from "@/shared/ui/text/Text";
-import { WrapperFormSheet } from "@/shared/ui/wrapper-form-sheet/WrapperFormSheet";
+import { WrapperFormSheet } from "@/shared/ui/wrapper/wrapper-form-sheet/WrapperFormSheet";
 import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";

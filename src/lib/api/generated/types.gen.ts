@@ -41,6 +41,7 @@ export type ArtworkChangeProposal = {
         imageUrl?: string;
         artistId?: string | null;
     };
+    note: string | null;
     status: 'pending' | 'approved' | 'rejected';
     reviewedByUserId: string | null;
     reviewedAt: string | null;
@@ -69,6 +70,7 @@ export type ArtworkHistory = {
         imageUrl?: string;
         artistId?: string | null;
     };
+    note: string | null;
     proposedByUserId: string | null;
     reviewedByUserId: string | null;
     appliedAt: string;
@@ -97,6 +99,7 @@ export type ArtworkChangeProposalPage = {
             imageUrl?: string;
             artistId?: string | null;
         };
+        note: string | null;
         status: 'pending' | 'approved' | 'rejected';
         reviewedByUserId: string | null;
         reviewedAt: string | null;
@@ -128,6 +131,7 @@ export type ArtworkHistoryPage = {
             imageUrl?: string;
             artistId?: string | null;
         };
+        note: string | null;
         proposedByUserId: string | null;
         reviewedByUserId: string | null;
         appliedAt: string;
@@ -222,6 +226,7 @@ export type ArtistChangeProposal = {
         };
         avatarUrl?: string;
     };
+    note: string | null;
     status: 'pending' | 'approved' | 'rejected';
     reviewedByUserId: string | null;
     reviewedAt: string | null;
@@ -258,6 +263,7 @@ export type ArtistHistory = {
         };
         avatarUrl?: string;
     };
+    note: string | null;
     proposedByUserId: string | null;
     reviewedByUserId: string | null;
     appliedAt: string;
@@ -294,6 +300,7 @@ export type ArtistChangeProposalPage = {
             };
             avatarUrl?: string;
         };
+        note: string | null;
         status: 'pending' | 'approved' | 'rejected';
         reviewedByUserId: string | null;
         reviewedAt: string | null;
@@ -333,6 +340,7 @@ export type ArtistHistoryPage = {
             };
             avatarUrl?: string;
         };
+        note: string | null;
         proposedByUserId: string | null;
         reviewedByUserId: string | null;
         appliedAt: string;
@@ -723,6 +731,7 @@ export type PostArtworksByIdChangesData = {
         longitude?: string | number;
         image?: Blob | File;
         artistId?: string;
+        note?: string;
     };
     path: {
         id: string;
@@ -764,6 +773,10 @@ export type GetArtworksData = {
         title?: Array<string>;
         tag?: Array<string>;
         artist?: Array<string>;
+        /**
+         * Restrict to artworks linked to this exact artist id. Unlike `artist` (name substring), this matches the `artistId` foreign key exactly. Combines with the other filters via AND.
+         */
+        artistId?: string;
         /**
          * Free-text search matched case-insensitively against the title OR the artist's name (substring). Combines with the other filters via AND.
          */
@@ -1176,6 +1189,7 @@ export type PostArtistsByIdChangesData = {
             website?: string;
         };
         avatar?: Blob | File;
+        note?: string;
     };
     path: {
         id: string;

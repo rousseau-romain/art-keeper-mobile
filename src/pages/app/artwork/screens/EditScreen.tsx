@@ -1,46 +1,75 @@
+import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+
 import { useArtworkBySlug } from "@/lib/api/artworks";
-import { Icon } from "@/shared/ui/icon/Icon";
+import { EditPhotoBand } from "@/pages/app/artwork/components/edit-photo-band/EditPhotoBand";
+import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
+import {
+  type EditProposalValues,
+  ProposeEditForm,
+} from "@/pages/app/artwork/form/ProposeEditForm";
+import { useProposeEditSubmit } from "@/pages/app/artwork/hooks/useProposeEditSubmit";
+import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperKeyboardAvoidingView } from "@/shared/ui/wrapper/wrapper-keyboard-avoiding-view/WrapperKeyboardAvoidingView";
+import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export type EditScreenProps = { slug: string };
 
+/**
+ * Propose an edit to an existing artwork — an admin reviews it before it applies.
+ * The form lives in the edit stack's shared `FormProvider` (see
+ * `EditProposalLayout`), which also gates loading / not-found, so this screen just
+ * reads the ready form via `useFormContext` and renders the fields + submit.
+ */
 export const EditScreen = ({ slug }: EditScreenProps) => {
   const { t: tr } = useTranslation();
+  const headerHeight = useHeaderHeight();
+
   const { data: artwork } = useArtworkBySlug(slug);
-  const styles = useThemeStyles(createStyles);
+  const methods = useFormContext<EditProposalValues>();
+  const { onSubmit, submitting } = useProposeEditSubmit({ methods, artwork });
+
+  // The layout only mounts this screen once the artwork is loaded (cache hit here).
+  if (!artwork) return null;
 
   return (
-    <View style={styles.screen}>
-      <Seo title={artwork ? artwork.title : tr("artwork.title.edit")} />
-      <Icon name="Pencil" size="xxl" color="textMuted" strokeWidth={1.6} />
-      {artwork ? (
-        <Text font="display" size="lg" style={styles.title} numberOfLines={2}>
-          {artwork.title}
-        </Text>
-      ) : null}
-      <Text font="body" size="base" color="textSoft" style={styles.note}>
-        {tr("artwork.editComingSoon")}
-      </Text>
-    </View>
+    <WrapperKeyboardAvoidingView keyboardVerticalOffset={headerHeight}>
+      <Seo title={artwork.title} />
+      <WrapperScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Text font="display" size="xxl" style={styles.title}>
+            {tr("artwork.edit.heading")}
+          </Text>
+          <Text font="body" size="base" color="textSoft">
+            {tr("artwork.edit.intro", { title: artwork.title })}
+          </Text>
+        </View>
+
+        <EditPhotoBand imageUrl={artwork.imageUrl} />
+
+        <ProposeEditForm slug={slug} />
+      </WrapperScrollView>
+
+      <WizardFooter
+        label={tr("artwork.edit.submitCta")}
+        showArrow
+        haptic={null}
+        loading={submitting}
+        onPress={onSubmit}
+      />
+    </WrapperKeyboardAvoidingView>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: SpacingEnum.md,
-      padding: SpacingEnum.xxl,
-      backgroundColor: c.bg,
-    },
-    title: { textTransform: "uppercase", textAlign: "center" },
-    note: { textAlign: "center" },
-  });
+const styles = StyleSheet.create({
+  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.xl },
+  header: { gap: SpacingEnum.sm },
+  title: { textTransform: "uppercase" },
+});

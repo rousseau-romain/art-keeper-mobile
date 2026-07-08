@@ -19,8 +19,9 @@ export type LocationMapProps = {
 
 /**
  * Read-only OpenStreetMap preview centered on a single coordinate, with an accent
- * pin. Used by the moderation location form sheet to show where a proposal places
- * an artwork. Native (MapLibre); Metro resolves LocationMap.web.tsx on web.
+ * pin. Shared single-location map — used by the artwork detail location band and
+ * the moderation location form sheet. Native (MapLibre); Metro resolves
+ * LocationMap.web.tsx on web.
  */
 export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
   const styles = useThemeStyles(createStyles);

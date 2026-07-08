@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
 import {
   type Artwork,
   type ArtworkFilters,
@@ -16,8 +15,7 @@ import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Seo } from "@/shared/ui/seo/Seo";
-import type { Palette } from "@/theme/enums/color.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 
 export type IndexScreenProps = {
   initialQuery?: string;
@@ -33,7 +31,6 @@ export const IndexScreen = ({
   const { t: tr } = useTranslation();
   const haptic = useHaptics();
   const router = useRouter();
-  const styles = useThemeStyles(createStyles);
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
   const {
     selectedTags,
@@ -135,14 +132,9 @@ export const IndexScreen = ({
   };
 
   return (
-    <View style={styles.screen}>
+    <WrapperView>
       <Seo title={tr("artwork.title.index")} />
       {body()}
-    </View>
+    </WrapperView>
   );
 };
-
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: { flex: 1, backgroundColor: c.bg },
-  });

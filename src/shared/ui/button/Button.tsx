@@ -25,7 +25,6 @@ export type ButtonProps = Omit<PressableProps, "style"> & {
   size?: Size;
   iconBefore?: IconProps;
   iconAfter?: IconProps;
-  block?: boolean;
   loading?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -36,7 +35,6 @@ export const Button = ({
   size = "normal",
   iconBefore,
   iconAfter,
-  block,
   loading,
   disabled,
   style,
@@ -61,7 +59,6 @@ export const Button = ({
           paddingHorizontal: sm ? SpacingEnum.md : SpacingEnum.lg,
           borderColor: colors[border],
           backgroundColor: colors[bg],
-          alignSelf: block ? "stretch" : "flex-start",
           opacity: disabled ? 0.5 : state.pressed ? 0.85 : 1,
         },
         style,

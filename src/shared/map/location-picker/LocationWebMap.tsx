@@ -16,11 +16,11 @@ import {
 import { mapDotIcon } from "@/shared/map/pin-icon";
 import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
 
-// Paris fallback when no pin has been set yet — mirrors LocationStep (native).
+// Paris fallback when no pin has been set yet — mirrors LocationPicker (native).
 const FALLBACK = { latitude: 48.8566, longitude: 2.3522 };
 const ZOOM = 15;
 
-type WebMapProps = {
+type LocationWebMapProps = {
   latitude?: number | null;
   longitude?: number | null;
   /** Accent colour for the pin (ColorEnum.primary). */
@@ -49,7 +49,7 @@ const MapController = ({
 };
 
 // Tap anywhere to drop/move the pin.
-const ClickToPick = ({ onPick }: { onPick: WebMapProps["onPick"] }) => {
+const ClickToPick = ({ onPick }: { onPick: LocationWebMapProps["onPick"] }) => {
   useMapEvents({
     click: (e) => onPick(e.latlng.lat, e.latlng.lng),
   });
@@ -57,11 +57,16 @@ const ClickToPick = ({ onPick }: { onPick: WebMapProps["onPick"] }) => {
 };
 
 /**
- * Web-only interactive map (react-leaflet + OpenStreetMap tiles). Loaded lazily
- * from LocationStep.web.tsx so `leaflet` only evaluates in the browser, never
- * during Expo's static (Node) prerender. The native app uses react-native-maps.
+ * Web-only interactive picker map (react-leaflet + OpenStreetMap tiles). Loaded
+ * lazily from LocationPicker.web.tsx so `leaflet` only evaluates in the browser,
+ * never during Expo's static (Node) prerender. The native app uses MapLibre.
  */
-const WebMap = ({ latitude, longitude, accent, onPick }: WebMapProps) => {
+const LocationWebMap = ({
+  latitude,
+  longitude,
+  accent,
+  onPick,
+}: LocationWebMapProps) => {
   const hasPin = latitude != null && longitude != null;
   const center: [number, number] = hasPin
     ? [latitude, longitude]
@@ -93,4 +98,4 @@ const WebMap = ({ latitude, longitude, accent, onPick }: WebMapProps) => {
   );
 };
 
-export default WebMap;
+export default LocationWebMap;

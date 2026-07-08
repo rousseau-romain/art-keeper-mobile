@@ -8,6 +8,7 @@ import {
 import {
   getArtworksByIdOptions,
   getArtworksByIdQueryKey,
+  getArtworksChangesQueryKey,
   getArtworksInfiniteOptions,
   getArtworksInfiniteQueryKey,
   getArtworksSlugBySlugOptions,
@@ -16,12 +17,14 @@ import {
 import {
   deleteArtworksByIdLike,
   postArtworks,
+  postArtworksByIdChanges,
   postArtworksByIdLike,
 } from "./generated/sdk.gen";
 import type {
   Artwork,
   ArtworkPage,
   GetArtworksData,
+  PostArtworksByIdChangesData,
   PostArtworksData,
 } from "./generated/types.gen";
 
@@ -82,7 +85,7 @@ function withLike(a: Artwork, liked: boolean): Artwork {
  */
 export const useArtworks = (
   filters: ArtworkFilters = {},
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean }
 ) => {
   const query = useInfiniteQuery({
     ...getArtworksInfiniteOptions({ query: { ...filters, limit: PAGE_SIZE } }),
@@ -125,8 +128,40 @@ const searchFilter = (query: string, scope: SearchScope): ArtworkFilters => {
 export const useBrowseArtworks = (
   filters: ArtworkFilters = {},
   search = "",
-  scope: SearchScope = "all",
+  scope: SearchScope = "all"
 ) => useArtworks({ ...filters, ...searchFilter(search.trim(), scope) });
+
+/** Radius (metres) for the detail screen's "nearby pieces" lookup. */
+const NEARBY_RADIUS = 200;
+
+/**
+ * Pieces geographically near a given artwork — the detail screen's "nearby"
+ * panel. Composes `useArtworks` with the list endpoint's `lat`/`lng`/`radius`
+ * filter and drops the artwork itself from its own neighbourhood. Accepts an
+ * `undefined` artwork (the detail screen calls it before the fetch resolves) and
+ * stays disabled until it's known. Returns the query plus `nearby` (the
+ * flattened, self-excluded rows) and the `radius` used.
+ */
+export const useNearbyArtworks = (artwork: Artwork | undefined) => {
+  const query = useArtworks(
+    artwork
+      ? { lat: artwork.latitude, lng: artwork.longitude, radius: NEARBY_RADIUS }
+      : {},
+    { enabled: !!artwork }
+  );
+  const nearby = query.artworks.filter((a) => a.id !== artwork?.id);
+  return { ...query, nearby, radius: NEARBY_RADIUS };
+};
+
+/**
+ * Other pieces by the same artist — the detail screen's "more by" strip. Uses
+ * the list `artistId` filter, which matches the artist foreign key exactly (no
+ * name-substring guessing), so it takes the artwork's `artistId` directly — no
+ * need to wait on the artist name resolving. The fetch is skipped until the id
+ * is known. Returns the `useArtworks` query verbatim (`artworks` + state flags).
+ */
+export const useArtworksByArtist = (artistId: string) =>
+  useArtworks({ artistId: artistId || undefined }, { enabled: !!artistId });
 
 /** What the new-artwork flow collects before it can submit. */
 export type CreateArtworkInput = {
@@ -220,6 +255,78 @@ export const useCreateArtwork = () => {
   });
 };
 
+/** The fields a proposed edit can touch — the partial the backend records as `changes`. */
+export type ArtworkChangeFields = {
+  title?: string;
+  description?: string | null;
+  tags?: string[];
+  artistId?: string | null;
+  latitude?: number;
+  longitude?: number;
+};
+
+/** What the "propose an edit" screen submits: the touched fields + a required reason. */
+export type ProposeArtworkChangeInput = {
+  artworkId: string;
+  changes: ArtworkChangeFields;
+  note: string;
+};
+
+/**
+ * Submit a proposed edit to an existing artwork (`POST /artworks/{id}/changes`).
+ * An admin reviews it before it applies — nothing on the artwork changes yet, so
+ * on success we only invalidate the pending-changes queue (so a moderator sees
+ * it), not the artwork detail or any list.
+ *
+ * The endpoint is multipart-capable (it can carry a replacement `image`), so we
+ * take the same structured-body override as `useCreateArtwork` — build the
+ * `FormData` by hand, pass it through untouched (`bodySerializer: (b) => b`), and
+ * drop the SDK's JSON `Content-Type` so the boundary is computed. Only the keys
+ * present in `changes` are appended (a cleared field arrives as an empty string);
+ * `tags` is a single JSON-encoded field. No image part this flow (photo edits are
+ * proposed separately).
+ */
+export const useProposeArtworkChange = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (
+      input: ProposeArtworkChangeInput,
+    ): Promise<void> => {
+      const { changes } = input;
+      const form = new FormData();
+      if (changes.title !== undefined) form.append("title", changes.title);
+      if (changes.description !== undefined) {
+        form.append("description", changes.description ?? "");
+      }
+      if (changes.tags !== undefined) {
+        form.append("tags", JSON.stringify(changes.tags));
+      }
+      if (changes.artistId !== undefined) {
+        form.append("artistId", changes.artistId ?? "");
+      }
+      if (changes.latitude !== undefined) {
+        form.append("latitude", String(changes.latitude));
+      }
+      if (changes.longitude !== undefined) {
+        form.append("longitude", String(changes.longitude));
+      }
+      form.append("note", input.note);
+
+      await postArtworksByIdChanges({
+        path: { id: input.artworkId },
+        body: form as unknown as PostArtworksByIdChangesData["body"],
+        bodySerializer: (body) => body,
+        headers: { "Content-Type": null },
+      });
+    },
+
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: getArtworksChangesQueryKey() });
+    },
+  });
+};
+
 /** A single artwork by id. */
 export const useArtwork = (id: string) => {
   return useQuery({
@@ -273,9 +380,8 @@ export const useToggleArtworkLike = () => {
       if (previousDetail) {
         qc.setQueryData(detailKey, withLike(previousDetail, liked));
       }
-      qc.setQueriesData<Artwork>(
-        { queryKey: slugDetailKey },
-        (old) => (old && old.id === id ? withLike(old, liked) : old),
+      qc.setQueriesData<Artwork>({ queryKey: slugDetailKey }, (old) =>
+        old && old.id === id ? withLike(old, liked) : old
       );
       qc.setQueriesData<InfiniteData<ArtworkPage>>(
         { queryKey: listsKey },
@@ -285,10 +391,10 @@ export const useToggleArtworkLike = () => {
             pages: old.pages.map((page) => ({
               ...page,
               data: page.data.map((a) =>
-                a.id === id ? withLike(a, liked) : a,
+                a.id === id ? withLike(a, liked) : a
               ),
             })),
-          },
+          }
       );
 
       return { previousDetail, previousLists, previousBySlug };
@@ -298,7 +404,7 @@ export const useToggleArtworkLike = () => {
       if (ctx?.previousDetail) {
         qc.setQueryData(
           getArtworksByIdQueryKey({ path: { id } }),
-          ctx.previousDetail,
+          ctx.previousDetail
         );
       }
       ctx?.previousLists?.forEach(([key, data]) => {

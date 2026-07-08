@@ -56,7 +56,7 @@ export const useArtworkSubmit = ({
         title: values.title.trim(),
         latitude: values.latitude,
         longitude: values.longitude,
-        description: values.note.trim() || undefined,
+        description: values.description.trim() || undefined,
         tags: values.tags,
         artistId: values.artistId ?? undefined,
         image: fileFromUri(cover.uri),

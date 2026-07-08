@@ -43,10 +43,13 @@ export const ArtistAutocomplete = ({
 }: ArtistAutocompleteProps) => {
   const { t: tr } = useTranslation();
   const { show } = useToast();
-  const { control, setValue } = useFormContext<ArtworkValues>();
+  const { control, setValue, getValues } = useFormContext<ArtworkValues>();
   const artistId = useWatch({ control, name: "artistId" });
+  // Seed the visible input from the form's current handle (set when editing an
+  // existing artwork). Read once — `useArtistSearch` owns the query state after.
+  const initialHandle = getValues("artistHandle");
   const { query, setQuery, matches, isLoading, createArtist, creating } =
-    useArtistSearch();
+    useArtistSearch(initialHandle ? `@${initialHandle}` : "");
   const styles = useThemeStyles(createStyles);
 
   const select = (artist: ArtistListItem) => {

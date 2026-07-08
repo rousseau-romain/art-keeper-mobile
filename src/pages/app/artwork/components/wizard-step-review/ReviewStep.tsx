@@ -31,7 +31,7 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
   const photo = useWatch({ control, name: "photo" });
   const address = useWatch({ control, name: "address" });
   const tags = useWatch({ control, name: "tags" });
-  const note = useWatch({ control, name: "note" });
+  const description = useWatch({ control, name: "description" });
   const title = useWatch({ control, name: "title" });
   const artistHandle = useWatch({ control, name: "artistHandle" });
   const rightsConfirmed = useWatch({ control, name: "rightsConfirmed" });
@@ -57,7 +57,7 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
     {
       key: "note",
       label: tr("artwork.new.review.note"),
-      value: note || "—",
+      value: description || "—",
       target: "details",
     },
   ];

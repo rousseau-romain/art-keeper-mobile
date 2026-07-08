@@ -1,24 +1,21 @@
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HAPTIC_NAMES, useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 export const HapticsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const haptic = useHaptics();
-  const styles = useThemeStyles(createStyles);
 
   return (
-    <ScrollView
-      style={styles.screen}
+    <WrapperScrollView
       contentContainerStyle={[
         styles.content,
         {
@@ -47,17 +44,15 @@ export const HapticsScreen = () => {
           />
         ))}
       </View>
-    </ScrollView>
+    </WrapperScrollView>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: { flex: 1, backgroundColor: c.bg },
-    content: {
-      paddingHorizontal: SpacingEnum.xl,
-      gap: SpacingEnum.xs,
-    },
-    title: { textTransform: "uppercase" },
-    list: { marginTop: SpacingEnum.xl, gap: SpacingEnum.md },
-  });
+const styles = StyleSheet.create({
+  content: {
+    paddingHorizontal: SpacingEnum.xl,
+    gap: SpacingEnum.xs,
+  },
+  title: { textTransform: "uppercase" },
+  list: { marginTop: SpacingEnum.xl, gap: SpacingEnum.md },
+});

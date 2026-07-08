@@ -20,6 +20,7 @@ import { Icon } from "@/shared/ui/icon/Icon";
 import { Segment } from "@/shared/ui/segment/Segment";
 import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import type { Palette } from "@/theme/enums/color.enums";
 import { RadiusEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
@@ -49,7 +50,7 @@ export const IndexScreen = () => {
   // Index of the current selection — drives the mobile prev/next navigation.
   const selectedIndex = Math.max(
     0,
-    proposals.findIndex((p) => p.id === selected?.id)
+    proposals.findIndex((p) => p.id === selected?.id),
   );
 
   const goPrev = () => {
@@ -68,7 +69,7 @@ export const IndexScreen = () => {
       {
         onSuccess: () =>
           haptic(decision === "approved" ? "success" : "warning"),
-      }
+      },
     );
   };
 
@@ -280,18 +281,16 @@ export const IndexScreen = () => {
   };
 
   return (
-    <View style={styles.screen}>
+    <WrapperView style={styles.screen}>
       <Seo title={tr("moderation.title.index")} />
       {renderBody()}
-    </View>
+    </WrapperView>
   );
 };
 
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     screen: {
-      flex: 1,
-      backgroundColor: c.bg,
       paddingHorizontal: SpacingEnum.xl,
       paddingTop: SpacingEnum.xl,
     },

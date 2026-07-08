@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { DraftBanner } from "@/pages/app/artwork/components/draft-banner/DraftBanner";
 import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
@@ -9,9 +9,9 @@ import { PhotoStep } from "@/pages/app/artwork/components/wizard-step-photo/Phot
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useNewArtwork } from "@/pages/app/artwork/new-artwork-context";
 import { Seo } from "@/shared/ui/seo/Seo";
-import type { Palette } from "@/theme/enums/color.enums";
+import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
+import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 
 /** Step 1 — pick the photo; restored-draft banner lives here, on the first step. */
 export const PhotoStepScreen = () => {
@@ -20,21 +20,18 @@ export const PhotoStepScreen = () => {
   const { control } = useFormContext<ArtworkValues>();
   const { restored, discardDraft } = useNewArtwork();
   const photo = useWatch({ control, name: "photo" });
-  const styles = useThemeStyles(createStyles);
 
   return (
-    <View style={styles.screen}>
+    <WrapperView>
       <Seo title={tr("artwork.new.title.index")} />
       {restored && <DraftBanner onDiscard={discardDraft} />}
 
-      <ScrollView
-        style={styles.scrollView}
+      <WrapperScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
       >
         <PhotoStep />
-      </ScrollView>
+      </WrapperScrollView>
 
       <WizardFooter
         label={tr("artwork.new.next")}
@@ -42,13 +39,10 @@ export const PhotoStepScreen = () => {
         showArrow
         onPress={() => router.push("/create-artwork/location")}
       />
-    </View>
+    </WrapperView>
   );
 };
 
-const createStyles = (c: Palette) =>
-  StyleSheet.create({
-    screen: { flex: 1, backgroundColor: c.bg },
-    scrollView: { flex: 1 },
-    scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
-  });
+const styles = StyleSheet.create({
+  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
+});

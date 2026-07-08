@@ -21,7 +21,7 @@ export type ArtworkValues = {
   artistId: string | null;
   artistHandle: string;
   tags: string[];
-  note: string;
+  description: string;
   rightsConfirmed: boolean;
 };
 
@@ -30,7 +30,7 @@ export const ArtworkForm = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
   const artistRef = useRef<RNTextInput>(null);
-  const noteRef = useRef<RNTextInput>(null);
+  const descriptionRef = useRef<RNTextInput>(null);
 
   return (
     <View style={styles.form}>
@@ -57,7 +57,7 @@ export const ArtworkForm = () => {
         ref={artistRef}
         label={tr("artwork.new.details.artistLabel")}
         placeholder={tr("artwork.new.details.artistPlaceholder")}
-        onSubmitEditing={() => noteRef.current?.focus()}
+        onSubmitEditing={() => descriptionRef.current?.focus()}
       />
 
       <Controller
@@ -75,10 +75,10 @@ export const ArtworkForm = () => {
 
       <Controller
         control={control}
-        name="note"
+        name="description"
         render={({ field }) => (
           <TextInput
-            ref={noteRef}
+            ref={descriptionRef}
             label={tr("artwork.new.details.noteLabel")}
             placeholder={tr("artwork.new.details.notePlaceholder")}
             value={field.value}
