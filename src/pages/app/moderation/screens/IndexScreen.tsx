@@ -10,6 +10,7 @@ import {
 } from "@/lib/api/moderation";
 import { DiffPanel } from "@/pages/app/moderation/components/diff-panel/DiffPanel";
 import { ProposalListItem } from "@/pages/app/moderation/components/proposal-list-item/ProposalListItem";
+import { ProposalNote } from "@/pages/app/moderation/components/proposal-note/ProposalNote";
 import { SwipeReviewCard } from "@/pages/app/moderation/components/swipe-review-card/SwipeReviewCard";
 import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { buildProposalDiff } from "@/pages/app/moderation/proposal-diff";
@@ -182,10 +183,13 @@ export const IndexScreen = () => {
               showsVerticalScrollIndicator={false}
             >
               {selected && (
-                <View style={styles.panels}>
-                  <DiffPanel side="before" fields={diff} />
-                  <DiffPanel side="after" fields={diff} />
-                </View>
+                <>
+                  <View style={styles.panels}>
+                    <DiffPanel side="before" fields={diff} />
+                    <DiffPanel side="after" fields={diff} />
+                  </View>
+                  <ProposalNote note={selected.note} />
+                </>
               )}
             </ScrollView>
             {footer}
@@ -271,6 +275,7 @@ export const IndexScreen = () => {
               ) : (
                 <DiffPanel side={mode} fields={diff} />
               )}
+              <ProposalNote note={selected.note} />
             </View>
           )}
         </ScrollView>

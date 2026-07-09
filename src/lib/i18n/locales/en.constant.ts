@@ -299,6 +299,7 @@ export const en = {
     loading: "Loading the review queue…",
     loadError: "Couldn't load the review queue.",
     noValue: "—",
+    note: "Proposer's note",
     photoCurrent: "current photo",
     photoProposed: "new photo",
     // Field labels — reused for the diff row labels and the queue descriptor.

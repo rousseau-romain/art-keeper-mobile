@@ -288,6 +288,7 @@ export const fr: Resources = {
     loading: "Chargement de la file…",
     loadError: "Impossible de charger la file d'examen.",
     noValue: "—",
+    note: "Note de l'auteur",
     photoCurrent: "photo actuelle",
     photoProposed: "nouvelle photo",
     field: {
