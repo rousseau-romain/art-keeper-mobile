@@ -1,5 +1,6 @@
 import "leaflet/dist/leaflet.css";
 
+import { useEffect } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
 import {
@@ -18,9 +19,17 @@ type LocationWebMapProps = {
   accent: string;
 };
 
-const MapController = () => {
+const MapController = ({
+  latitude,
+  longitude,
+}: Pick<LocationWebMapProps, "latitude" | "longitude">) => {
   const map = useMap();
   useLeafletAutosize(map);
+  // `center` only positions the map on mount; re-center when the coordinate
+  // changes (the map instance is reused across detail → detail navigation).
+  useEffect(() => {
+    map.setView([latitude, longitude], ZOOM);
+  }, [map, latitude, longitude]);
   return null;
 };
 
@@ -40,7 +49,7 @@ const LocationWebMap = ({
     style={{ height: "100%", width: "100%" }}
   >
     <TileLayer attribution={OSM_TILE_ATTRIBUTION} url={OSM_TILE_URL} />
-    <MapController />
+    <MapController latitude={latitude} longitude={longitude} />
     <Marker position={[latitude, longitude]} icon={mapDotIcon(accent)} />
   </MapContainer>
 );
