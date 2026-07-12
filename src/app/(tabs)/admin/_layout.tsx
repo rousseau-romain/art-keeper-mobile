@@ -1,7 +1,8 @@
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { formsheetOptions } from "@/shared/navigation/formsheet-options.constant";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
@@ -18,10 +19,17 @@ export default function AdminLayout() {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const { wide } = useBreakpoint();
+  const { status, isReviewer, isAdmin } = useAuth();
 
   // On desktop web the WebHeader (top brand nav) already covers navigation +
   // settings, so the per-page native header would be redundant — hide it there.
   const webHeader = Platform.OS === "web" && wide;
+
+  // Moderation is reviewer/admin-only. The tab is already hidden for everyone
+  // else (`href: null` in `(tabs)/_layout`), but guard the route: signed-out →
+  // Login, signed-in-without-role → back to the public browse.
+  if (status !== "authenticated") return <Redirect href="/login" />;
+  if (!isReviewer && !isAdmin) return <Redirect href="/artworks" />;
 
   return (
     <Stack

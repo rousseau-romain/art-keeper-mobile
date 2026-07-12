@@ -296,6 +296,7 @@ export const fr: Resources = {
     viewProfile: "Voir plus de {{handle}}",
     filters: "Ouvrir les filtres par tag",
     settings: "Ouvrir les réglages",
+    signIn: "Se connecter",
     appearance: "Choisir le thème de l'application",
     biometricToggle: "Activer le déverrouillage biométrique",
     tagSourceToggle: "Choisir l'ordre des tags suggérés",

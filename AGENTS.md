@@ -42,6 +42,9 @@ Open these when the trigger applies (they are intentionally not imported):
 - **`.claude/rules/router-navigation-paths.md`** — when writing a navigation
   target (`router.push`/`replace`/`navigate`, `<Redirect href>`, `<Link href>`);
   strip route-group parens from the URL.
+- **`.claude/rules/protected-routes.md`** — when gating a route by auth/role
+  (guest-only, admin-only, signed-in-only); use `<Stack.Protected guard={…}>` in
+  the layout, not a `<Redirect>` in the route/screen body.
 - **`.claude/rules/link-aschild-pressable.md`** — when wrapping a component that
   renders its own touchable box (`Tag`, `Button`, a padded `Pressable`) in a
   `<Link>`; use `asChild` so the padded area is the tap target, not a bare Link.

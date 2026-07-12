@@ -13,6 +13,9 @@ export const unstable_settings = {
 export default function EditLayout() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
 
+  // The auth guard lives one level up: `artworks/_layout` wraps this route in
+  // `Stack.Protected`, so signed-out visitors never reach it (deep links included).
+
   return (
     <EditProposalLayout slug={slug}>
       <Stack screenOptions={{ headerShown: false }}>

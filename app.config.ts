@@ -9,11 +9,15 @@ const WEB_ORIGIN =
 
 // Dynamic config that extends app.json (received as `config`) — everything stays
 // in app.json except the `expo-router` plugin, which we replace with its
-// configured form so Expo Head has an `origin`.
+// configured form so Expo Head has an `origin` and request-time SSR is enabled.
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...(config as ExpoConfig),
   plugins: [
-    ["expo-router", { origin: WEB_ORIGIN }],
+    // `unstable_useServerRendering` renders HTML (and route `generateMetadata`)
+    // at request time instead of at build time — required so the dynamic
+    // `artworks/[slug]` detail route can resolve its SEO/Open Graph tags from
+    // the live artwork. Pairs with `web.output: "server"` in app.json.
+    ["expo-router", { origin: WEB_ORIGIN, unstable_useServerRendering: true }],
     ...(config.plugins ?? []).filter(
       (plugin) =>
         plugin !== "expo-router" &&

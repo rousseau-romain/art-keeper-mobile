@@ -23,7 +23,6 @@ import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingR
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -235,7 +234,6 @@ export const SettingsScreen = () => {
     <WrapperView
       style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}
     >
-      <Seo title={tr("settings.title.index")} />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} accessibilityRole="button">

@@ -11,7 +11,6 @@ import {
 } from "@/pages/app/artwork/form/ProposeEditForm";
 import { useProposeEditSubmit } from "@/pages/app/artwork/hooks/useProposeEditSubmit";
 import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperKeyboardAvoidingView } from "@/shared/ui/wrapper/wrapper-keyboard-avoiding-view/WrapperKeyboardAvoidingView";
 import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
@@ -38,7 +37,6 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
 
   return (
     <WrapperKeyboardAvoidingView keyboardVerticalOffset={headerHeight}>
-      <Seo title={artwork.title} />
       <WrapperScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"

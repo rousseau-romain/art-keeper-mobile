@@ -11,7 +11,6 @@ import {
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon, type IconName } from "@/shared/ui/icon/Icon";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import type { Palette } from "@/theme/enums/color.enums";
@@ -76,7 +75,6 @@ export const LockScreen = () => {
     <WrapperView
       style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xxxl }]}
     >
-      <Seo title={tr("auth.title.lock")} />
 
       <View style={styles.center}>
         <View style={styles.brand}>

@@ -1,13 +1,11 @@
 import { useFocusEffect, useNavigation } from "expo-router";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 
 import { SuccessStep } from "@/pages/app/artwork/components/wizard-step-success/SuccessStep";
 import { clearArtworkDraft } from "@/pages/app/artwork/draft-store";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { EMPTY_ARTWORK_DRAFT } from "@/pages/app/artwork/hooks/useArtworkDraft";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 
 export type SuccessScreenProps = {
@@ -16,7 +14,6 @@ export type SuccessScreenProps = {
 
 /** Post-submit confirmation; "create another" resets the form and restarts. */
 export const SuccessScreen = ({ slug }: SuccessScreenProps) => {
-  const { t: tr } = useTranslation();
   const navigation = useNavigation();
   const { reset } = useFormContext<ArtworkValues>();
 
@@ -46,7 +43,6 @@ export const SuccessScreen = ({ slug }: SuccessScreenProps) => {
 
   return (
     <WrapperView>
-      <Seo title={tr("artwork.new.title.success")} />
       <SuccessStep slug={slug} onAnother={onAnother} />
     </WrapperView>
   );

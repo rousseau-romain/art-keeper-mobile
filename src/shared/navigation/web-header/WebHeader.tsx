@@ -3,6 +3,7 @@ import type { BottomTabBarProps } from "expo-router/js-tabs";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, View } from "react-native";
 
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Text } from "@/shared/ui/text/Text";
@@ -28,6 +29,7 @@ export const WebHeader = ({
 }: WebHeaderProps) => {
   const router = useRouter();
   const { t: tr } = useTranslation();
+  const { status } = useAuth();
   const { colors } = useTheme();
   const styles = useThemeStyles(createStyles);
 
@@ -81,6 +83,19 @@ export const WebHeader = ({
             );
           })}
         </View>
+
+        {status !== "authenticated" && (
+          <Pressable
+            onPress={() => router.push("/login")}
+            accessibilityRole="link"
+            accessibilityLabel={tr("a11y.signIn")}
+            style={styles.link}
+          >
+            <Text font="mono" size="sm" color="primary">
+              {tr("auth.signIn")}
+            </Text>
+          </Pressable>
+        )}
 
         <IconButton
           name="Settings"

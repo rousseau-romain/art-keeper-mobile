@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   type Artwork,
   type ArtworkFilters,
@@ -14,7 +13,6 @@ import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/Vie
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useHaptics } from "@/shared/hooks/useHaptics";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 
 export type IndexScreenProps = {
@@ -28,7 +26,6 @@ export const IndexScreen = ({
   initialScope,
   initialTags,
 }: IndexScreenProps) => {
-  const { t: tr } = useTranslation();
   const haptic = useHaptics();
   const router = useRouter();
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
@@ -132,9 +129,6 @@ export const IndexScreen = ({
   };
 
   return (
-    <WrapperView>
-      <Seo title={tr("artwork.title.index")} />
-      {body()}
-    </WrapperView>
+    <WrapperView>{body()}</WrapperView>
   );
 };

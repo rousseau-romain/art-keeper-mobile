@@ -10,7 +10,6 @@ import {
   type ArtworkValues,
 } from "@/pages/app/artwork/form/ArtworkForm";
 import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
 import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
@@ -48,7 +47,6 @@ export const DetailsStepScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={headerHeight}
     >
-      <Seo title={tr("artwork.new.title.details")} />
       <WrapperScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"

@@ -12,8 +12,10 @@ export type StackProps = ComponentProps<typeof ExpoStack>;
 /**
  * Expo Router's `Stack` preset with the app's default chrome — surface header,
  * accent tint, display-font title, and bg content. Pass `screenOptions` to
- * extend or override the defaults per navigator; `Stack.Screen` is re-exposed
- * unchanged so callers keep the usual `<Stack><Stack.Screen … /></Stack>` shape.
+ * extend or override the defaults per navigator; `Stack.Screen` and
+ * `Stack.Protected` are re-exposed unchanged so callers keep the usual
+ * `<Stack><Stack.Screen … /></Stack>` shape (and can guard routes with
+ * `<Stack.Protected guard={…}>`).
  */
 export const Stack = ({ screenOptions, ...rest }: StackProps) => {
   const { colors } = useTheme();
@@ -33,6 +35,7 @@ export const Stack = ({ screenOptions, ...rest }: StackProps) => {
 };
 
 Stack.Screen = ExpoStack.Screen;
+Stack.Protected = ExpoStack.Protected;
 
 const createStyles = (c: Palette) =>
   StyleSheet.create({

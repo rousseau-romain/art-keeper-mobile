@@ -1,4 +1,4 @@
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import {
   Map as MapIcon,
   Plus as PlusIcon,
@@ -29,10 +29,12 @@ export default function TabsLayout() {
   // narrow / mobile web keep the default bottom bar.
   const webHeader = Platform.OS === "web" && wide;
 
-  // Auth guard: a sign-out (or expired/invalidated session) flips status to
-  // "unauthenticated" while the user is deep in the tab stack — bounce them
-  // back to Login instead of stranding them on a session-less screen.
-  if (status !== "authenticated") return <Redirect href="/login" />;
+  // No blanket auth guard here: the `artworks` browse + detail routes are public
+  // (SEO / shared links). `create-artwork` is gated below with `Tabs.Protected`
+  // (unregistered → tab hidden + route unreachable for signed-out visitors, and
+  // the history is purged if they sign out mid-wizard). `admin` / `dev` still use
+  // the `href: null` pattern (role- / dev-gated), and `artworks/[slug]/edit`
+  // guards itself in the artworks Stack layout.
 
   return (
     <Tabs
@@ -61,15 +63,21 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="create-artwork"
-        options={{
-          title: tr("artwork.createTab"),
-          tabBarIcon: ({ color, size }) => (
-            <PlusIcon size={size} color={color} strokeWidth={1.8} />
-          ),
-        }}
-      />
+      {/* Submitting a piece needs an account. `Tabs.Protected` unregisters the
+          route when signed out — hiding the tab and blocking deep links — and
+          purges its history if the user signs out mid-wizard, redirecting to the
+          anchor (the public browse) rather than to Login. */}
+      <Tabs.Protected guard={status === "authenticated"}>
+        <Tabs.Screen
+          name="create-artwork"
+          options={{
+            title: tr("artwork.createTab"),
+            tabBarIcon: ({ color, size }) => (
+              <PlusIcon size={size} color={color} strokeWidth={1.8} />
+            ),
+          }}
+        />
+      </Tabs.Protected>
       <Tabs.Screen
         name="admin"
         options={{

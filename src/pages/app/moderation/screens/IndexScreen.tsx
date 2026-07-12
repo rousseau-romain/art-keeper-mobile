@@ -19,7 +19,6 @@ import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Segment } from "@/shared/ui/segment/Segment";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import type { Palette } from "@/theme/enums/color.enums";
@@ -287,7 +286,6 @@ export const IndexScreen = () => {
 
   return (
     <WrapperView style={styles.screen}>
-      <Seo title={tr("moderation.title.index")} />
       {renderBody()}
     </WrapperView>
   );

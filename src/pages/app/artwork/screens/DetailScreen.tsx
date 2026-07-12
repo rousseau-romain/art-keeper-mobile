@@ -13,7 +13,6 @@ import { ArtworkMeta } from "@/pages/app/artwork/components/artwork-meta/Artwork
 import { MoreByArtist } from "@/pages/app/artwork/components/more-by-artist/MoreByArtist";
 import { NearbyPanel } from "@/pages/app/artwork/components/nearby-panel/NearbyPanel";
 import { Icon } from "@/shared/ui/icon/Icon";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { SplitRow } from "@/shared/ui/split-row/SplitRow";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
@@ -63,15 +62,6 @@ export const DetailScreen = ({ slug }: DetailScreenProps) => {
 
   return (
     <WrapperScrollView>
-      <Seo
-        title={artwork.title}
-        description={
-          artwork.description ||
-          tr("artwork.meta.descriptionFallback", { title: artwork.title })
-        }
-        image={artwork.imageUrl}
-      />
-
       <SplitRow>
         <ArtworkHero imageUrl={artwork.imageUrl} wide={wide} />
         <ArtworkMeta artwork={artwork} artist={artist} wide={wide} />

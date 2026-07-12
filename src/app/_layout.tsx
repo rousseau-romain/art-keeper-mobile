@@ -92,7 +92,11 @@ function RootNavigator() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="(auth)/login" />
+        {/* Guest-only: once authenticated, login is unnavigable and Expo Router
+            redirects to the anchor (index → /artworks). */}
+        <Stack.Protected guard={status !== "authenticated"}>
+          <Stack.Screen name="(auth)/login" />
+        </Stack.Protected>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="settings" options={{ presentation: "card" }} />
       </Stack>

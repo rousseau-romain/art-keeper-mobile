@@ -34,6 +34,9 @@ export default function Layout() {
   const draft = useArtworkDraft({ methods });
   const router = useRouter();
 
+  // The auth guard lives one level up: `(tabs)/_layout` wraps this route in
+  // `Tabs.Protected`, so signed-out visitors never reach it (deep links included).
+
   return (
     <FormProvider {...methods}>
       <NewArtworkContext.Provider value={draft}>

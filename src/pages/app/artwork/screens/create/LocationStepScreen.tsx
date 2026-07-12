@@ -5,7 +5,6 @@ import { StyleSheet, View } from "react-native";
 import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
 import { LocationStep } from "@/pages/app/artwork/components/wizard-step-location/LocationStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -20,7 +19,6 @@ export const LocationStepScreen = () => {
 
   return (
     <WrapperView>
-      <Seo title={tr("artwork.new.title.location")} />
       <View style={styles.mapBody}>
         <LocationStep />
       </View>

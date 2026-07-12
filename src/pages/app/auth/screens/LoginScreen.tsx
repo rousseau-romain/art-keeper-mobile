@@ -18,7 +18,6 @@ import { useResendVerification } from "@/pages/app/auth/hooks/useResendVerificat
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Segment } from "@/shared/ui/segment/Segment";
-import { Seo } from "@/shared/ui/seo/Seo";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
 import type { Palette } from "@/theme/enums/color.enums";
@@ -240,7 +239,6 @@ export const LoginScreen = () => {
       style={styles.screen}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <Seo title={verifyEmail ? tr("auth.title.verify") : tr("auth.signIn")} />
       <View style={[styles.flex1, wide ? styles.row : styles.col]}>
         {wide ? hero : null}
         <ScrollView

@@ -309,6 +309,7 @@ export const en = {
     viewProfile: "See more by {{handle}}",
     filters: "Open tag filters",
     settings: "Open settings",
+    signIn: "Sign in",
     appearance: "Choose the app theme",
     biometricToggle: "Toggle biometric unlock",
     tagSourceToggle: "Choose how suggested tags are ordered",
