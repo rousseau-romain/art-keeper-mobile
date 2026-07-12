@@ -46,6 +46,16 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <meta name="color-scheme" content="dark light" />
+        {/* Leaflet's layout CSS, loaded globally here rather than via the
+            `import "leaflet/dist/leaflet.css"` inside the lazy map chunks: Metro
+            doesn't reliably extract async-chunk CSS in the production web export,
+            so without this the tiles scatter (works in dev, breaks in prod).
+            Pinned to the installed leaflet version. */}
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          crossOrigin=""
+        />
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: build-time constants, no user input */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: build-time constants, no user input */}
