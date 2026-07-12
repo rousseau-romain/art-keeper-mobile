@@ -60,7 +60,6 @@ export const en = {
       emailRequired: "Enter your email",
       emailInvalid: "Enter a valid email",
       passwordRequired: "Enter your password",
-      biometricFailed: "Couldn't verify. Try again.",
     },
   },
   artwork: {
@@ -75,17 +74,10 @@ export const en = {
     meta: {
       descriptionFallback: "Discover {{title}} on ArtKeeper.",
     },
-    byline: "by {{name}}",
-    location: "Paris 11e",
-    pieceCount_one: "{{count}} piece",
-    pieceCount_other: "{{count}} pieces",
     // Browse map ⇄ grid view.
     map: {
       toggleMap: "Map",
       toggleGrid: "Grid",
-      piecesInView_one: "{{count}} piece in view",
-      piecesInView_other: "{{count}} pieces in view",
-      dragForGrid: "drag ↑ for grid",
     },
     // Tag filter sheet (the (formsheet) modal).
     filters: {
@@ -103,17 +95,12 @@ export const en = {
       appliedCount_one: "{{count}} filter",
       appliedCount_other: "{{count}} filters",
     },
-    statusUpdating: "updating",
-    statusStale: "stale",
-    statusLive: "live",
     loading: "Loading the wall…",
     loadError: "Couldn't load artworks.",
     empty: "No artworks here yet.\nBe the first to catalog this wall.",
-    signOut: "Sign out",
     like: "Like",
     unlike: "Unlike",
     notFound: "Artwork not found.",
-    createComingSoon: "Creating isn't available yet.",
     // The "propose an edit" screen — a reviewed correction to an existing piece.
     edit: {
       heading: "Propose an edit",
@@ -125,7 +112,6 @@ export const en = {
       locationLabel: "Location",
       changeLocation: "Change location",
       locationTitle: "Move the pin",
-      locationSubtitle: "Tap the map to correct where this piece is.",
       locationDone: "Done",
       accuracy: "I believe this correction is accurate to the best of my knowledge.",
       submitCta: "Submit proposal",
@@ -153,7 +139,6 @@ export const en = {
     // The 5-step "add artwork" wizard.
     new: {
       cancel: "Cancel",
-      back: "Back",
       next: "Next",
       reviewCta: "Review",
       submitCta: "Submit for review",
@@ -182,10 +167,7 @@ export const en = {
       },
       location: {
         title: "Confirm the location",
-        subtitle: "Auto-pinned from your photo. Tap the map to nudge it.",
-        hint: "tap to move pin · or use my location",
         useMyLocation: "Use my location",
-        locating: "Locating…",
         error: "Couldn't get your location.",
       },
       details: {
@@ -283,13 +265,10 @@ export const en = {
       index: "Moderation",
       location: "Location",
     },
-    openCount_one: "{{count}} open",
-    openCount_other: "{{count}} open",
     before: "before",
     after: "after",
     current: "Current",
     proposed: "Proposed",
-    proposedBy: "by {{name}}",
     reject: "Reject",
     accept: "Accept changes",
     prev: "Previous",

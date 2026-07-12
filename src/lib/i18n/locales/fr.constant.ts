@@ -53,7 +53,6 @@ export const fr: Resources = {
       emailRequired: "Saisissez votre e-mail",
       emailInvalid: "Saisissez un e-mail valide",
       passwordRequired: "Saisissez votre mot de passe",
-      biometricFailed: "Vérification impossible. Réessayez.",
     },
   },
   artwork: {
@@ -68,16 +67,9 @@ export const fr: Resources = {
     meta: {
       descriptionFallback: "Découvrez {{title}} sur ArtKeeper.",
     },
-    byline: "par {{name}}",
-    location: "Paris 11e",
-    pieceCount_one: "{{count}} œuvre",
-    pieceCount_other: "{{count}} œuvres",
     map: {
       toggleMap: "Carte",
       toggleGrid: "Grille",
-      piecesInView_one: "{{count}} œuvre en vue",
-      piecesInView_other: "{{count}} œuvres en vue",
-      dragForGrid: "glisser ↑ pour la grille",
     },
     // Tag filter sheet (the (formsheet) modal).
     filters: {
@@ -95,18 +87,13 @@ export const fr: Resources = {
       appliedCount_one: "{{count}} filtre",
       appliedCount_other: "{{count}} filtres",
     },
-    statusUpdating: "mise à jour",
-    statusStale: "obsolète",
-    statusLive: "à jour",
     loading: "Chargement du mur…",
     loadError: "Impossible de charger les œuvres.",
     empty:
       "Aucune œuvre ici pour l'instant.\nSoyez le premier à cataloguer ce mur.",
-    signOut: "Se déconnecter",
     like: "J'aime",
     unlike: "Je n'aime plus",
     notFound: "Œuvre introuvable.",
-    createComingSoon: "La création n'est pas encore disponible.",
     // L'écran « proposer une modification » — une correction relue d'une œuvre.
     edit: {
       heading: "Proposer une modification",
@@ -118,7 +105,6 @@ export const fr: Resources = {
       locationLabel: "Lieu",
       changeLocation: "Changer le lieu",
       locationTitle: "Déplacer le repère",
-      locationSubtitle: "Touchez la carte pour corriger l'emplacement de l'œuvre.",
       locationDone: "Terminé",
       accuracy: "Je crois que cette correction est exacte au mieux de ma connaissance.",
       submitCta: "Envoyer la proposition",
@@ -145,7 +131,6 @@ export const fr: Resources = {
     },
     new: {
       cancel: "Annuler",
-      back: "Retour",
       next: "Suivant",
       reviewCta: "Vérifier",
       submitCta: "Soumettre pour examen",
@@ -173,10 +158,7 @@ export const fr: Resources = {
       },
       location: {
         title: "Confirmer le lieu",
-        subtitle: "Épinglé depuis votre photo. Touchez la carte pour ajuster.",
-        hint: "touchez pour déplacer · ou utilisez ma position",
         useMyLocation: "Utiliser ma position",
-        locating: "Localisation…",
         error: "Impossible d'obtenir votre position.",
       },
       details: {
@@ -272,13 +254,10 @@ export const fr: Resources = {
       index: "Modération",
       location: "Emplacement",
     },
-    openCount_one: "{{count}} ouvert",
-    openCount_other: "{{count}} ouverts",
     before: "avant",
     after: "après",
     current: "Actuel",
     proposed: "Proposé",
-    proposedBy: "par {{name}}",
     reject: "Rejeter",
     accept: "Accepter les changements",
     prev: "Précédent",
