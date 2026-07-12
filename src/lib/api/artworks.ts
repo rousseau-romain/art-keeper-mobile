@@ -96,7 +96,7 @@ export const useArtworks = (
     enabled: options?.enabled ?? true,
   });
 
-  const artworks = query.data?.pages.flatMap((page) => page.data) ?? [];
+  const artworks = query.data?.pages.flatMap((page) => page.data ?? []) ?? [];
   return { ...query, artworks };
 };
 
@@ -290,9 +290,7 @@ export const useProposeArtworkChange = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async (
-      input: ProposeArtworkChangeInput,
-    ): Promise<void> => {
+    mutationFn: async (input: ProposeArtworkChangeInput): Promise<void> => {
       const { changes } = input;
       const form = new FormData();
       if (changes.title !== undefined) form.append("title", changes.title);
