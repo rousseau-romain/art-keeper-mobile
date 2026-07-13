@@ -20,7 +20,7 @@ import { ReviewModePicker } from "@/pages/app/moderation/components/review-mode-
 import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { SectionTitle } from "@/pages/app/settings/components/section-title/SectionTitle";
 import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingRow";
-import { Button } from "@/shared/ui/button/Button";
+import { AuthButton } from "@/shared/ui/auth-button/AuthButton";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
 import { Text } from "@/shared/ui/text/Text";
@@ -78,13 +78,8 @@ export const SettingsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const {
-    biometricEnabled,
-    setBiometricEnabled,
-    signOut,
-    isReviewer,
-    isAdmin,
-  } = useAuth();
+  const { biometricEnabled, setBiometricEnabled, isReviewer, isAdmin } =
+    useAuth();
   const { source, setSource } = useTagSource();
   const { reviewMode, setReviewMode } = useReviewMode();
   const { language, setLanguage } = useLocale();
@@ -263,13 +258,7 @@ export const SettingsScreen = () => {
           { paddingBottom: insets.bottom + SpacingEnum.xl },
         ]}
       >
-        <Button
-          label={tr("settings.signOut")}
-          variant="ghost"
-          block
-          onPress={signOut}
-          iconBefore={{ name: "LogOut" }}
-        />
+        <AuthButton variant="ghost" />
       </View>
     </WrapperView>
   );

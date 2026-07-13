@@ -98,7 +98,7 @@ function RootNavigator() {
           <Stack.Screen name="(auth)/login" />
         </Stack.Protected>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="settings" options={{ presentation: "card" }} />
+        <Stack.Screen name="settings" />
       </Stack>
     </View>
   );
