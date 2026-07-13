@@ -26,6 +26,11 @@ Open these when the trigger applies (they are intentionally not imported):
 - **`.claude/rules/expo-workflow.md`** — before writing any Expo/SDK code, running
   the dev server, or using simulator automation. Versioned docs (v56), Expo MCP
   tools, `bun start:mcp`, bun-not-npm.
+- **`.claude/rules/web-prod-export.md`** — when editing the `Dockerfile`,
+  `src/app/+html.tsx`, or upgrading the Expo SDK/expo-router. Web production
+  export gotchas: build-time bundler flags (`EXPO_UNSTABLE_WEB_MODAL`) that must
+  reach `expo export`, Metro dropping async-chunk CSS in prod (hoist real CSS into
+  `+html.tsx`), and the modal-CSS re-sync check on upgrade.
 - **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
   sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.
