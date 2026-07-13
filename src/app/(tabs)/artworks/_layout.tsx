@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform } from "react-native";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { formsheetOptions } from "@/shared/navigation/formsheet-options.constant";
+import { HeaderRight } from "@/shared/navigation/header-right/HeaderRight";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
-import { SpacingEnum } from "@/theme/enums/scale.enums";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
 export const unstable_settings = {
@@ -32,7 +32,7 @@ export default function ArtworksLayout() {
         // (the browse/detail are public) also get a Sign in entry here, since
         // there's no tab bar affordance to reach Login otherwise.
         headerRight: () => (
-          <View style={headerStyles.right}>
+          <HeaderRight>
             {status !== "authenticated" && (
               <IconButton
                 name="LogIn"
@@ -45,7 +45,7 @@ export default function ArtworksLayout() {
               onPress={() => router.push("/settings")}
               accessibilityLabel={tr("a11y.settings")}
             />
-          </View>
+          </HeaderRight>
         ),
       }}
     >
@@ -77,7 +77,3 @@ export default function ArtworksLayout() {
     </Stack>
   );
 }
-
-const headerStyles = StyleSheet.create({
-  right: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.sm },
-});

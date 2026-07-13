@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { formsheetOptions } from "@/shared/navigation/formsheet-options.constant";
+import { HeaderRight } from "@/shared/navigation/header-right/HeaderRight";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
@@ -36,11 +37,13 @@ export default function AdminLayout() {
       screenOptions={{
         headerShown: !webHeader,
         headerRight: () => (
-          <IconButton
-            name="Settings"
-            onPress={() => router.push("/settings")}
-            accessibilityLabel={tr("a11y.settings")}
-          />
+          <HeaderRight>
+            <IconButton
+              name="Settings"
+              onPress={() => router.push("/settings")}
+              accessibilityLabel={tr("a11y.settings")}
+            />
+          </HeaderRight>
         ),
       }}
     >

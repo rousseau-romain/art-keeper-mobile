@@ -12,6 +12,7 @@ import {
   DISPLAY_TOTAL,
   STEP_BY_ROUTE,
 } from "@/pages/app/artwork/wizard-steps.constant";
+import { HeaderRight } from "@/shared/navigation/header-right/HeaderRight";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
 
@@ -43,11 +44,13 @@ export default function Layout() {
         <Stack
           screenOptions={{
             headerRight: () => (
-              <IconButton
-                name="Settings"
-                onPress={() => router.push("/settings")}
-                accessibilityLabel={tr("a11y.settings")}
-              />
+              <HeaderRight>
+                <IconButton
+                  name="Settings"
+                  onPress={() => router.push("/settings")}
+                  accessibilityLabel={tr("a11y.settings")}
+                />
+              </HeaderRight>
             ),
           }}
         >
