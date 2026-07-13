@@ -14,6 +14,13 @@ COPY . .
 ARG EXPO_PUBLIC_WEB_ORIGIN
 ARG EXPO_PUBLIC_API_URL
 ARG EXPO_PUBLIC_AUTH_ORIGIN
+
+# Build-only bundler switch (not an EXPO_PUBLIC_ var), read at export time by
+# expo-router's Metro config: renders `presentation: "formSheet"` / "modal" routes
+# as web overlays instead of full pages. It lives in `.env`, but `.env` is
+# dockerignored, so it must be passed here or the web filter sheet renders
+# full-screen. Defaults on; overridable as a Dokploy build arg.
+ARG EXPO_UNSTABLE_WEB_MODAL=1
 RUN bun expo export -p web
 
 # ---- runtime: serve dist/ (SSR + API routes) with the Expo server ----
