@@ -1,5 +1,9 @@
 import { useLocalSearchParams } from "expo-router";
-import type { GenerateMetadataFunction } from "expo-router/server";
+import type {
+  GenerateMetadataFunction,
+  LoaderFunction,
+} from "expo-router/server";
+import { setResponseHeaders } from "expo-server";
 
 // Side-effect: configure the generated API client (base URL + interceptors)
 // before the server-side fetch in `generateMetadata` runs. Metadata resolves
@@ -44,6 +48,39 @@ export const generateMetadata: GenerateMetadataFunction = async (
     // Unknown slug or API unreachable: still give the page a sensible <title>
     // (the screen renders its own not-found / error branch).
     return { title: t("artwork.title.detail") };
+  }
+};
+
+// Web-only, runs server-side at request time (see `unstable_useServerDataLoaders`
+// in app.config.ts). The detail screen's LCP is the hero image, but nothing about
+// the artwork is in the initial HTML — the app renders a blank auth-gated shell on
+// the server and only fetches the artwork client-side, so the image request starts
+// very late and Lighthouse flags it as "not discoverable in initial document".
+// Reusing the same server-side fetch `generateMetadata` already does, we emit an
+// HTTP `Link: rel=preload` header so the browser starts downloading the hero image
+// as soon as the document response arrives — before the JS bundle even loads. The
+// image then paints from that preloaded response the moment the client mounts the
+// hero `<img>` (see ArtworkHero.web). The returned artwork is embedded in the HTML
+// and available to `useLoaderData` if we later seed React Query from it.
+export const loader: LoaderFunction<{ artwork: Artwork | null }> = async (
+  _request,
+  params,
+) => {
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+
+  try {
+    // Same cast as `generateMetadata` / the data layer: the configured client
+    // sets `throwOnError: true`, so a resolved call always has `data`.
+    const { data } = await getArtworksSlugBySlug({ path: { slug } });
+    const artwork = data as Artwork;
+    setResponseHeaders({
+      Link: `<${artwork.imageUrl}>; rel=preload; as=image; fetchpriority=high`,
+    });
+    return { artwork };
+  } catch {
+    // Unknown slug or API unreachable: no preload; the screen renders its own
+    // not-found / error branch from its client-side query.
+    return { artwork: null };
   }
 };
 

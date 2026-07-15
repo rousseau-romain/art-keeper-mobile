@@ -16,8 +16,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // `unstable_useServerRendering` renders HTML (and route `generateMetadata`)
     // at request time instead of at build time — required so the dynamic
     // `artworks/[slug]` detail route can resolve its SEO/Open Graph tags from
-    // the live artwork. Pairs with `web.output: "server"` in app.json.
-    ["expo-router", { origin: WEB_ORIGIN, unstable_useServerRendering: true }],
+    // the live artwork. `unstable_useServerDataLoaders` enables per-route
+    // `loader` functions (Remix model) that run server-side at request time —
+    // used by `artworks/[slug]` to emit an LCP `Link: rel=preload` response
+    // header for the hero image. Pairs with `web.output: "server"` in app.json.
+    [
+      "expo-router",
+      {
+        origin: WEB_ORIGIN,
+        unstable_useServerRendering: true,
+        unstable_useServerDataLoaders: true,
+      },
+    ],
     ...(config.plugins ?? []).filter(
       (plugin) =>
         plugin !== "expo-router" &&
