@@ -77,6 +77,21 @@ const fontFacesCss = `
 
 const modalCss = `.fApBhq_modal{pointer-events:auto;border:var(--expo-router-modal-border,none);box-sizing:border-box;will-change:transform;flex-direction:column;flex:1;display:flex;overflow:auto}.fApBhq_overlay{background-color:var(--expo-router-modal-overlay-background,#00000040);position:fixed;inset:0}@media (width>=768px){.fApBhq_modal{z-index:50;width:var(--expo-router-modal-width,83vw);min-width:var(--expo-router-modal-min-width,auto);max-width:var(--expo-router-modal-max-width,min(936px,83vw));height:var(--expo-router-modal-height,79dvh);max-height:min(var(--expo-router-modal-height,min(586px,79dvh)),calc(100dvh - 2rem));min-height:min(var(--expo-router-modal-min-height,var(--expo-router-modal-height,min(586px,79dvh))),calc(100dvh - 2rem));filter:var(--expo-router-modal-shadow,drop-shadow(0 10px 8px #0000000a)drop-shadow(0 4px 3px #0000001a));outline:none;position:relative;overflow:auto}.fApBhq_modalWrap>.fApBhq_modal{pointer-events:auto}}.fApBhq_drawerContent{outline:none;flex-direction:column;height:100%;display:flex;position:fixed;bottom:0;left:0;right:0}body>.fApBhq_transparentDrawerContent{outline:none;flex-direction:column;height:100%;animation:none;display:flex;position:fixed;bottom:0;left:0;right:0}@media (width>=768px){.fApBhq_drawerContent{pointer-events:box-none;max-height:100%}}.fApBhq_modal::-webkit-scrollbar{width:0;height:0}.fApBhq_modal::-webkit-scrollbar-thumb{background:0 0}.fApBhq_modalBody{box-sizing:border-box;flex:1;display:flex;overflow:auto}.fApBhq_drawerContent .fApBhq_modal[data-presentation=formSheet],.fApBhq_drawerContent .fApBhq_modal[data-presentation=containedModal]{box-shadow:none;filter:none;border-radius:inherit;width:100%;max-width:none;min-height:auto;max-height:none;position:relative;transform:none}.fApBhq_drawerContent .fApBhq_modal[data-presentation=modal],.fApBhq_drawerContent .fApBhq_modal[data-presentation=fullScreenModal]{width:var(--expo-router-modal-width,83vw);min-width:var(--expo-router-modal-min-width,auto);max-width:var(--expo-router-modal-max-width,min(936px,83vw));filter:var(--expo-router-modal-shadow,drop-shadow(0px 25px 50px #0000004d));border-radius:var(--expo-router-modal-border-radius,24px);margin:0;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}.fApBhq_srOnly{display:none}`;
 
+// Leaflet's layout CSS. On web it must be present for the map to render, but the
+// `import "leaflet/dist/leaflet.css"` inside the *lazy* map chunk isn't linked in
+// the production export (Metro drops async-chunk CSS — same bug as `modalCss`).
+// It's self-hosted from the npm package in `public/leaflet/` (served same-origin
+// at `/leaflet/leaflet.css`, like the fonts in `public/fonts/`), and injected by
+// this tiny script rather than a synchronous `<link>`: a stylesheet inserted via
+// JS is NOT render-blocking (the old unpkg `<link>` was — Lighthouse). The CSS is
+// off the critical path (below-the-fold map, itself a lazy chunk). Keeping the
+// file verbatim (with its `images/` beside it) means `url(images/…)` resolve to
+// `/leaflet/images/…`. The files are committed but generated from the npm package
+// by `bun run sync:leaflet` (scripts/copy-leaflet-assets.ts), run automatically by
+// the `postinstall` hook (every `bun install`) and the `prestart` / `preweb` hooks
+// (every `bun start` / `bun web`) — so a leaflet bump refreshes them; commit the diff.
+const leafletCssLoader = `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href="/leaflet/leaflet.css";document.head.appendChild(l)})()`;
+
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
@@ -110,16 +125,13 @@ export default function Root({ children }: PropsWithChildren) {
             the `fontFacesCss` note above. */}
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: build-time constant, no user input */}
         <style dangerouslySetInnerHTML={{ __html: fontFacesCss }} />
-        {/* Leaflet's layout CSS, loaded globally here rather than via the
-            `import "leaflet/dist/leaflet.css"` inside the lazy map chunks: Metro
-            doesn't reliably extract async-chunk CSS in the production web export,
-            so without this the tiles scatter (works in dev, breaks in prod).
-            Pinned to the installed leaflet version. */}
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          crossOrigin=""
-        />
+        {/* Leaflet's layout CSS — self-hosted in `public/leaflet/`, loaded
+            non-render-blocking via `leafletCssLoader` (not a synchronous `<link>`;
+            the old unpkg one blocked render). The preload just starts the fetch
+            sooner. See the `leafletCssLoader` note above. */}
+        <link rel="preload" as="style" href="/leaflet/leaflet.css" />
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: build-time constant, no user input */}
+        <script dangerouslySetInnerHTML={{ __html: leafletCssLoader }} />
         {/* Web-modal positioning CSS that Metro drops from the prod export — see
             the `modalCss` note above. Without it the filter sheet renders
             off-screen. */}

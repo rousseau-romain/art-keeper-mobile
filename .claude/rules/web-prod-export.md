@@ -71,11 +71,24 @@ is **prod-only**: a feature that depends on a real `.css`/CSS-module import
 renders **unstyled** on staging while looking fine locally.
 
 The app has essentially two such CSS dependencies, both **hoisted into the web
-shell `src/app/+html.tsx`** (a global `<link>` or an inline `<style>`), never
-left to the lazy chunk:
+shell `src/app/+html.tsx`**, never left to the lazy chunk:
 
-- **Leaflet** — `leaflet.css` via an unpkg `<link>` (pinned to the installed
-  version), instead of `import "leaflet/dist/leaflet.css"` in the map chunk.
+- **Leaflet** — `leaflet.css` **self-hosted** from the npm package in
+  `public/leaflet/` (served same-origin at `/leaflet/leaflet.css`, like the fonts
+  in `public/fonts/`), instead of `import "leaflet/dist/leaflet.css"` in the map
+  chunk. It's injected **non-render-blocking** by the `leafletCssLoader` script (a
+  JS-inserted stylesheet doesn't block render), preceded by a `<link
+  rel="preload" as="style">` hint. It used to be a unpkg `<link>` — a third-party
+  **render-blocking request** (Lighthouse) — then briefly an inline `<style>`.
+  The file is committed **verbatim** with its `images/` beside it, so the
+  `url(images/…)` resolve to `/leaflet/images/…` (never fetched by this app —
+  markers use `L.divIcon`, no layers control). The files are **committed** but
+  generated from the npm package by `bun run sync:leaflet`
+  (`scripts/copy-leaflet-assets.ts`), run automatically by the **`postinstall`**
+  hook (every `bun install`) and the **`prestart` / `preweb`** hooks (every
+  `bun start` / `bun web`) — so a leaflet bump refreshes them (commit the diff).
+  `postinstall` is guarded (`bun -e` no-ops if the script isn't present yet), so
+  it's safe in the `Dockerfile` where `bun install` runs before `COPY . .`.
 - **expo-router web modal** — `expo-router/assets/modal.module.css` (positions the
   `vaul` drawer). Imported inside the lazy modal chunk, so in prod the sheet had
   `position: static` and rendered off-screen below the fold ("the filter modal
