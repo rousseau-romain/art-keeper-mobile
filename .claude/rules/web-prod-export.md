@@ -2,7 +2,7 @@
 
 The web app is shipped by **exporting** the bundle (`bun expo export -p web`,
 `web.output: "server"`) and serving `dist/` with `bunx expo serve`. Staging
-(`artkeeper-staging.web-rows.com`) builds this in the root **`Dockerfile`** (no
+(`artkeeper.staging.web-rows.com`) builds this in the root **`Dockerfile`** (no
 EAS Hosting, no `eas.json`). Two things behave differently in this production
 export than in `expo start --web`, and both have bitten us — read this before
 touching the `Dockerfile`, `src/app/+html.tsx`, or upgrading the Expo SDK.
@@ -30,6 +30,36 @@ RUN bun expo export -p web
 - Without `EXPO_UNSTABLE_WEB_MODAL`, `presentation: "formSheet" | "modal"` routes
   (the `filters` sheet) fall back to `BaseStack` and render as a **full page** on
   web (see [router-navigation-paths](router-navigation-paths.md)).
+
+### Dokploy setup (staging)
+
+- **Source**: this repo, branch `master`. **Build Type: Dockerfile** — the
+  multi-stage `Dockerfile` does `bun expo export -p web` then `bunx expo serve`.
+- **Domain**: `artkeeper.staging.web-rows.com`, **container port `8081`**
+  (`expo serve` in the `runtime` stage), HTTPS on.
+- **Build-time Arguments** (the values below, *not* runtime env):
+
+  | Arg | Staging value |
+  | --- | --- |
+  | `EXPO_PUBLIC_API_URL` | `https://api.artkeeper.staging.web-rows.com` |
+  | `EXPO_PUBLIC_WEB_ORIGIN` | `https://artkeeper.staging.web-rows.com` |
+  | `EXPO_UNSTABLE_WEB_MODAL` | `1` |
+
+- **`EXPO_PUBLIC_AUTH_ORIGIN` is not needed on web** — `AUTH_ORIGIN` in
+  `src/lib/api/client.ts` is only attached to requests on native
+  (`Platform.OS !== "web"`); the browser sets `Origin` itself. Leave it unset for
+  the web deploy (it's still declared as an `ARG` for parity). It matters only
+  for native builds pointing at a backend whose trusted origin differs from
+  `EXPO_PUBLIC_API_URL`.
+
+### Backend prerequisites (art-keeper-api)
+
+The web app runs cross-origin (`artkeeper.staging.web-rows.com` → the
+`api.` host), so the API must allow it or the browser/Better Auth block requests:
+
+- **CORS**: allow origin `https://artkeeper.staging.web-rows.com`.
+- **Better Auth `trustedOrigins`**: include `https://artkeeper.staging.web-rows.com`,
+  or state-changing auth calls (sign-in/sign-up) are rejected by the CSRF guard.
 
 ## The async-chunk CSS bug — hoist real CSS into `+html.tsx`
 
