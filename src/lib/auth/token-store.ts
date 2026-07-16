@@ -9,7 +9,15 @@ const isWeb = Platform.OS === "web";
 
 // In-memory mirror so the API client can read the bearer token synchronously
 // when building request headers. Kept in sync with persistent storage.
-let cached: string | null = null;
+//
+// On web the mirror is seeded synchronously at module load: localStorage is a
+// synchronous API, so the token is available on the very first render — the web
+// SSR gate can pass without awaiting an async hydrate, letting the app render
+// public content immediately (server sees no localStorage → null, as expected).
+// Native keeps the async keychain read (see `hydrateToken`).
+let cached: string | null = isWeb
+  ? (globalThis.localStorage?.getItem(KEY) ?? null)
+  : null;
 
 async function readStore(): Promise<string | null> {
   if (isWeb) return globalThis.localStorage?.getItem(KEY) ?? null;

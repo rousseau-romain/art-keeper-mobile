@@ -337,11 +337,18 @@ export const useArtwork = (id: string) => {
  * A single artwork by slug — the public, SEO-friendly lookup used by the detail
  * route. The fetched artwork still carries `.id`, so writes (like/unlike, future
  * edit) key off that.
+ *
+ * `initialData` seeds the cache from the route's server `loader` (web SSR), so the
+ * detail hero renders in the initial HTML instead of after a client fetch. It's
+ * passed WITHOUT `initialDataUpdatedAt` on purpose: the loader runs unauthenticated
+ * (no user token server-side), so `likedByMe` is neutral — treating the data as
+ * immediately stale triggers a background refetch that personalizes it on the client.
  */
-export const useArtworkBySlug = (slug: string) => {
+export const useArtworkBySlug = (slug: string, initialData?: Artwork) => {
   return useQuery({
     ...getArtworksSlugBySlugOptions({ path: { slug } }),
     enabled: !!slug,
+    initialData,
   });
 };
 

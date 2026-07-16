@@ -53,6 +53,8 @@ export type SignUpOutcome = "authenticated" | "needs-verification";
 
 type AuthContextValue = {
   status: AuthStatus;
+  /** True once the stored token has been loaded (sync on web, async on native). */
+  hydrated: boolean;
   user: User | null;
   isAdmin: boolean;
   /** True when the user can moderate — carries the `reviewer` role. */
@@ -98,8 +100,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // pass we decide whether to open locked: a stored token + the opt-in + enrolled
   // biometrics means the app starts behind the Lock screen (the session still
   // loads in the background so it's ready the moment they unlock).
-  const [hydrated, setHydrated] = useState(false);
+  // Web hydrates synchronously: `token-store` seeds its mirror from localStorage
+  // at module load, and biometric app-lock is native-only (`locked` stays false),
+  // so the gate can pass on the first render — enabling public SSR content without
+  // awaiting anything. Native still reads the encrypted keychain asynchronously.
+  const [hydrated, setHydrated] = useState(Platform.OS === "web");
   useEffect(() => {
+    if (Platform.OS === "web") return; // already hydrated synchronously above
     (async () => {
       const tok = await hydrateToken();
       const pref = await getBiometricPref();
@@ -368,6 +375,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
+      hydrated,
       user,
       isAdmin: user?.role === "admin",
       isReviewer: user?.role === "reviewer",
@@ -386,6 +394,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }),
     [
       status,
+      hydrated,
       user,
       locked,
       unlock,

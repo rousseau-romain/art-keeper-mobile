@@ -31,6 +31,13 @@ Open these when the trigger applies (they are intentionally not imported):
   export gotchas: build-time bundler flags (`EXPO_UNSTABLE_WEB_MODAL`) that must
   reach `expo export`, Metro dropping async-chunk CSS in prod (hoist real CSS into
   `+html.tsx`), and the modal-CSS re-sync check on upgrade.
+- **`.claude/rules/web-ssr-hydration.md`** — when touching web SSR of public
+  content: the `RootNavigator` auth gate (`hydrated`, not `status`), a provider's
+  first-render value (theme / i18n / token / breakpoint), the `QueryClient`
+  construction (`getQueryClient`, per-request), a route `loader` + `useLoaderData`
+  seeding, reading request config server-side (`Accept-Language` / a cookie), or a
+  protected-route guard's `loading` behavior. Keeps the server render == the
+  client's first render (no #418 hydration mismatch).
 - **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
   sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.

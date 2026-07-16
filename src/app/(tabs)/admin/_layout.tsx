@@ -24,11 +24,20 @@ export default function AdminLayout() {
 
   // On desktop web the WebHeader (top brand nav) already covers navigation +
   // settings, so the per-page native header would be redundant — hide it there.
+  // `wide` is hydration-safe (narrow until mounted, see useBreakpoint), so the
+  // server + first client render agree the header is shown — toggling
+  // `headerShown` is a structural branch that would mismatch otherwise — then it
+  // hides post-mount.
   const webHeader = Platform.OS === "web" && wide;
 
   // Moderation is reviewer/admin-only. The tab is already hidden for everyone
   // else (`href: null` in `(tabs)/_layout`), but guard the route: signed-out →
   // Login, signed-in-without-role → back to the public browse.
+  //
+  // Hold during `loading`: the app now renders while get-session is in flight, so
+  // redirecting on `status !== "authenticated"` would bounce an admin refreshing
+  // here to Login before their session resolves. Wait until the status is known.
+  if (status === "loading") return null;
   if (status !== "authenticated") return <Redirect href="/login" />;
   if (!isReviewer && !isAdmin) return <Redirect href="/artworks" />;
 

@@ -20,6 +20,10 @@ export default function ArtworksLayout() {
 
   // On desktop web the WebHeader (top brand nav) already covers navigation +
   // settings, so the per-page native header would be redundant — hide it there.
+  // `wide` is hydration-safe (narrow until mounted, see useBreakpoint), so the
+  // server + first client render agree the header is shown — toggling
+  // `headerShown` is a structural branch that would mismatch otherwise — then it
+  // hides post-mount.
   const webHeader = Platform.OS === "web" && wide;
 
   return (
@@ -59,8 +63,11 @@ export default function ArtworksLayout() {
       />
       {/* The detail is public, but proposing an edit needs an account.
           `Stack.Protected` blocks deep links / web refreshes for signed-out
-          visitors and redirects to the stack anchor (the public detail). */}
-      <Stack.Protected guard={status === "authenticated"}>
+          visitors and redirects to the stack anchor (the public detail). Guard on
+          `!== "unauthenticated"` so the brief `loading` window (the app now renders
+          during get-session) doesn't bounce an authenticated user refreshing the
+          edit route — it stays registered until we KNOW they're signed out. */}
+      <Stack.Protected guard={status !== "unauthenticated"}>
         <Stack.Screen
           name="[slug]/edit"
           options={{ title: tr("artwork.title.edit") }}

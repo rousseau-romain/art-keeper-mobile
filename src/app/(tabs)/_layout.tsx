@@ -26,7 +26,11 @@ export default function TabsLayout() {
   const styles = useThemeStyles(createStyles);
 
   // Desktop web swaps the bottom tab bar for a top brand header; native and
-  // narrow / mobile web keep the default bottom bar.
+  // narrow / mobile web keep the default bottom bar. `wide` is hydration-safe
+  // (narrow until mounted, see useBreakpoint), so the server + first client
+  // render agree on the bottom bar — the swap is a structural (element-type)
+  // branch that would throw a hydration mismatch otherwise — then flip to the
+  // WebHeader post-mount.
   const webHeader = Platform.OS === "web" && wide;
 
   // No blanket auth guard here: the `artworks` browse + detail routes are public
@@ -66,8 +70,12 @@ export default function TabsLayout() {
       {/* Submitting a piece needs an account. `Tabs.Protected` unregisters the
           route when signed out — hiding the tab and blocking deep links — and
           purges its history if the user signs out mid-wizard, redirecting to the
-          anchor (the public browse) rather than to Login. */}
-      <Tabs.Protected guard={status === "authenticated"}>
+          anchor (the public browse) rather than to Login. Guard on
+          `!== "unauthenticated"` (not `=== "authenticated"`) so the brief
+          `loading` window — the app now renders during get-session instead of
+          blocking on it — doesn't unregister the route under an authenticated
+          user refreshing here; it stays registered until we KNOW they're signed out. */}
+      <Tabs.Protected guard={status !== "unauthenticated"}>
         <Tabs.Screen
           name="create-artwork"
           options={{

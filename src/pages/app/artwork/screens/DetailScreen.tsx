@@ -12,6 +12,7 @@ import { ArtworkLocationBand } from "@/pages/app/artwork/components/artwork-loca
 import { ArtworkMeta } from "@/pages/app/artwork/components/artwork-meta/ArtworkMeta";
 import { MoreByArtist } from "@/pages/app/artwork/components/more-by-artist/MoreByArtist";
 import { NearbyPanel } from "@/pages/app/artwork/components/nearby-panel/NearbyPanel";
+import { useLoaderArtwork } from "@/pages/app/artwork/hooks/useLoaderArtwork";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { SplitRow } from "@/shared/ui/split-row/SplitRow";
 import { Text } from "@/shared/ui/text/Text";
@@ -27,7 +28,15 @@ export type DetailScreenProps = { slug: string };
 export const DetailScreen = ({ slug }: DetailScreenProps) => {
   const { t: tr } = useTranslation();
   const { wide } = useBreakpoint();
-  const { data: artwork, isLoading, isError, error } = useArtworkBySlug(slug);
+  // Web SSR: seed from the route loader so the hero renders in the initial HTML
+  // (undefined on native — the query fetches client-side as usual).
+  const initialArtwork = useLoaderArtwork();
+  const {
+    data: artwork,
+    isLoading,
+    isError,
+    error,
+  } = useArtworkBySlug(slug, initialArtwork);
   const { data: artist } = useArtist(artwork?.artistId);
   const { radius, nearby } = useNearbyArtworks(artwork);
   const { artworks: moreByArtist } = useArtworksByArtist(

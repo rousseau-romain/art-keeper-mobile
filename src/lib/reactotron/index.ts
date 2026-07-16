@@ -5,11 +5,13 @@ import {
   reactotronReactQuery,
 } from "reactotron-react-query";
 
-import { queryClient } from "@/lib/query";
+import { getQueryClient } from "@/lib/query";
 
-// Observe the same module-scoped QueryClient the app renders with, so the
-// React Query panel mirrors live cache state.
-const queryClientManager = new QueryClientManager({ queryClient });
+// Observe the same QueryClient the app renders with (native → the memoized
+// singleton), so the React Query panel mirrors live cache state.
+const queryClientManager = new QueryClientManager({
+  queryClient: getQueryClient(),
+});
 
 // biome-ignore lint/correctness/useHookAtTopLevel: `.use`/`.useReactNative` are Reactotron builder methods, not React hooks.
 Reactotron.setAsyncStorageHandler(AsyncStorage)

@@ -13,7 +13,7 @@ import { ToastProvider } from "@/shared/ui/toast/Toast";
 import "@/lib/api/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
-import { queryClient } from "@/lib/query";
+import { getQueryClient } from "@/lib/query";
 import { LockScreen } from "@/pages/app/auth/screens/LockScreen";
 import type { Palette } from "@/theme/enums/color.enums";
 import { useAppFonts } from "@/theme/hooks/useAppFonts";
@@ -33,6 +33,8 @@ if (__DEV__ && Platform.OS !== "web") {
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
+  // Per-request on the web server, memoized singleton in the browser / on native.
+  const queryClient = getQueryClient();
   return (
     <GestureHandlerRootView style={staticStyles.fill}>
       <SafeAreaProvider>
@@ -54,14 +56,20 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const [fontsLoaded, fontError] = useAppFonts();
-  const { status, locked } = useAuth();
+  const { status, hydrated, locked } = useAuth();
   const { scheme } = useTheme();
   const styles = useThemeStyles(createStyles);
 
   // Status-bar glyphs must contrast with the themed background.
   const barStyle = scheme === "dark" ? "light" : "dark";
 
-  const ready = (fontsLoaded || !!fontError) && status !== "loading";
+  // Gate on the local token hydration, NOT on `status` — waiting for `status`
+  // meant waiting for the `get-session` network round-trip before rendering
+  // anything, even the public artwork detail. `hydrated` is synchronous on web
+  // (localStorage) and a fast keychain read on native, so public content (and
+  // its LCP hero image) paints as soon as fonts + the token are ready; the
+  // session resolves in the background and personalizes afterwards.
+  const ready = (fontsLoaded || !!fontError) && hydrated;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {});
@@ -69,10 +77,11 @@ function RootNavigator() {
 
   if (!ready) return <View style={styles.screen} />;
 
-  // Biometric gate: a stored session is loading behind this, but nothing is
-  // shown until the user passes the Lock screen. Clearing `locked` reveals the
-  // normal Stack (already in whatever state the session settled into).
-  if (status === "authenticated" && locked) {
+  // Biometric gate: `locked` is decided at hydration (a stored token + the opt-in
+  // + enrolled biometrics) — independent of the session query — so the Lock screen
+  // shows immediately, before get-session resolves. The session loads behind it,
+  // ready the moment they unlock. (Web is never locked: biometrics are native-only.)
+  if (locked) {
     return (
       <View style={styles.screen}>
         <StatusBar style={barStyle} />

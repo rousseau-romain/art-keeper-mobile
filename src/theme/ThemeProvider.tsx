@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createContext,
   useCallback,
@@ -14,12 +13,15 @@ import {
   LightColorEnum,
   type Palette,
 } from "@/theme/enums/color.enums";
-import {
-  ThemeModeEnum,
-  type ThemeModeEnumType,
-  type ThemeScheme,
+import type {
+  ThemeModeEnumType,
+  ThemeScheme,
 } from "@/theme/enums/theme-mode.enums";
-import { THEME_MODE_STORAGE_KEY } from "@/theme/theme.constant";
+import {
+  getInitialThemeMode,
+  persistThemeMode,
+  readPersistedThemeMode,
+} from "@/theme/theme-mode-store";
 
 type ThemeContextValue = {
   /** The user's choice ("auto" | "light" | "dark") — what Settings edits. */
@@ -33,33 +35,34 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function normalize(raw: string): ThemeModeEnumType {
-  return raw in ThemeModeEnum ? (raw as ThemeModeEnumType) : "dark";
-}
-
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  // Dark is the app's default: it applies until a persisted choice loads, and
-  // it's the fallback when `auto` can't read a device scheme.
-  const [mode, setModeState] = useState<ThemeModeEnumType>("dark");
+  // First-render mode is deterministic across server + client: web reads it from a
+  // cookie (so an explicit light/dark choice renders with no flash), native starts
+  // on the default and applies the stored value on launch (below).
+  const [mode, setModeState] = useState<ThemeModeEnumType>(getInitialThemeMode);
+  const [mounted, setMounted] = useState(false);
   const device = useColorScheme();
 
-  // Apply a persisted manual override once on launch.
   useEffect(() => {
-    AsyncStorage.getItem(THEME_MODE_STORAGE_KEY)
-      .then((raw) => {
-        if (raw) setModeState(normalize(raw));
+    setMounted(true);
+    // Native only (web resolved the mode synchronously from the cookie above).
+    readPersistedThemeMode()
+      .then((m) => {
+        if (m) setModeState(m);
       })
       .catch(() => {});
   }, []);
 
   const setMode = useCallback((next: ThemeModeEnumType) => {
     setModeState(next);
-    AsyncStorage.setItem(THEME_MODE_STORAGE_KEY, next).catch(() => {});
+    persistThemeMode(next);
   }, []);
 
-  // `useColorScheme` can report null/"unspecified" — dark stays the fallback.
+  // "auto" follows the device scheme — but only after mount, so the server and the
+  // client's first render agree (deterministic dark) rather than the server having
+  // to guess a system preference it can't read. Explicit light/dark are immediate.
   const scheme: ThemeScheme =
-    mode === "auto" ? (device === "light" ? "light" : "dark") : mode;
+    mode === "auto" ? (mounted && device === "light" ? "light" : "dark") : mode;
 
   const value = useMemo<ThemeContextValue>(
     () => ({

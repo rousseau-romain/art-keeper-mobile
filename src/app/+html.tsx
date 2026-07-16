@@ -2,7 +2,7 @@ import { ScrollViewStyleReset } from "expo-router/html";
 import type { PropsWithChildren } from "react";
 
 import { DarkColorEnum, LightColorEnum } from "@/theme/enums/color.enums";
-import { THEME_MODE_STORAGE_KEY } from "@/theme/theme.constant";
+import { THEME_MODE_COOKIE } from "@/theme/theme.constant";
 
 /**
  * Web-only root HTML shell (Expo Router, static output). Paints the background
@@ -26,12 +26,13 @@ body { background-color: ${DarkColorEnum.bg}; }
 }
 `;
 
-// AsyncStorage's web backend is localStorage with the raw key, so the persisted
-// mode is readable synchronously here.
+// The persisted mode lives in a cookie (see `theme-mode-store.web.ts`) so the SSR
+// render can read it too; mirror it onto `data-theme` before first paint so the
+// background/color-scheme CSS above is right immediately. Unset/unknown → dark.
 const themeScript = `
 try {
-  document.documentElement.dataset.theme =
-    localStorage.getItem(${JSON.stringify(THEME_MODE_STORAGE_KEY)}) || "dark";
+  var m = document.cookie.match(/(?:^|;\\s*)${THEME_MODE_COOKIE}=([^;]+)/);
+  document.documentElement.dataset.theme = m ? decodeURIComponent(m[1]) : "dark";
 } catch (e) {}
 `;
 

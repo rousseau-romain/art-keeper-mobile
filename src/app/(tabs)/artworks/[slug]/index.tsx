@@ -4,6 +4,7 @@ import type {
   LoaderFunction,
 } from "expo-router/server";
 import { setResponseHeaders } from "expo-server";
+import { Suspense } from "react";
 
 // Side-effect: configure the generated API client (base URL + interceptors)
 // before the server-side fetch in `generateMetadata` runs. Metadata resolves
@@ -13,6 +14,7 @@ import type { Artwork } from "@/lib/api/artworks";
 import { getArtworksSlugBySlug } from "@/lib/api/generated/sdk.gen";
 import { serverT } from "@/lib/i18n/server";
 import { DetailScreen } from "@/pages/app/artwork/screens/DetailScreen";
+import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 
 // Resolve the page's SEO/Open Graph tags from the live artwork at request time
 // (server rendering), so social crawlers — which don't run the client JS the old
@@ -86,5 +88,12 @@ export const loader: LoaderFunction<{ artwork: Artwork | null }> = async (
 
 export default function Screen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  return <DetailScreen slug={slug} />;
+  // `DetailScreen` reads the loader data (`useLoaderArtwork` on web), which
+  // suspends during client-side navigation (on initial load the data is already
+  // in the HTML, so it doesn't). The boundary shows a themed spinner meanwhile.
+  return (
+    <Suspense fallback={<ScreenFallback />}>
+      <DetailScreen slug={slug} />
+    </Suspense>
+  );
 }
