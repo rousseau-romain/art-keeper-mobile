@@ -43,7 +43,7 @@ export type ArtworkFilters = Omit<
  */
 export type SearchScope = "all" | "title" | "artist";
 
-const PAGE_SIZE = 20;
+export const PAGE_SIZE = 20;
 
 // --- Query keys ------------------------------------------------------------
 // The generated `*QueryKey` helpers model the domain hierarchically (each key
@@ -85,7 +85,13 @@ function withLike(a: Artwork, liked: boolean): Artwork {
  */
 export const useArtworks = (
   filters: ArtworkFilters = {},
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
+  // Web SSR: the route `loader` prefetches the first page; seeding it as
+  // `initialData` renders the list from the server HTML (no client fetch first).
+  // Passed WITHOUT `initialDataUpdatedAt` on purpose — the loader runs
+  // unauthenticated, so it's treated as stale and refetched in the background to
+  // personalize `likedByMe` (same rationale as `useArtworkBySlug`).
+  initialData?: ArtworkPage
 ) => {
   const query = useInfiniteQuery({
     ...getArtworksInfiniteOptions({ query: { ...filters, limit: PAGE_SIZE } }),
@@ -94,6 +100,12 @@ export const useArtworks = (
     initialPageParam: {},
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     enabled: options?.enabled ?? true,
+    // Seed the first page from the loader. `pageParams: [{}]` mirrors
+    // `initialPageParam` (the first page has no cursor); `{} as never` sidesteps
+    // the generated page-param union without widening the query type.
+    initialData: initialData
+      ? { pages: [initialData], pageParams: [{} as never] }
+      : undefined,
   });
 
   const artworks = query.data?.pages.flatMap((page) => page.data ?? []) ?? [];
@@ -118,6 +130,45 @@ const searchFilter = (query: string, scope: SearchScope): ArtworkFilters => {
   }
 };
 
+const SEARCH_SCOPES: readonly SearchScope[] = ["all", "title", "artist"];
+
+/** Narrow a raw `scope` query param to a `SearchScope` (defaults handled by callers). */
+export const isSearchScope = (
+  value: string | undefined
+): value is SearchScope =>
+  value !== undefined && SEARCH_SCOPES.includes(value as SearchScope);
+
+/** Normalize a `tag` query param into a deduped list of trimmed, lowercased tags. */
+export const toTagArray = (raw: string | string[] | undefined): string[] => {
+  const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  const seen = new Set<string>();
+  for (const value of list) {
+    const tag = value.trim().toLowerCase();
+    if (tag) seen.add(tag);
+  }
+  return [...seen];
+};
+
+/**
+ * Map the browse URL query params (`q` / `scope` / `tag`) to the exact
+ * `ArtworkFilters` shape `useBrowseArtworks` produces internally — so the route
+ * `loader` (server prefetch) and the screen's first render build the **same**
+ * query key, and the seeded `initialData` attaches. Shared by both to keep them
+ * in lock-step. Empty params → `{}` (the base list).
+ */
+export const paramsToBrowseFilters = (
+  q?: string,
+  scope?: string,
+  tag?: string | string[]
+): ArtworkFilters => {
+  const tags = toTagArray(tag);
+  const searchScope: SearchScope = isSearchScope(scope) ? scope : "all";
+  return {
+    ...(tags.length ? { tag: tags } : {}),
+    ...searchFilter((q ?? "").trim(), searchScope),
+  };
+};
+
 /**
  * The browse list, with an optional free-text search targeting a single scope.
  * A single request handles every case: `"all"` goes through the API's `q` (title
@@ -128,11 +179,26 @@ const searchFilter = (query: string, scope: SearchScope): ArtworkFilters => {
 export const useBrowseArtworks = (
   filters: ArtworkFilters = {},
   search = "",
-  scope: SearchScope = "all"
-) => useArtworks({ ...filters, ...searchFilter(search.trim(), scope) });
+  scope: SearchScope = "all",
+  initialData?: ArtworkPage
+) =>
+  useArtworks(
+    { ...filters, ...searchFilter(search.trim(), scope) },
+    undefined,
+    initialData
+  );
 
-/** Radius (metres) for the detail screen's "nearby pieces" lookup. */
-const NEARBY_RADIUS = 200;
+/** Radius (metres) for the detail screen's "nearby pieces" lookup. Capped at the API's max (≤ 100000). */
+export const NEARBY_RADIUS = 200;
+
+/**
+ * Drop a given artwork from a list of artworks — used to keep a piece out of its
+ * own "nearby" neighbourhood and "more by this artist" strip. Shared by the
+ * detail hooks and the web route `loader` (which fetches the same lists
+ * imperatively), so the self-exclusion rule lives in one place.
+ */
+export const excludeArtwork = (list: Artwork[], id: string): Artwork[] =>
+  list.filter((a) => a.id !== id);
 
 /**
  * Pieces geographically near a given artwork — the detail screen's "nearby"
@@ -149,7 +215,9 @@ export const useNearbyArtworks = (artwork: Artwork | undefined) => {
       : {},
     { enabled: !!artwork }
   );
-  const nearby = query.artworks.filter((a) => a.id !== artwork?.id);
+  const nearby = artwork
+    ? excludeArtwork(query.artworks, artwork.id)
+    : query.artworks;
   return { ...query, nearby, radius: NEARBY_RADIUS };
 };
 

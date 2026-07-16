@@ -44,6 +44,14 @@ RUN bun expo export -p web
   | `EXPO_PUBLIC_API_URL` | `https://api.artkeeper.staging.web-rows.com` |
   | `EXPO_PUBLIC_WEB_ORIGIN` | `https://artkeeper.staging.web-rows.com` |
   | `EXPO_UNSTABLE_WEB_MODAL` | `1` |
+  | `EXPO_PUBLIC_SEO_NOINDEX` | `1` |
+
+- **`EXPO_PUBLIC_SEO_NOINDEX=1` on every non-production deploy** (staging,
+  previews) — it emits a global `noindex, nofollow` from the HTML shell
+  (`+html.tsx`). Staging serves the same content as prod and is **self-canonical**
+  (the canonical is built from the request's own origin), so without it the two
+  hosts compete over identical content. **Leave it unset in production** — absent
+  means indexable. See [seo-generate-metadata](seo-generate-metadata.md).
 
 - **`EXPO_PUBLIC_AUTH_ORIGIN` is not needed on web** — `AUTH_ORIGIN` in
   `src/lib/api/client.ts` is only attached to requests on native

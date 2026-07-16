@@ -15,6 +15,7 @@ import {
   type ArtworkView,
   ViewToggle,
 } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
+import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 import { useTheme } from "@/theme/ThemeProvider";
 
@@ -47,16 +48,29 @@ export const GridView = ({
 }: GridViewProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const hydrated = useIsHydrated();
   const { colors } = useTheme();
 
-  // Responsive grid: derive a column count from the window width, then size
-  // each cell to an explicit pixel width so a lone card on an odd last row
-  // keeps its width instead of stretching across the row. Computed against the
-  // same padding/gap as `listContent` so the row fills edge-to-edge.
-  const numColumns = Math.max(1, Math.floor(width / MIN_CARD_WIDTH));
+  // Responsive grid: derive a column count from the window width, then size each
+  // cell to an explicit pixel width so a lone card on an odd last row keeps its
+  // width instead of stretching across the row. Computed against the same
+  // padding/gap as `listContent` so the row fills edge-to-edge.
+  //
+  // Until hydrated (web SSR + the client's first render) force a single column:
+  // the server has no viewport (width 0), and the FlatList `key` is derived from
+  // `numColumns`, so a server/client mismatch would remount the list — a
+  // structural hydration error (#418). The real column count applies post-mount
+  // (an accepted reflow, since there's no reliable server viewport). A single
+  // column takes the full available width (no explicit itemWidth), which is also
+  // the deterministic SSR render.
+  const numColumns = hydrated
+    ? Math.max(1, Math.floor(width / MIN_CARD_WIDTH))
+    : 1;
   const itemWidth =
-    (width - SpacingEnum.lg * 2 - SpacingEnum.lg * (numColumns - 1)) /
-    numColumns;
+    numColumns > 1
+      ? (width - SpacingEnum.lg * 2 - SpacingEnum.lg * (numColumns - 1)) /
+        numColumns
+      : undefined;
 
   return (
     <View style={styles.container}>

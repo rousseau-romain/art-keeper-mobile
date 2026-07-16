@@ -11,6 +11,7 @@ export const en = {
   auth: {
     tagline: "A living map of street art.",
     title: {
+      login: "Sign in",
       hero: "Catalog the walls before they're gone.",
       verify: "Check your inbox",
       lock: "Locked",
@@ -73,6 +74,8 @@ export const en = {
     },
     meta: {
       descriptionFallback: "Discover {{title}} on ArtKeeper.",
+      tagTitle: "{{tag}} street art",
+      tagDescription: "Browse street art tagged {{tag}} on ArtKeeper.",
     },
     // Browse map ⇄ grid view.
     map: {
@@ -101,6 +104,8 @@ export const en = {
     like: "Like",
     unlike: "Unlike",
     notFound: "Artwork not found.",
+    notFoundHint: "It may have been removed, or the link may be wrong.",
+    notFoundCta: "Browse artworks",
     // The "propose an edit" screen — a reviewed correction to an existing piece.
     edit: {
       heading: "Propose an edit",
@@ -113,7 +118,8 @@ export const en = {
       changeLocation: "Change location",
       locationTitle: "Move the pin",
       locationDone: "Done",
-      accuracy: "I believe this correction is accurate to the best of my knowledge.",
+      accuracy:
+        "I believe this correction is accurate to the best of my knowledge.",
       submitCta: "Submit proposal",
       success: "Proposal submitted for review",
       errors: {
@@ -218,6 +224,10 @@ export const en = {
     themeAuto: "Auto",
     themeLight: "Light",
     themeDark: "Dark",
+    browseViewLabel: "Default view",
+    browseViewHint: "Grid or map when you open Browse.",
+    browseViewGrid: "Grid",
+    browseViewMap: "Map",
     language: "Language",
     languageLabel: "App language",
     languageHint: "Choose the language used across the app.",
@@ -311,6 +321,7 @@ export const en = {
     settings: "Open settings",
     signIn: "Sign in",
     appearance: "Choose the app theme",
+    browseView: "Choose the default browse view",
     biometricToggle: "Toggle biometric unlock",
     tagSourceToggle: "Choose how suggested tags are ordered",
     reviewModeToggle: "Choose how to review proposals",

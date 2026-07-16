@@ -1,6 +1,10 @@
-import { ScrollViewStyleReset } from "expo-router/html";
+import {
+  ScrollViewStyleReset,
+  useServerDocumentContext,
+} from "expo-router/html";
 import type { PropsWithChildren } from "react";
 
+import { resolveI18n } from "@/lib/i18n/resolve-i18n";
 import { DarkColorEnum, LightColorEnum } from "@/theme/enums/color.enums";
 import { THEME_MODE_COOKIE } from "@/theme/theme.constant";
 
@@ -93,10 +97,36 @@ const modalCss = `.fApBhq_modal{pointer-events:auto;border:var(--expo-router-mod
 // (every `bun start` / `bun web`) — so a leaflet bump refreshes them; commit the diff.
 const leafletCssLoader = `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href="/leaflet/leaflet.css";document.head.appendChild(l)})()`;
 
+// Environment-wide opt-out of search indexing, for any deploy that serves the
+// real content on a non-production host (staging). Without it staging is fully
+// indexable AND self-canonical (the canonical is built from the request's own
+// origin — see `generateMetadata` in `artworks/index.tsx`), so it would compete
+// with production over the same content instead of consolidating onto it.
+//
+// It lives in the shell rather than in each route's `generateMetadata` because
+// it must cover EVERY page — including the routes that have no metadata of their
+// own (the create-artwork wizard, admin): their guards are client-side, so a
+// crawler is served their HTML all the same. When a route does declare `robots`,
+// both tags are emitted and crawlers apply the most restrictive — still noindex.
+//
+// Build-time (inlined by Metro at `expo export`), so it must be passed as a
+// Docker build arg, NOT a runtime env var — see the web-prod-export rule.
+const NOINDEX = process.env.EXPO_PUBLIC_SEO_NOINDEX === "1";
+
 export default function Root({ children }: PropsWithChildren) {
+  const { headNodes, htmlAttributes, bodyAttributes, bodyNodes } =
+    useServerDocumentContext();
+  // Same instance the SSR render uses (request's Accept-Language), so the shell
+  // announces the language the copy is actually in. A post-hydration manual
+  // override re-syncs it from `I18nProvider`.
+  const lang = resolveI18n().language;
   return (
-    <html lang="en">
+    <html lang={lang} {...htmlAttributes}>
       <head>
+        {/* charSet must stay the first thing in <head> (the browser has to know
+            the encoding before it decodes any text): `headNodes` carries the
+            route's `generateMetadata` output, whose title/description is
+            localized copy with non-ASCII characters. */}
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
@@ -104,6 +134,13 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <meta name="color-scheme" content="dark light" />
+        {/* The route's resolved <title> / description / Open Graph tags — see
+            `generateMetadata` in `artworks/[slug]/index.tsx`. Without this the
+            shell renders no metadata at all. */}
+        {headNodes}
+        {/* Non-production host: keep the whole deploy out of the index. Placed
+            after `headNodes` so it reads as an override of the routes' own tags. */}
+        {NOINDEX && <meta name="robots" content="noindex, nofollow" />}
         {/* Preload the display + body WOFF2 so the real font arrives sooner and
             the fallback→real swap flashes for less time. Mono is small-label-only,
             not preloaded. `crossOrigin` is required on font preloads even
@@ -145,7 +182,10 @@ export default function Root({ children }: PropsWithChildren) {
         {/* Keeps `position: fixed` / `100vh` scrolling correct with static web output. */}
         <ScrollViewStyleReset />
       </head>
-      <body>{children}</body>
+      <body {...bodyAttributes}>
+        {children}
+        {bodyNodes}
+      </body>
     </html>
   );
 }

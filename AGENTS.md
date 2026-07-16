@@ -38,6 +38,11 @@ Open these when the trigger applies (they are intentionally not imported):
   seeding, reading request config server-side (`Accept-Language` / a cookie), or a
   protected-route guard's `loading` behavior. Keeps the server render == the
   client's first render (no #418 hydration mismatch).
+- **`.claude/rules/seo-generate-metadata.md`** — when touching a public web
+  route's SEO: a route's `generateMetadata` export, a page `<title>` /
+  description / Open Graph tags, or an `alternates.canonical` (built inline from
+  `origin()`). Server-only, translated with `serverT`, canonical from the
+  request's own origin.
 - **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
   sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.

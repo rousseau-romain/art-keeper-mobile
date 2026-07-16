@@ -15,6 +15,12 @@ ARG EXPO_PUBLIC_WEB_ORIGIN
 ARG EXPO_PUBLIC_API_URL
 ARG EXPO_PUBLIC_AUTH_ORIGIN
 
+# Set to 1 on every non-production deploy (staging, previews): emits a global
+# `noindex, nofollow` in the HTML shell (+html.tsx), keeping the environment out
+# of search results so it can't compete with production over the same content.
+# Unset in production — absent means indexable.
+ARG EXPO_PUBLIC_SEO_NOINDEX
+
 # Build-only bundler switch (not an EXPO_PUBLIC_ var), read at export time by
 # expo-router's Metro config: renders `presentation: "formSheet"` / "modal" routes
 # as web overlays instead of full pages. It lives in `.env`, but `.env` is

@@ -68,6 +68,8 @@
     "ios": "expo run:ios",
     "preweb": "bun run sync:leaflet",
     "web": "expo start --web",
+    "preserve:dist": "bun run sync:leaflet",
+    "serve:dist": "bun expo serve dist",
     "lint": "biome lint . && bun scripts/check-unused-styles.ts",
     "lint:styles": "bun scripts/check-unused-styles.ts",
     "hooks:install": "git config core.hooksPath .githooks",

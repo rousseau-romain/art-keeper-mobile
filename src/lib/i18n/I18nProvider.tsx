@@ -33,6 +33,12 @@ function normalize(lng: string): Language {
     : "en";
 }
 
+// Keeps `<html lang>` (rendered from the request's Accept-Language by `+html.tsx`)
+// in sync when the language changes client-side. No-op on native.
+const syncDocumentLang = (lng: Language): void => {
+  if (typeof document !== "undefined") document.documentElement.lang = lng;
+};
+
 export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
   // On the web server this is the request's Accept-Language instance; in the
   // browser / on native it's the device-locale singleton (so the mutation methods
@@ -50,6 +56,7 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
         const lng = normalize(raw);
         i18n.changeLanguage(lng);
         setLanguageState(lng);
+        syncDocumentLang(lng);
       })
       .catch(() => {});
   }, []);
@@ -57,6 +64,7 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
   const setLanguage = useCallback((lng: Language) => {
     setLanguageState(lng);
     i18n.changeLanguage(lng);
+    syncDocumentLang(lng);
     AsyncStorage.setItem(LOCALE_STORAGE_KEY, lng).catch(() => {});
   }, []);
 

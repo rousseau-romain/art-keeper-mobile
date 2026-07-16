@@ -2,7 +2,11 @@ import { useFocusEffect, useNavigation } from "expo-router";
 import { useCallback, useRef } from "react";
 import { Platform } from "react-native";
 
-import type { SearchScope } from "@/lib/api/artworks";
+import {
+  isSearchScope,
+  type SearchScope,
+  toTagArray,
+} from "@/lib/api/artworks";
 import {
   getSearch,
   getSearchScope,
@@ -14,22 +18,6 @@ export type UseArtworkFiltersUrlSyncArgs = {
   initialQuery?: string;
   initialScope?: string;
   initialTags?: string | string[];
-};
-
-const SEARCH_SCOPES: readonly SearchScope[] = ["all", "title", "artist"];
-
-const isSearchScope = (value: string | undefined): value is SearchScope =>
-  value !== undefined && SEARCH_SCOPES.includes(value as SearchScope);
-
-/** Normalize a `tag` query param into a deduped list of trimmed, lowercased tags. */
-const toTagArray = (raw: string | string[] | undefined): string[] => {
-  const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
-  const seen = new Set<string>();
-  for (const value of list) {
-    const tag = value.trim().toLowerCase();
-    if (tag) seen.add(tag);
-  }
-  return [...seen];
 };
 
 /** Serialize a filter selection into a stable key for change detection. */

@@ -12,6 +12,7 @@ export const fr: Resources = {
   auth: {
     tagline: "Une carte vivante du street art.",
     title: {
+      login: "Connexion",
       hero: "Cataloguez les murs avant qu'ils disparaissent.",
       verify: "Vérifiez votre boîte mail",
       lock: "Verrouillé",
@@ -66,6 +67,8 @@ export const fr: Resources = {
     },
     meta: {
       descriptionFallback: "Découvrez {{title}} sur ArtKeeper.",
+      tagTitle: "Street art {{tag}}",
+      tagDescription: "Parcourez le street art taggé {{tag}} sur ArtKeeper.",
     },
     map: {
       toggleMap: "Carte",
@@ -94,6 +97,8 @@ export const fr: Resources = {
     like: "J'aime",
     unlike: "Je n'aime plus",
     notFound: "Œuvre introuvable.",
+    notFoundHint: "Elle a peut-être été supprimée, ou le lien est incorrect.",
+    notFoundCta: "Parcourir les œuvres",
     // L'écran « proposer une modification » — une correction relue d'une œuvre.
     edit: {
       heading: "Proposer une modification",
@@ -106,7 +111,8 @@ export const fr: Resources = {
       changeLocation: "Changer le lieu",
       locationTitle: "Déplacer le repère",
       locationDone: "Terminé",
-      accuracy: "Je crois que cette correction est exacte au mieux de ma connaissance.",
+      accuracy:
+        "Je crois que cette correction est exacte au mieux de ma connaissance.",
       submitCta: "Envoyer la proposition",
       success: "Proposition envoyée pour relecture",
       errors: {
@@ -210,6 +216,10 @@ export const fr: Resources = {
     themeAuto: "Auto",
     themeLight: "Clair",
     themeDark: "Sombre",
+    browseViewLabel: "Vue par défaut",
+    browseViewHint: "Grille ou carte à l'ouverture de la navigation.",
+    browseViewGrid: "Grille",
+    browseViewMap: "Carte",
     language: "Langue",
     languageLabel: "Langue de l'application",
     languageHint: "Choisissez la langue utilisée dans l'application.",
@@ -298,6 +308,7 @@ export const fr: Resources = {
     settings: "Ouvrir les réglages",
     signIn: "Se connecter",
     appearance: "Choisir le thème de l'application",
+    browseView: "Choisir la vue de navigation par défaut",
     biometricToggle: "Activer le déverrouillage biométrique",
     tagSourceToggle: "Choisir l'ordre des tags suggérés",
     reviewModeToggle: "Choisir le mode de revue des propositions",

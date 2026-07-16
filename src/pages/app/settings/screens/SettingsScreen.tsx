@@ -15,6 +15,8 @@ import {
 import { useLocale } from "@/lib/i18n/I18nProvider";
 import { type Language, SUPPORTED_LANGUAGES } from "@/lib/i18n/index";
 import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
+import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
+import { useDefaultBrowseView } from "@/pages/app/artwork/hooks/useDefaultBrowseView";
 import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
 import { ReviewModePicker } from "@/pages/app/moderation/components/review-mode-picker/ReviewModePicker";
 import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
@@ -84,6 +86,7 @@ export const SettingsScreen = () => {
   const { reviewMode, setReviewMode } = useReviewMode();
   const { language, setLanguage } = useLocale();
   const { mode, setMode, colors } = useTheme();
+  const { view: browseView, setView: setBrowseView } = useDefaultBrowseView();
 
   const languageOptions = SUPPORTED_LANGUAGES.map((lng) => ({
     value: lng,
@@ -94,6 +97,11 @@ export const SettingsScreen = () => {
     value,
     label: tr(THEME_LABEL_KEY[value]),
   }));
+
+  const browseViewOptions: { value: ArtworkView; label: string }[] = [
+    { value: "grid", label: tr("settings.browseViewGrid") },
+    { value: "map", label: tr("settings.browseViewMap") },
+  ];
 
   const [availability, setAvailability] =
     useState<BiometricAvailability | null>(null);
@@ -167,6 +175,19 @@ export const SettingsScreen = () => {
             />
           ),
         },
+        {
+          key: "browseView",
+          label: tr("settings.browseViewLabel"),
+          hint: tr("settings.browseViewHint"),
+          control: (
+            <Picker
+              value={browseView}
+              onChange={setBrowseView}
+              options={browseViewOptions}
+              accessibilityLabel={tr("a11y.browseView")}
+            />
+          ),
+        },
       ],
     },
     {
@@ -229,7 +250,6 @@ export const SettingsScreen = () => {
     <WrapperView
       style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}
     >
-
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} accessibilityRole="button">
           <Icon name="ChevronLeft" size="lg" color="text" />
