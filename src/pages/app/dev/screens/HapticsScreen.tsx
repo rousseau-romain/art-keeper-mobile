@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { HAPTIC_NAMES, useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Text } from "@/shared/ui/text/Text";
@@ -12,6 +13,8 @@ export const HapticsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const haptic = useHaptics();
+
+  useDocumentTitle(tr("dev.tab"));
 
   return (
     <WrapperScrollView

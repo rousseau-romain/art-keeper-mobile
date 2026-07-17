@@ -9,6 +9,7 @@ import {
   ArtworkForm,
   type ArtworkValues,
 } from "@/pages/app/artwork/form/ArtworkForm";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Text } from "@/shared/ui/text/Text";
 import { useToast } from "@/shared/ui/toast/Toast";
@@ -27,6 +28,8 @@ export const DetailsStepScreen = () => {
   const warnedNoArtist = useRef(false);
   const headerHeight = useHeaderHeight();
   const styles = useThemeStyles(createStyles);
+
+  useDocumentTitle(tr("artwork.new.title.details"));
 
   // Only advance once the title validates. The first attempt without an artist
   // warns (once) instead of advancing, so the user gets a chance to credit one;

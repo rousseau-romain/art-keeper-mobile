@@ -19,6 +19,7 @@ import {
 import { getArtworks } from "@/lib/api/generated/sdk.gen";
 import { forwardedCookie } from "@/lib/api/ssr-auth";
 import { serverT } from "@/lib/i18n/server";
+import { browseTitle } from "@/lib/seo/titles";
 import { useLoaderArtworks } from "@/pages/app/artwork/hooks/useLoaderArtworks";
 import { IndexScreen } from "@/pages/app/artwork/screens/IndexScreen";
 import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
@@ -48,7 +49,7 @@ export const generateMetadata: GenerateMetadataFunction = async (request) => {
 
   if (q || tags.length > 1) {
     return {
-      title: t("artwork.title.index"),
+      title: browseTitle(t, tags, q),
       robots: { index: false, follow: true },
     };
   }
@@ -56,7 +57,7 @@ export const generateMetadata: GenerateMetadataFunction = async (request) => {
   const tag = tags[0];
   if (!tag) {
     return {
-      title: t("artwork.title.index"),
+      title: browseTitle(t, tags, q),
       robots: { index: true, follow: true },
       alternates: {
         canonical: `${baseUrl}/artworks`,
@@ -65,7 +66,7 @@ export const generateMetadata: GenerateMetadataFunction = async (request) => {
   }
 
   return {
-    title: t("artwork.meta.tagTitle", { tag }),
+    title: browseTitle(t, tags, q),
     description: t("artwork.meta.tagDescription", { tag }),
     robots: { index: true, follow: true },
     alternates: {

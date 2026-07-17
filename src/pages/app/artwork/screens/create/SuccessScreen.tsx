@@ -1,11 +1,13 @@
 import { useFocusEffect, useNavigation } from "expo-router";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { SuccessStep } from "@/pages/app/artwork/components/wizard-step-success/SuccessStep";
 import { clearArtworkDraft } from "@/pages/app/artwork/draft-store";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { EMPTY_ARTWORK_DRAFT } from "@/pages/app/artwork/hooks/useArtworkDraft";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 
 export type SuccessScreenProps = {
@@ -14,8 +16,11 @@ export type SuccessScreenProps = {
 
 /** Post-submit confirmation; "create another" resets the form and restarts. */
 export const SuccessScreen = ({ slug }: SuccessScreenProps) => {
+  const { t: tr } = useTranslation();
   const navigation = useNavigation();
   const { reset } = useFormContext<ArtworkValues>();
+
+  useDocumentTitle(tr("artwork.new.title.success"));
 
   // Reset the wizard back to a blank step 1: pop the create-artwork stack to its
   // root, wipe the collected values, and clear the persisted draft — the same

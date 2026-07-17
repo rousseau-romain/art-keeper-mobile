@@ -10,6 +10,7 @@ import {
   ProposeEditForm,
 } from "@/pages/app/artwork/form/ProposeEditForm";
 import { useProposeEditSubmit } from "@/pages/app/artwork/hooks/useProposeEditSubmit";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHeaderHeight } from "@/shared/hooks/useHeaderHeight";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperKeyboardAvoidingView } from "@/shared/ui/wrapper/wrapper-keyboard-avoiding-view/WrapperKeyboardAvoidingView";
@@ -31,6 +32,8 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
   const { data: artwork } = useArtworkBySlug(slug);
   const methods = useFormContext<EditProposalValues>();
   const { onSubmit, submitting } = useProposeEditSubmit({ methods, artwork });
+
+  useDocumentTitle(tr("artwork.title.edit"));
 
   // The layout only mounts this screen once the artwork is loaded (cache hit here).
   if (!artwork) return null;

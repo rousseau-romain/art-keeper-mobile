@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/WizardFooter";
 import { LocationStep } from "@/pages/app/artwork/components/wizard-step-location/LocationStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -16,6 +17,8 @@ export const LocationStepScreen = () => {
   const latitude = useWatch({ control, name: "latitude" });
   const longitude = useWatch({ control, name: "longitude" });
   const hasPin = latitude != null && longitude != null;
+
+  useDocumentTitle(tr("artwork.new.title.location"));
 
   return (
     <WrapperView>

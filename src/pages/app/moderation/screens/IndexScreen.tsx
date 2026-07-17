@@ -14,6 +14,7 @@ import { ProposalNote } from "@/pages/app/moderation/components/proposal-note/Pr
 import { SwipeReviewCard } from "@/pages/app/moderation/components/swipe-review-card/SwipeReviewCard";
 import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { buildProposalDiff } from "@/pages/app/moderation/proposal-diff";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
@@ -35,6 +36,8 @@ export const IndexScreen = () => {
   const { wide } = useBreakpoint();
   const styles = useThemeStyles(createStyles);
   const haptic = useHaptics();
+
+  useDocumentTitle(tr("moderation.title.index"));
 
   const { proposals, isLoading, isError, error, refetch } = usePendingChanges();
   const review = useReviewChange();

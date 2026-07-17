@@ -6,6 +6,7 @@ import { WizardFooter } from "@/pages/app/artwork/components/wizard-footer/Wizar
 import { ReviewStep } from "@/pages/app/artwork/components/wizard-step-review/ReviewStep";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import { useArtworkSubmit } from "@/pages/app/artwork/hooks/useArtworkSubmit";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -23,6 +24,8 @@ export const ReviewStepScreen = () => {
         params: { slug: artwork.slug },
       }),
   });
+
+  useDocumentTitle(tr("artwork.new.title.review"));
 
   return (
     <WrapperView>

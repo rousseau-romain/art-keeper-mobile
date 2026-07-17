@@ -22,6 +22,7 @@ import { ReviewModePicker } from "@/pages/app/moderation/components/review-mode-
 import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { SectionTitle } from "@/pages/app/settings/components/section-title/SectionTitle";
 import { SettingRow } from "@/pages/app/settings/components/setting-row/SettingRow";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { AuthButton } from "@/shared/ui/auth-button/AuthButton";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
@@ -87,6 +88,8 @@ export const SettingsScreen = () => {
   const { language, setLanguage } = useLocale();
   const { mode, setMode, colors } = useTheme();
   const { view: browseView, setView: setBrowseView } = useDefaultBrowseView();
+
+  useDocumentTitle(tr("settings.title.index"));
 
   const languageOptions = SUPPORTED_LANGUAGES.map((lng) => ({
     value: lng,

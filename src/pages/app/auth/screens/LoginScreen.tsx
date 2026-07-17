@@ -15,6 +15,7 @@ import { LoginForm, type LoginValues } from "@/pages/app/auth/form/LoginForm";
 import { useGoogleSignIn } from "@/pages/app/auth/hooks/useGoogleSignIn";
 import { useLoginSubmit } from "@/pages/app/auth/hooks/useLoginSubmit";
 import { useResendVerification } from "@/pages/app/auth/hooks/useResendVerification";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Segment } from "@/shared/ui/segment/Segment";
@@ -48,6 +49,8 @@ export const LoginScreen = () => {
   const { show } = useToast();
   const { colors } = useTheme();
   const styles = useThemeStyles(createStyles);
+
+  useDocumentTitle(tr("auth.title.login"));
 
   const [mode, setMode] = useState<Mode>("sign-in");
 

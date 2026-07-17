@@ -10,6 +10,54 @@ or search crawler will read them, since crawlers don't run the client JS that
 Reference: `src/app/(tabs)/artworks/[slug]/index.tsx` (dynamic, fetches the
 artwork) and `src/app/(tabs)/artworks/index.tsx` (static title).
 
+## It only covers the *initial document* — the tab title needs `useDocumentTitle`
+
+`generateMetadata` resolves the `<head>` **once, server-side, per document**.
+Expo Router never replays it in the browser: the client bundle only *validates*
+that the export is a function (`expo-router/build/getRoutesCore.js`), and
+`@expo/router-server/build/server/metadata.js` is the sole caller. A client-side
+navigation refetches the route's `loader` payload (`/_expo/loaders/…`) — the
+content changes — and leaves the `<head>` untouched. Clicking from one artwork to
+the next left the first one's title in the tab.
+
+React Navigation's own fallback can't rescue it: expo-router hard-disables it
+(`const documentTitle = { enabled: false }` in `expo-router/build/ExpoRoot.js`).
+**Don't try to flip it** — it isn't a prop (patching `node_modules` is the only
+way), its formatter is `options?.title ?? route?.name`, i.e. the *navigator's*
+static label (« Œuvre »), not the artwork's, and its effect has no dependency
+array, so it would overwrite every server-resolved title at hydration.
+
+So each routable **page screen** publishes its own title via
+**`useDocumentTitle`** (`src/shared/hooks/useDocumentTitle.ts`, a no-op on
+native / `.web.ts` on web):
+
+```ts
+// src/pages/app/artwork/screens/DetailScreen.tsx
+useDocumentTitle(
+  artwork?.title ?? (!hydrated || isLoading ? undefined : tr("artwork.notFound")),
+);
+```
+
+- **It's an effect, never a render** — it runs neither on the server nor on the
+  client's first render, so it can't cause a hydration mismatch
+  ([web-ssr-hydration](web-ssr-hydration.md)).
+- **`undefined` leaves the title alone**, so the SSR title stands during a load
+  instead of flashing a generic label.
+- **It's gated on focus** (`useIsFocused`): a Stack keeps the previous screen
+  mounted, so without the gate a background refetch under the current screen would
+  rewrite its title. The gate also restores the title on a back navigation for
+  free.
+- **The two must agree.** A screen's title is the same copy its route's
+  `generateMetadata` returns — where the rule is conditional, both sides call one
+  helper (`browseTitle`, `src/lib/seo/titles.ts`, which takes a `t` so `serverT`
+  and `useTranslation().t` both fit). Otherwise a client-side navigation
+  contradicts the document the server would have served for that URL.
+- **Not a `<Head>` in disguise.** The ban below still holds: this touches only
+  `document.title`, after hydration, for humans. Crawlers don't run the JS, so
+  the HTML source stays `generateMetadata`'s alone.
+- A **form sheet** (`artworks/filters`, `admin/location`) gets no call — its URL
+  renders its anchor behind it, and the anchor already owns the title.
+
 ## The shape
 
 ```ts
@@ -139,7 +187,9 @@ branch that genuinely ships is the **soft 404** — an unknown slug returns HTTP
 
 ## Adding SEO to a new public route
 
-1. Export `generateMetadata` from the `src/app/**` route file.
+1. Export `generateMetadata` from the `src/app/**` route file, **and** call
+   `useDocumentTitle` with the same title in its page screen (see above) — the
+   route covers the initial document, the hook covers client-side navigation.
 2. `title` + `description` via `serverT`, or from the fetched entity.
 3. `alternates.canonical` via `canonicalUrl(<sitemap path>)`.
 4. `openGraph` + `twitter` when the page is meant to be shared — every tag is

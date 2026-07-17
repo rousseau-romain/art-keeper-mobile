@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   type Artwork,
   type ArtworkPage,
@@ -7,6 +8,7 @@ import {
   toTagArray,
   useBrowseArtworks,
 } from "@/lib/api/artworks";
+import { browseTitle } from "@/lib/seo/titles";
 import { getInitialBrowseView } from "@/pages/app/artwork/browse-view-store";
 import { ErrorState } from "@/pages/app/artwork/components/error-state/ErrorState";
 import { GridView } from "@/pages/app/artwork/components/grid-view/GridView";
@@ -16,6 +18,7 @@ import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/Vie
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useDefaultBrowseView } from "@/pages/app/artwork/hooks/useDefaultBrowseView";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
@@ -38,6 +41,7 @@ export const IndexScreen = ({
   initialScope,
   initialTags,
 }: IndexScreenProps) => {
+  const { t: tr } = useTranslation();
   const haptic = useHaptics();
   const router = useRouter();
   const hydrated = useIsHydrated();
@@ -48,6 +52,11 @@ export const IndexScreen = ({
     searchScope,
     count: storeCount,
   } = useArtworkFilters();
+
+  // Same helper the route's `generateMetadata` builds the initial <title> from,
+  // so filtering in-screen (or arriving by a client-side navigation) keeps the tab
+  // consistent with what the server would have served for that URL.
+  useDocumentTitle(browseTitle(tr, selectedTags, search));
 
   // Initial view = the persisted default-view preference. On web it's read
   // synchronously from the cookie (deterministic server + first client render, so

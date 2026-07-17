@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { DataArtworkPageLoaded } from "@/app/(tabs)/artworks/[slug]";
 import { useArtist } from "@/lib/api/artists";
 import {
@@ -8,6 +9,7 @@ import {
 } from "@/lib/api/artworks";
 import { ArtworkDetail } from "@/pages/app/artwork/components/artwork-detail/ArtworkDetail";
 import { ArtworkNotFound } from "@/pages/app/artwork/components/artwork-not-found/ArtworkNotFound";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 
@@ -34,6 +36,7 @@ export type DetailScreenProps = {
  * the same hooks just fetch client-side.
  */
 export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
+  const { t: tr } = useTranslation();
   const hydrated = useIsHydrated();
 
   const { data: artwork, isLoading } = useArtworkBySlug(slug, initial?.artwork);
@@ -42,6 +45,16 @@ export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
   const { artworks: byArtist } = useArtworksByArtist(
     artwork?.artistId ?? "",
     initial?.moreByArtistPage,
+  );
+
+  // Mirrors the three render branches below, computed before them (hooks can't
+  // sit after a return). `undefined` while loading leaves the SSR <title> alone;
+  // once resolved it matches what `generateMetadata` served on the initial
+  // document, so an arrival rewrites the title with its own value (a no-op) and
+  // only a client-side navigation actually changes it.
+  useDocumentTitle(
+    artwork?.title ??
+      (!hydrated || isLoading ? undefined : tr("artwork.notFound")),
   );
 
   // Data first, and deliberately before the `hydrated` gate: with a loader seed
