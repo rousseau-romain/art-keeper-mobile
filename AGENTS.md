@@ -52,6 +52,14 @@ Open these when the trigger applies (they are intentionally not imported):
   share image, or an `og:type` / `og:url`. Expo infers nothing — every tag is
   declared, `og:title` does *not* fall back to the page title, and the
   `article:*` tags ship only under `type: "article"`.
+- **`src/shared/ui/seo/README.md`** — when rendering a web-facing screen's
+  document body: reaching for a heading (`Heading` / `H1`…`H6`) or a semantic
+  landmark/container (`Main`, `Banner`, `Nav`, `Article`, `Section`, `Aside`,
+  `Footer`, `Figure`, `List`, `ListItem`) instead of a bare `View`/`Text`. All
+  live under `src/shared/ui/seo/`; they pass a `role` that react-native-web maps
+  to a real HTML element (`<main>`, `<article>`, `<h1>`…) for the crawlable
+  outline, and pose the ARIA role on native. No `<p>`/`<strong>`/`<em>` (excluded
+  — see the README).
 - **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
   sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.
