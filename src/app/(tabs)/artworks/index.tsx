@@ -3,7 +3,7 @@ import type {
   GenerateMetadataFunction,
   LoaderFunction,
 } from "expo-router/server";
-import { origin, setResponseHeaders } from "expo-server";
+import { setResponseHeaders } from "expo-server";
 import { Suspense } from "react";
 
 // Side-effect: configure the generated API client (base URL + interceptors)
@@ -19,6 +19,7 @@ import {
 import { getArtworks } from "@/lib/api/generated/sdk.gen";
 import { forwardedCookie } from "@/lib/api/ssr-auth";
 import { serverT } from "@/lib/i18n/server";
+import { requestOrigin } from "@/lib/seo/request-origin";
 import { browseTitle } from "@/lib/seo/titles";
 import { useLoaderArtworks } from "@/pages/app/artwork/hooks/useLoaderArtworks";
 import { IndexScreen } from "@/pages/app/artwork/screens/IndexScreen";
@@ -39,7 +40,7 @@ import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 // - no params → the bare listing.
 export const generateMetadata: GenerateMetadataFunction = async (request) => {
   const t = serverT(request.headers.get("accept-language"));
-  const baseUrl = origin();
+  const baseUrl = requestOrigin();
 
   const sp = new URL(request.url).searchParams;
   const q = (sp.get("q") ?? "").trim();

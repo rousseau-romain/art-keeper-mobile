@@ -3,7 +3,7 @@ import type {
   GenerateMetadataFunction,
   LoaderFunction,
 } from "expo-router/server";
-import { origin, setResponseHeaders } from "expo-server";
+import { setResponseHeaders } from "expo-server";
 import { Suspense } from "react";
 
 // Side-effect: configure the generated API client (base URL + interceptors)
@@ -25,6 +25,7 @@ import {
 } from "@/lib/api/generated/sdk.gen";
 import { forwardedCookie } from "@/lib/api/ssr-auth";
 import { serverT } from "@/lib/i18n/server";
+import { requestOrigin } from "@/lib/seo/request-origin";
 import { useLoaderArtwork } from "@/pages/app/artwork/hooks/useLoaderArtwork";
 import { DetailScreen } from "@/pages/app/artwork/screens/DetailScreen";
 import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
@@ -42,7 +43,7 @@ import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 // may not see. Both render the same not-found, which is the truth for each.
 const fetchArtworkBySlug = async (
   slug: string,
-  headers?: { cookie: string },
+  headers?: { cookie: string }
 ): Promise<Artwork | undefined> => {
   try {
     const { data } = await getArtworksSlugBySlug({ path: { slug }, headers });
@@ -63,11 +64,11 @@ const fetchArtworkBySlug = async (
 // default `og:type` or `og:url`. See the seo-open-graph rule.
 export const generateMetadata: GenerateMetadataFunction = async (
   request,
-  params,
+  params
 ) => {
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   const t = serverT(request.headers.get("accept-language"));
-  const baseUrl = origin();
+  const baseUrl = requestOrigin();
 
   try {
     // Resolve as the caller, exactly like the `loader` beside us. Anonymous, the
@@ -200,7 +201,7 @@ export type DataArtworkPageLoaded = {
 
 export const loader: LoaderFunction<DataArtworkPageLoaded> = async (
   request,
-  params,
+  params
 ) => {
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   // Per-call, never on the shared client — see `forwardedCookie`.
