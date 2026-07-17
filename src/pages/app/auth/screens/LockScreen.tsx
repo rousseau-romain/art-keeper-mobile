@@ -105,7 +105,6 @@ export const LockScreen = () => {
         <Button
           label={tr("auth.unlockCta", { method })}
           variant="primary"
-          block
           loading={pending}
           onPress={handleUnlock}
           iconBefore={{ name: METHOD_ICON[kind] }}
@@ -113,7 +112,6 @@ export const LockScreen = () => {
         <Button
           label={tr("auth.lockSignOut")}
           variant="ghost"
-          block
           onPress={signOut}
         />
       </View>

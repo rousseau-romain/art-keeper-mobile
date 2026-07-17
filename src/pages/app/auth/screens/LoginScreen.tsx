@@ -108,7 +108,6 @@ export const LoginScreen = () => {
       <Button
         label={isCreate ? tr("auth.createAccount") : tr("auth.signIn")}
         variant="primary"
-        block
         loading={isSubmitting}
         onPress={onSubmit}
       />
@@ -125,7 +124,6 @@ export const LoginScreen = () => {
       <Button
         label={tr("auth.continueWithGoogle")}
         variant="ghost"
-        block
         loading={googlePending}
         onPress={onGoogle}
       />
@@ -153,7 +151,6 @@ export const LoginScreen = () => {
       <Button
         label={tr("auth.verifyBackToSignIn")}
         variant="primary"
-        block
         onPress={() => {
           setVerifyEmail(null);
           setMode("sign-in");
@@ -163,7 +160,6 @@ export const LoginScreen = () => {
       <Button
         label={tr("auth.verifyResend")}
         variant="ghost"
-        block
         loading={resendPending}
         onPress={onResend}
       />

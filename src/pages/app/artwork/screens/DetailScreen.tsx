@@ -1,50 +1,69 @@
 import type { DataArtworkPageLoaded } from "@/app/(tabs)/artworks/[slug]";
-import { ArtworkHero } from "@/pages/app/artwork/components/artwork-hero/ArtworkHero";
-import { ArtworkLocationBand } from "@/pages/app/artwork/components/artwork-location-band/ArtworkLocationBand";
-import { ArtworkMeta } from "@/pages/app/artwork/components/artwork-meta/ArtworkMeta";
-import { MoreByArtist } from "@/pages/app/artwork/components/more-by-artist/MoreByArtist";
-import { NearbyPanel } from "@/pages/app/artwork/components/nearby-panel/NearbyPanel";
-import { SplitRow } from "@/shared/ui/split-row/SplitRow";
-import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
-import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
+import { useArtist } from "@/lib/api/artists";
+import {
+  excludeArtwork,
+  useArtworkBySlug,
+  useArtworksByArtist,
+  useNearbyArtworks,
+} from "@/lib/api/artworks";
+import { ArtworkDetail } from "@/pages/app/artwork/components/artwork-detail/ArtworkDetail";
+import { ArtworkNotFound } from "@/pages/app/artwork/components/artwork-not-found/ArtworkNotFound";
+import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
+import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 
-type RequiredNonNullableKeys<T, K extends keyof T> = Omit<T, K> & {
-  [P in K]-?: NonNullable<T[P]>;
+export type DetailScreenProps = {
+  slug: string;
+  /** What the route's server `loader` resolved — web SSR only, `undefined` on native. */
+  initial?: DataArtworkPageLoaded;
 };
 
-export type DetailScreenProps = RequiredNonNullableKeys<
-  DataArtworkPageLoaded,
-  "artwork"
->;
+/**
+ * The artwork detail. Every piece of data it renders is read from the React
+ * Query cache, **seeded** from the route's server `loader` on web — never
+ * rendered from the loader payload directly.
+ *
+ * That indirection is the whole point: `useLoaderData` hands back a value frozen
+ * for the life of the page, so a screen fed from it can't react to a cache write.
+ * Liking from the hero (or from any nearby / more-by card) patches the query
+ * cache — the button only flips because this screen is subscribed to it. Reading
+ * the loader payload directly is what left the like needing an F5 to show.
+ *
+ * The seed keeps the SSR win intact (the hero ships in the HTML, no client fetch
+ * in front of it) and is backdated, so a background refetch on mount reconciles
+ * it with the server. Native has no loader: `initial` is `undefined` there, and
+ * the same hooks just fetch client-side.
+ */
+export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
+  const hydrated = useIsHydrated();
 
-export const DetailScreen = ({
-  artist,
-  artwork,
-  moreArtworkByArtist,
-  nearbyArtwortk,
-}: DetailScreenProps) => {
-  const { wide } = useBreakpoint();
-
-  return (
-    <WrapperScrollView>
-      <SplitRow>
-        <ArtworkHero imageUrl={artwork.imageUrl} wide={wide} />
-        <ArtworkMeta artwork={artwork} artist={artist} wide={wide} />
-      </SplitRow>
-
-      <SplitRow>
-        <ArtworkLocationBand artwork={artwork} wide={wide} />
-        {nearbyArtwortk && (
-          <NearbyPanel
-            artworks={nearbyArtwortk.artwork}
-            radius={nearbyArtwortk.radius}
-          />
-        )}
-      </SplitRow>
-
-      {artist && moreArtworkByArtist && (
-        <MoreByArtist artist={artist} artworks={moreArtworkByArtist} />
-      )}
-    </WrapperScrollView>
+  const { data: artwork, isLoading } = useArtworkBySlug(slug, initial?.artwork);
+  const { data: artist } = useArtist(artwork?.artistId, initial?.artist);
+  const { nearby, radius } = useNearbyArtworks(artwork, initial?.nearbyPage);
+  const { artworks: byArtist } = useArtworksByArtist(
+    artwork?.artistId ?? "",
+    initial?.moreByArtistPage,
   );
+
+  // Data first, and deliberately before the `hydrated` gate: with a loader seed
+  // the artwork is there on the server render AND on the client's first render
+  // (same payload, same query key), so both produce this tree — the SSR hero
+  // survives hydration. Gating on `hydrated` here instead would blank it.
+  if (artwork) {
+    return (
+      <ArtworkDetail
+        artwork={artwork}
+        artist={artist}
+        nearby={nearby}
+        nearbyRadius={radius}
+        moreByArtist={excludeArtwork(byArtist, artwork.id)}
+      />
+    );
+  }
+
+  // No seed: native, or a loader that came back empty. `hydrated` is false during
+  // the server render AND the client's first render, so both sides show the
+  // spinner — the tree matches (no #418) and the author never reads "not found"
+  // about a piece that is about to appear on their own authenticated fetch.
+  if (!hydrated || isLoading) return <ScreenFallback />;
+  return <ArtworkNotFound />;
 };

@@ -31,6 +31,7 @@ import {
   setBiometricPref,
 } from "./biometric-pref";
 import { authenticate, isBiometricAvailable } from "./biometrics";
+import { persistProfile, readProfileCookie } from "./session-cookie";
 import { clearToken, getToken, hydrateToken, setToken } from "./token-store";
 
 /** Re-lock after the app has been backgrounded at least this long. */
@@ -186,14 +187,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, [t, setBiometricEnabled]);
 
+  // Web SSR: the signed-in chrome must already be in the HTML, and the client's
+  // first render must produce that same tree. Both sides therefore read the profile
+  // cookie *synchronously* — the server from the request's `Cookie` header, the
+  // browser from `document.cookie` — so they cannot disagree. Without this the
+  // server would render signed-in while the client's first render still had
+  // `session.data === undefined` (status "loading"), i.e. a #418 on every
+  // auth-driven branch. Native returns null here and is unaffected.
+  // Read once per mount: the value must not flip between renders, and both sides
+  // read the same cookie, so one read is the whole story.
+  const [initialProfile] = useState(readProfileCookie);
+
   // get-session returns `{ session, user }` or `null`, so `data === undefined`
   // cleanly means "not loaded yet".
   const session = useQuery({
     queryKey: SESSION_KEY,
     queryFn: getSession,
     enabled: hydrated,
+    // A *partial* user, cast like `primeSession` does. Load-bearing: nothing reads
+    // `useAuth().user` today — consumers take `status` / `isAdmin` / `isReviewer`,
+    // all of which this covers. Widen `SessionProfile` before reading another field.
+    initialData: initialProfile
+      ? ({ user: initialProfile } as SessionResponse)
+      : undefined,
+    // Backdate the seed so it's stale on arrival and the mount refetch fires — the
+    // same rule the loader seeds follow. Undated, it'd be stamped `Date.now()` and
+    // sit fresh for `staleTime`, leaving an expired session's chrome (or a forged
+    // cookie's) standing with nothing to correct it.
+    initialDataUpdatedAt: initialProfile ? 0 : undefined,
   });
   const user = session.data?.user ?? null;
+
+  // Mirror the resolved session back into the cookie so the *next* document request
+  // server-renders the right chrome. `undefined` means "not loaded yet" — leave the
+  // cookie alone; `null` (signed out, incl. sign-out's `setQueryData`) clears it.
+  useEffect(() => {
+    if (session.data === undefined) return;
+    persistProfile(
+      session.data
+        ? { id: session.data.user.id, role: session.data.user.role }
+        : null,
+    );
+  }, [session.data]);
 
   const status: AuthStatus = !hydrated
     ? "loading"

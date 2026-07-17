@@ -142,17 +142,52 @@ branch that genuinely ships is the **soft 404** — an unknown slug returns HTTP
 1. Export `generateMetadata` from the `src/app/**` route file.
 2. `title` + `description` via `serverT`, or from the fetched entity.
 3. `alternates.canonical` via `canonicalUrl(<sitemap path>)`.
-4. `openGraph` (`title` / `description` / `images`) when the page has a share
-   image — the artwork's `imageUrl` is the reference.
+4. `openGraph` + `twitter` when the page is meant to be shared — every tag is
+   declared explicitly (nothing falls back to `title` / `description`). See
+   [seo-open-graph](seo-open-graph.md).
 5. Verify against the **prod export**, not the dev server: `curl` the route and
    confirm the tags are in the HTML source (see
    [web-prod-export](web-prod-export.md)).
 
 **Authenticated routes** (the create-artwork wizard, admin, `[slug]/edit`) get
-**no** `generateMetadata` — they're unreachable for a crawler, and its fetch
-would run server-side without a user token anyway. Same for the `filters`
-formsheet (its URL just renders the listing behind it) and the entry `index.tsx`
-(a pure `<Redirect>` — no document to describe).
+**no** `generateMetadata` — there is no crawler-reachable document to describe.
+Same for the `filters` formsheet (its URL just renders the listing behind it) and
+the entry `index.tsx` (a pure `<Redirect>` — no document to describe).
+
+`generateMetadata` **resolves as the caller**, exactly like the `loader` beside it
+([web-ssr-hydration](web-ssr-hydration.md)) — it passes `forwardedCookie(request)`
+to its fetch. **Both server phases of one request must agree about who is
+asking.** They were once split (the loader authenticated, the metadata anonymous)
+and the mismatch was visible: an author opened their own unverified artwork, the
+page rendered in full, and the tab read *"Œuvre introuvable."* — the API had 404'd
+the metadata's anonymous fetch while serving the loader's authenticated one.
+
+This costs nothing extra: it's the same fetch, plus a cookie. And it stays safe
+because **a crawler carries no cookie** — it gets the anonymous 404 and the
+`notFound` title exactly as before, so the public SEO surface is unchanged.
+
+What personalizing it does *not* license: **a private page must never declare
+itself indexable.** An unverified artwork is readable by its author and admins
+alone, so it returns its real `title` + `description` and then stops — `noindex,
+follow`, no canonical, no `openGraph` (see [seo-open-graph](seo-open-graph.md)).
+Branch on the entity's own visibility, not on whether a cookie was sent:
+
+```ts
+const artwork = await fetchArtworkBySlug(slug, forwardedCookie(request));
+// …
+if (!artwork.verified) {
+  return { title: artwork.title, description, robots: { index: false, follow: true } };
+}
+```
+
+The crawler can't reach that branch anyway (no cookie → 404 above), so the tag is
+belt-and-braces — write it regardless: the policy should be stated by the route,
+not inferred from an access rule two systems away.
+
+Because the tags are now per-visitor, the document must not be cached and handed
+to the next visitor — the `loader`'s `Cache-Control: private, no-store` already
+covers this, and the CDN caveats in [web-ssr-hydration](web-ssr-hydration.md)
+apply to the metadata for the same reason they apply to the loader.
 
 ## `robots` — always explicit, by kind of page
 
@@ -207,6 +242,6 @@ reconcile them.
 | Route | Metadata |
 | --- | --- |
 | `(tabs)/artworks/index.tsx` | title + `index, follow` + canonical; per-param policy (see above) — one `tag` is self-canonical, `q` / multi-tag are `noindex, follow` |
-| `(tabs)/artworks/[slug]/index.tsx` | title + description + `index, follow` + canonical + `openGraph`, from the fetched artwork; its not-found / outage branches are `noindex, follow` |
+| `(tabs)/artworks/[slug]/index.tsx` | title + description + `index, follow` + canonical + `openGraph` + `twitter` ([seo-open-graph](seo-open-graph.md)), from the fetched artwork; its not-found / outage branches are `noindex, follow` |
 | `(auth)/login.tsx` | title + description (`auth.tagline`) + `noindex, nofollow` |
 | `settings.tsx` | title + `noindex, nofollow` |

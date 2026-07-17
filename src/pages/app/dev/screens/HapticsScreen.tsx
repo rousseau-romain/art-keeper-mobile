@@ -36,7 +36,6 @@ export const HapticsScreen = () => {
             key={name}
             label={name}
             variant="default"
-            block
             iconBefore={{ name: "Vibrate" }}
             onPress={() => haptic(name)}
           />

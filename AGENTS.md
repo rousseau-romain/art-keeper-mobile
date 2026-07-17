@@ -31,18 +31,27 @@ Open these when the trigger applies (they are intentionally not imported):
   export gotchas: build-time bundler flags (`EXPO_UNSTABLE_WEB_MODAL`) that must
   reach `expo export`, Metro dropping async-chunk CSS in prod (hoist real CSS into
   `+html.tsx`), and the modal-CSS re-sync check on upgrade.
-- **`.claude/rules/web-ssr-hydration.md`** — when touching web SSR of public
-  content: the `RootNavigator` auth gate (`hydrated`, not `status`), a provider's
-  first-render value (theme / i18n / token / breakpoint), the `QueryClient`
-  construction (`getQueryClient`, per-request), a route `loader` + `useLoaderData`
-  seeding, reading request config server-side (`Accept-Language` / a cookie), or a
-  protected-route guard's `loading` behavior. Keeps the server render == the
-  client's first render (no #418 hydration mismatch).
+- **`.claude/rules/web-ssr-hydration.md`** — when touching web SSR: the
+  `RootNavigator` auth gate (`hydrated`, not `status`), a provider's first-render
+  value (theme / i18n / token / breakpoint), the `QueryClient` construction
+  (`getQueryClient`, per-request), a route `loader` + `useLoaderData` seeding, or
+  a protected-route guard's `loading` behavior. **The SSR is authenticated by the
+  request's session cookie** — forward it per SDK call (`forwardedCookie`), never
+  via the module-singleton client and never as a bearer token; read it when
+  touching an SSR fetch, anything that makes the HTML per-visitor (CDN caching —
+  `/_expo/loaders/` is **not** a cacheable asset), the `ak-profile` chrome seed, or
+  request config read server-side (`Accept-Language` / a cookie). Keeps the server
+  render == the client's first render (no #418 hydration mismatch).
 - **`.claude/rules/seo-generate-metadata.md`** — when touching a public web
   route's SEO: a route's `generateMetadata` export, a page `<title>` /
   description / Open Graph tags, or an `alternates.canonical` (built inline from
   `origin()`). Server-only, translated with `serverT`, canonical from the
   request's own origin.
+- **`.claude/rules/seo-open-graph.md`** — when touching a public route's social
+  share preview: an `openGraph` / `twitter` block in a `generateMetadata`, a
+  share image, or an `og:type` / `og:url`. Expo infers nothing — every tag is
+  declared, `og:title` does *not* fall back to the page title, and the
+  `article:*` tags ship only under `type: "article"`.
 - **`.claude/rules/email-verification.md`** — when touching auth: login, sign-up,
   sign-in, or the `AuthProvider` / `(auth)/login` screens. Backend requires email
   verification; handle null-token sign-up and the `EMAIL_NOT_VERIFIED` 403.

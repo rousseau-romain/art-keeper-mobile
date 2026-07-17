@@ -17,7 +17,9 @@ import {
   toTagArray,
 } from "@/lib/api/artworks";
 import { getArtworks } from "@/lib/api/generated/sdk.gen";
+import { forwardedCookie } from "@/lib/api/ssr-auth";
 import { serverT } from "@/lib/i18n/server";
+import { useLoaderArtworks } from "@/pages/app/artwork/hooks/useLoaderArtworks";
 import { IndexScreen } from "@/pages/app/artwork/screens/IndexScreen";
 import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 
@@ -79,6 +81,12 @@ export const generateMetadata: GenerateMetadataFunction = async (request) => {
 // the screen uses, so the SSR HTML reflects the *filtered* list and the seeded
 // `initialData` attaches to the query the screen subscribes to on first render.
 // The returned page is embedded in the HTML and read by `useLoaderArtworks`.
+//
+// The fetch runs as the caller (forwarded session cookie), so a signed-in user's
+// own unverified pieces and their `likedByMe` are in the HTML rather than missing
+// until the client refetches. The seed still MUST stay backdated
+// (`initialDataUpdatedAt: 0`) — the mount refetch is what reconciles this page
+// with the live list, and a fresh seed would skip it. See the web-ssr-hydration rule.
 export const loader: LoaderFunction<{ page: ArtworkPage | null }> = async (
   request,
 ) => {
@@ -90,12 +98,20 @@ export const loader: LoaderFunction<{ page: ArtworkPage | null }> = async (
     sp.get("scope") ?? undefined,
     sp.getAll("tag"),
   );
+  // Per-call, never on the shared client — see `forwardedCookie`.
+  const headers = forwardedCookie(request);
+
+  // Authenticated → a personalized document (the caller's unverified pieces, their
+  // `likedByMe`, their signed-in chrome). Declare it uncacheable at the origin so no
+  // CDN can serve it onward; Cloudflare's cookie bypass rule is the other half.
+  if (headers) setResponseHeaders({ "Cache-Control": "private, no-store" });
 
   try {
     // The configured client sets `throwOnError: true`, so a resolved call always
     // has `data` — same cast as the data layer (e.g. `setLike`).
     const { data } = await getArtworks({
       query: { ...filters, limit: PAGE_SIZE },
+      headers,
     });
     const page = data as ArtworkPage;
     // Preload the first thumbnail (grid LCP) as soon as the document arrives.
@@ -119,12 +135,22 @@ export default function Screen() {
     scope?: string;
     tag?: string | string[];
   }>();
-  // `IndexScreen` reads the loader page (`useLoaderArtworks` on web), which
-  // suspends during client-side navigation (on initial load the data is already
-  // in the HTML, so it doesn't). The boundary shows a themed spinner meanwhile.
+  // Read the loader page here and hand it down, so `IndexScreen` stays a plain
+  // props consumer (no router/loader coupling) — same split as the detail route.
+  // `useLoaderArtworks` is platform-split: it reads `useLoaderData` on web and is
+  // a no-op on native, where loaders don't run (a bare `useLoaderData` would try
+  // to fetch a relative `/_expo/loaders/…` URL and throw). It suspends on
+  // client-side navigation; the boundary shows a themed spinner meanwhile.
+  const page = useLoaderArtworks();
+
   return (
     <Suspense fallback={<ScreenFallback />}>
-      <IndexScreen initialQuery={q} initialScope={scope} initialTags={tag} />
+      <IndexScreen
+        page={page}
+        initialQuery={q}
+        initialScope={scope}
+        initialTags={tag}
+      />
     </Suspense>
   );
 }

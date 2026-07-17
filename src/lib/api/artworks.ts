@@ -88,9 +88,6 @@ export const useArtworks = (
   options?: { enabled?: boolean },
   // Web SSR: the route `loader` prefetches the first page; seeding it as
   // `initialData` renders the list from the server HTML (no client fetch first).
-  // Passed WITHOUT `initialDataUpdatedAt` on purpose — the loader runs
-  // unauthenticated, so it's treated as stale and refetched in the background to
-  // personalize `likedByMe` (same rationale as `useArtworkBySlug`).
   initialData?: ArtworkPage
 ) => {
   const query = useInfiniteQuery({
@@ -106,6 +103,14 @@ export const useArtworks = (
     initialData: initialData
       ? { pages: [initialData], pageParams: [{} as never] }
       : undefined,
+    // Mark the seed as ancient so it's stale on arrival and refetched on mount.
+    // Without this it'd be stamped `Date.now()`, stay fresh for the client's
+    // `staleTime` (30s, `lib/query.ts`) and skip the mount refetch — and since
+    // React Query only refetches on an event (mount/focus/reconnect), a seed that
+    // has drifted from the server would simply stand. The refetch is a background
+    // one: the seeded rows stay on screen while it runs, so there's no flash and
+    // no mismatch.
+    initialDataUpdatedAt: initialData ? 0 : undefined,
   });
 
   const artworks = query.data?.pages.flatMap((page) => page.data ?? []) ?? [];
@@ -207,13 +212,22 @@ export const excludeArtwork = (list: Artwork[], id: string): Artwork[] =>
  * `undefined` artwork (the detail screen calls it before the fetch resolves) and
  * stays disabled until it's known. Returns the query plus `nearby` (the
  * flattened, self-excluded rows) and the `radius` used.
+ *
+ * `initialData` seeds the first page from the detail route's server `loader`
+ * (web SSR). It must be the endpoint's **raw** page — the artwork itself
+ * included — so the seed matches what the client's own refetch returns for the
+ * same key; the self-exclusion below applies to both alike.
  */
-export const useNearbyArtworks = (artwork: Artwork | undefined) => {
+export const useNearbyArtworks = (
+  artwork: Artwork | undefined,
+  initialData?: ArtworkPage
+) => {
   const query = useArtworks(
     artwork
       ? { lat: artwork.latitude, lng: artwork.longitude, radius: NEARBY_RADIUS }
       : {},
-    { enabled: !!artwork }
+    { enabled: !!artwork },
+    initialData
   );
   const nearby = artwork
     ? excludeArtwork(query.artworks, artwork.id)
@@ -227,9 +241,21 @@ export const useNearbyArtworks = (artwork: Artwork | undefined) => {
  * name-substring guessing), so it takes the artwork's `artistId` directly — no
  * need to wait on the artist name resolving. The fetch is skipped until the id
  * is known. Returns the `useArtworks` query verbatim (`artworks` + state flags).
+ *
+ * `initialData` seeds the first page from the detail route's server `loader`
+ * (web SSR) — the endpoint's raw page, as in `useNearbyArtworks`. The strip's
+ * own artwork isn't dropped here (this hook doesn't know it); the detail screen
+ * applies `excludeArtwork`.
  */
-export const useArtworksByArtist = (artistId: string) =>
-  useArtworks({ artistId: artistId || undefined }, { enabled: !!artistId });
+export const useArtworksByArtist = (
+  artistId: string,
+  initialData?: ArtworkPage
+) =>
+  useArtworks(
+    { artistId: artistId || undefined },
+    { enabled: !!artistId },
+    initialData
+  );
 
 /** What the new-artwork flow collects before it can submit. */
 export type CreateArtworkInput = {
@@ -407,16 +433,21 @@ export const useArtwork = (id: string) => {
  * edit) key off that.
  *
  * `initialData` seeds the cache from the route's server `loader` (web SSR), so the
- * detail hero renders in the initial HTML instead of after a client fetch. It's
- * passed WITHOUT `initialDataUpdatedAt` on purpose: the loader runs unauthenticated
- * (no user token server-side), so `likedByMe` is neutral — treating the data as
- * immediately stale triggers a background refetch that personalizes it on the client.
+ * detail hero renders in the initial HTML instead of after a client fetch.
+ * `initialDataUpdatedAt: 0` backdates the seed so it's stale on arrival and
+ * refetched on mount — see `useArtworks` for why that line is load-bearing.
+ *
+ * Going through the query (rather than rendering the loader payload directly) is
+ * also what makes the detail **reactive**: the like mutation patches this cache,
+ * so a screen that reads it re-renders — one that reads the loader's frozen
+ * payload does not.
  */
 export const useArtworkBySlug = (slug: string, initialData?: Artwork) => {
   return useQuery({
     ...getArtworksSlugBySlugOptions({ path: { slug } }),
     enabled: !!slug,
     initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
   });
 };
 

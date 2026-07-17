@@ -39,7 +39,6 @@ export const WizardFooter = ({
       <Button
         label={label}
         variant="primary"
-        block
         disabled={disabled}
         loading={loading}
         iconAfter={showArrow ? { name: "ArrowRight" } : undefined}

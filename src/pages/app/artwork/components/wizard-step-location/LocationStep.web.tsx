@@ -49,7 +49,6 @@ export const LocationStep = () => {
       <Button
         label={tr("artwork.new.location.useMyLocation")}
         variant="ghost"
-        block
         loading={locating}
         iconBefore={{ name: "Globe" }}
         onPress={useMyLocation}

@@ -56,11 +56,21 @@ export const useArtists = (
  * Fetch a single artist by id — used to resolve an artwork's `artistId` to its
  * name on the artwork detail screen. Public endpoint; skips the fetch when no
  * `id` is set (an artwork with no attributed artist).
+ *
+ * `initialData` seeds the cache from the detail route's server `loader` (web
+ * SSR), so the artist name ships in the initial HTML. `initialDataUpdatedAt: 0`
+ * backdates the seed so it's stale on arrival and refetched on mount — the same
+ * contract every loader seed follows (see `useArtworks`).
  */
-export const useArtist = (id: string | null | undefined) =>
+export const useArtist = (
+  id: string | null | undefined,
+  initialData?: Artist,
+) =>
   useQuery({
     ...getArtistsByIdOptions({ path: { id: id ?? "" } }),
     enabled: !!id,
+    initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
   });
 
 /**

@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import { getToken, setToken } from "@/lib/auth/token-store";
 import i18n, { deviceLanguage } from "@/lib/i18n";
+import { isServerRender } from "@/lib/is-server-render";
 import { client } from "./generated/client.gen";
 
 const RAW_API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
@@ -189,8 +190,13 @@ client.interceptors.request.use((request) => {
 // with it before the client's own (untyped) error handling runs.
 client.interceptors.response.use(async (response) => {
   // Better Auth returns the bearer token in this header on sign-in (native).
+  // Never capture it during a server render: `setToken` writes `token-store`'s
+  // module-level mirror, which the web server shares across concurrent requests
+  // — one visitor's token would then sign another's SSR fetch. The server
+  // authenticates by forwarding the request's own cookie per call instead (see
+  // the artwork route loaders), so it has no use for the mirror.
   const issued = response.headers.get("set-auth-token");
-  if (issued) await setToken(issued);
+  if (issued && !isServerRender()) await setToken(issued);
   if (!response.ok) {
     const body = await response
       .clone()

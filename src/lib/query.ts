@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
-import { Platform } from "react-native";
 
 import { ApiError } from "./api/client";
+import { isServerRender } from "./is-server-render";
 
 /** Fresh QueryClient with the app's default options. */
 export const makeQueryClient = () =>
@@ -20,11 +20,6 @@ export const makeQueryClient = () =>
 
 let clientSingleton: QueryClient | undefined;
 
-// Web server rendering (React Native's global has no `window`, so detect the
-// server by platform + absent window — not `typeof window` alone, which is also
-// undefined on native).
-const isServerRender = Platform.OS === "web" && typeof window === "undefined";
-
 /**
  * One QueryClient per server request, a single shared one everywhere else.
  *
@@ -36,7 +31,7 @@ const isServerRender = Platform.OS === "web" && typeof window === "undefined";
  * TanStack Query SSR guide.
  */
 export const getQueryClient = (): QueryClient => {
-  if (isServerRender) return makeQueryClient();
+  if (isServerRender()) return makeQueryClient();
   if (!clientSingleton) clientSingleton = makeQueryClient();
   return clientSingleton;
 };

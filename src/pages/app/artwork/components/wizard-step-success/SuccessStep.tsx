@@ -51,14 +51,12 @@ export const SuccessStep = ({ slug, onAnother }: SuccessStepProps) => {
         {slug && (
           <Button
             label={tr("artwork.new.success.track")}
-            block
             onPress={() => router.push(`/artworks/${slug}` as Href)}
           />
         )}
         <Button
           label={tr("artwork.new.success.another")}
           variant="primary"
-          block
           onPress={onAnother}
         />
         <Pressable
@@ -99,10 +97,11 @@ const createStyles = (c: Palette) =>
       borderRadius: RadiusEnum.sm,
       backgroundColor: c.surface2,
     },
+    // No `alignItems` — the CTAs below are meant to be full-width, and a button
+    // takes its width from its parent. Only the back link hugs its text.
     actions: {
       alignSelf: "stretch",
       gap: SpacingEnum.md,
-      alignItems: "center",
     },
-    backLink: { paddingVertical: SpacingEnum.sm },
+    backLink: { alignSelf: "center", paddingVertical: SpacingEnum.sm },
   });

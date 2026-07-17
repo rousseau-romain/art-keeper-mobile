@@ -13,8 +13,14 @@ const isWeb = Platform.OS === "web";
 // On web the mirror is seeded synchronously at module load: localStorage is a
 // synchronous API, so the token is available on the very first render — the web
 // SSR gate can pass without awaiting an async hydrate, letting the app render
-// public content immediately (server sees no localStorage → null, as expected).
-// Native keeps the async keychain read (see `hydrateToken`).
+// public content immediately. Native keeps the async keychain read (see
+// `hydrateToken`).
+//
+// The server has no localStorage, so this stays `null` there. That is the
+// intended behaviour, not a gap to fill: this mirror is module scope, shared by
+// every concurrent SSR request, so a token in it would leak across visitors
+// (see `@/lib/is-server-render`). The server authenticates by forwarding the
+// request's own cookie per call — never through this mirror.
 let cached: string | null = isWeb
   ? (globalThis.localStorage?.getItem(KEY) ?? null)
   : null;

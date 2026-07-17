@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type Artwork,
+  type ArtworkPage,
   paramsToBrowseFilters,
   toTagArray,
   useBrowseArtworks,
@@ -15,18 +16,24 @@ import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/Vie
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useDefaultBrowseView } from "@/pages/app/artwork/hooks/useDefaultBrowseView";
-import { useLoaderArtworks } from "@/pages/app/artwork/hooks/useLoaderArtworks";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 
 export type IndexScreenProps = {
+  /**
+   * Web SSR: the first page the route `loader` prefetched (already filtered to the
+   * URL params), handed down by the route. `undefined` on native and on a loader
+   * miss — the list then just fetches client-side.
+   */
+  page?: ArtworkPage;
   initialQuery?: string;
   initialScope?: string;
   initialTags?: string | string[];
 };
 
 export const IndexScreen = ({
+  page: initialPage,
   initialQuery,
   initialScope,
   initialTags,
@@ -34,9 +41,6 @@ export const IndexScreen = ({
   const haptic = useHaptics();
   const router = useRouter();
   const hydrated = useIsHydrated();
-  // Web SSR: the first page the route `loader` prefetched (already filtered to the
-  // URL params), embedded in the HTML. `undefined` on native and on cache misses.
-  const initialPage = useLoaderArtworks();
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
   const {
     selectedTags,
