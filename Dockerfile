@@ -5,7 +5,10 @@ FROM oven/bun:1.3.14 AS build
 WORKDIR /app
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+# BuildKit cache mount on bun's global install cache (~/.bun/install/cache): when
+# the lockfile changes, packages aren't re-downloaded — only re-linked/extracted.
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 
 COPY . .
 
@@ -27,18 +30,30 @@ ARG EXPO_PUBLIC_SEO_NOINDEX
 # dockerignored, so it must be passed here or the web filter sheet renders
 # full-screen. Defaults on; overridable as a Dokploy build arg.
 ARG EXPO_UNSTABLE_WEB_MODAL=1
-RUN bun expo export -p web
+# Cache mounts on Metro's caches (the heaviest step). Metro's default FileStore is
+# os.tmpdir()/metro-cache (/tmp/metro-cache); node_modules/.cache and .expo are
+# mounted too for robustness across @expo/metro-config's cache stores. These only
+# speed things up when the BuildKit cache persists between builds — neutral (no
+# regression) otherwise.
+RUN --mount=type=cache,target=/tmp/metro-cache \
+    --mount=type=cache,target=/app/node_modules/.cache \
+    --mount=type=cache,target=/app/.expo \
+    bun expo export -p web
 
 # ---- runtime: serve dist/ (SSR + API routes) with the Expo server ----
 FROM oven/bun:1.3.14-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
-# `expo serve` (from the Expo CLI) hosts dist/server + dist/client — it needs the
-# exported dist and node_modules (the CLI + @expo/server live there).
+# `expo serve` (from the Expo CLI) hosts dist/server + dist/client — the CLI +
+# @expo/server come from `expo` (a runtime dependency). Rather than copy the full
+# 2.7 GB build node_modules (dev deps + Metro caches included), install prod-only
+# deps here. The dist/server bundle is self-contained after export.
+COPY package.json bun.lock ./
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile --production
+
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
 
 EXPOSE 8081
 CMD ["bunx", "expo", "serve", "--port", "8081"]
