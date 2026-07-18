@@ -6,6 +6,9 @@ import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkActions } from "@/pages/app/artwork/components/artwork-actions/ArtworkActions";
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
+import { H1 } from "@/shared/ui/seo/h1/H1";
+import { List } from "@/shared/ui/seo/list/List";
+import { ListItem } from "@/shared/ui/seo/list-item/ListItem";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -23,9 +26,7 @@ export const ArtworkMeta = ({ artwork, artist, wide }: ArtworkMetaProps) => {
   const handle = artist ? `@${artist.slug}` : "";
   return (
     <View style={[styles.meta, wide && styles.metaWide]}>
-      <Text font="display" size="xxl" style={styles.title}>
-        {artwork.title}
-      </Text>
+      <H1 style={styles.title}>{artwork.title}</H1>
 
       {artist && (
         <Link
@@ -47,20 +48,18 @@ export const ArtworkMeta = ({ artwork, artist, wide }: ArtworkMetaProps) => {
       )}
 
       {artwork.tags.length > 0 ? (
-        <View style={styles.tags}>
+        <List style={styles.tags}>
           {artwork.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={{ pathname: "/artworks", params: { tag } }}
-              asChild
-            >
-              <Tag
-                label={tag}
-                accessibilityLabel={tr("a11y.searchTag", { tag })}
-              />
-            </Link>
+            <ListItem key={tag}>
+              <Link href={{ pathname: "/artworks", params: { tag } }} asChild>
+                <Tag
+                  label={tag}
+                  accessibilityLabel={tr("a11y.searchTag", { tag })}
+                />
+              </Link>
+            </ListItem>
           ))}
-        </View>
+        </List>
       ) : null}
 
       {artwork.description && (

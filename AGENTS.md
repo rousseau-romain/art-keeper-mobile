@@ -42,6 +42,13 @@ Open these when the trigger applies (they are intentionally not imported):
   `/_expo/loaders/` is **not** a cacheable asset), the `ak-profile` chrome seed, or
   request config read server-side (`Accept-Language` / a cookie). Keeps the server
   render == the client's first render (no #418 hydration mismatch).
+- **`.claude/rules/ssr-loader-anchor.md`** — when adding/moving a route that
+  exports a `loader` in a stack whose `_layout` declares
+  `unstable_settings.initialRouteName`, or debugging a "Failed to load loader
+  data" / "Switched to client rendering" SSR error on a deep link to a nested
+  route. The seeded stack anchor renders a loader-bearing screen server-side with
+  no prefetched data → a relative `fetchLoader` that rejects on Node. Gate the
+  loader read on `useIsFocused` (an ErrorBoundary does **not** help).
 - **`.claude/rules/seo-generate-metadata.md`** — when touching a public web
   route's SEO: a route's `generateMetadata` export, a page `<title>` /
   description / Open Graph tags, or an `alternates.canonical` (built inline from

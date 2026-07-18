@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { NearbyThumb } from "@/pages/app/artwork/components/nearby-thumb/NearbyThumb";
+import { Aside } from "@/shared/ui/seo/aside/Aside";
+import { H2 } from "@/shared/ui/seo/h2/H2";
 import { Text } from "@/shared/ui/text/Text";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -17,15 +19,20 @@ export type NearbyPanelProps = {
 /**
  * "Nearby" panel: a count line plus up to three thumbnails of pieces near the
  * current artwork. Renders nothing when there are no neighbours.
+ *
+ * On web it's a complementary `<aside>` (see `src/shared/ui/seo/README.md`) —
+ * nearby pieces are tangential to the main artwork — with its eyebrow label as an
+ * `<h2>` and `aria-label` naming the region.
  */
 export const NearbyPanel = ({ artworks, radius }: NearbyPanelProps) => {
   const { t: tr } = useTranslation();
   if (artworks.length === 0) return null;
+  const title = tr("artwork.detail.nearbyTitle");
   return (
-    <View style={styles.panel}>
-      <Text font="mono" size="xs" color="textMuted" style={styles.eyebrow}>
-        {tr("artwork.detail.nearbyTitle")}
-      </Text>
+    <Aside style={styles.panel} aria-label={title}>
+      <H2 font="mono" size="xs" color="textMuted" style={styles.eyebrow}>
+        {title}
+      </H2>
       <Text font="body" size="sm" color="textSoft">
         {tr("artwork.detail.nearbyCount", { count: artworks.length, radius })}
       </Text>
@@ -34,7 +41,7 @@ export const NearbyPanel = ({ artworks, radius }: NearbyPanelProps) => {
           <NearbyThumb key={artwork.id} artwork={artwork} />
         ))}
       </View>
-    </View>
+    </Aside>
   );
 };
 

@@ -11,16 +11,27 @@ export type ArtworkHeroProps = {
 // flagged as `loading=lazy`). `fetchPriority="high"` + `loading="eager"` make the
 // hero a first-class LCP resource; it paints from the bytes already preloaded by
 // the `Link: rel=preload` header the route's server `loader` emits.
+//
+// The `<figure>` is the semantic wrapper (see `src/shared/ui/seo/README.md`) —
+// here a raw element, since this file is web-only and already emits raw DOM. It
+// carries `display: contents` so it generates NO box: the `<img>` keeps its exact
+// responsive styles (and stays the flex child of the `SplitRow` in wide mode) and
+// its LCP eligibility, while the `<figure>` still lands in the HTML for crawlers.
 export const ArtworkHero = ({ imageUrl, wide }: ArtworkHeroProps) => (
-  <img
-    src={imageUrl}
-    alt=""
-    fetchPriority="high"
-    loading="eager"
-    decoding="async"
-    style={wide ? wideStyle : fullStyle}
-  />
+  <figure style={figureStyle}>
+    <img
+      src={imageUrl}
+      alt=""
+      fetchPriority="high"
+      loading="eager"
+      decoding="async"
+      style={wide ? wideStyle : fullStyle}
+    />
+  </figure>
 );
+
+/** No box — purely a semantic wrapper; the `<img>` lays out as if unwrapped. */
+const figureStyle: CSSProperties = { display: "contents" };
 
 /** Cap the hero image height so tall portraits don't dominate the screen. */
 const HERO_MAX_HEIGHT = 550;

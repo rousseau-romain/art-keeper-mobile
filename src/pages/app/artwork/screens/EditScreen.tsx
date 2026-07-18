@@ -70,7 +70,7 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
 };
 
 const styles = StyleSheet.create({
-  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.xl },
+  scroll: { padding: SpacingEnum.lg, gap: SpacingEnum.lg },
   header: { gap: SpacingEnum.sm },
   title: { textTransform: "uppercase" },
 });

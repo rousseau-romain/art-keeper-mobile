@@ -90,6 +90,7 @@ export const GridView = ({
           styles.listContent,
           { paddingBottom: insets.bottom + SpacingEnum.xl },
         ]}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

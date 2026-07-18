@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from "expo-router";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { Platform } from "react-native";
 
 import {
@@ -27,6 +27,20 @@ const filterKey = (
   tags: string[],
 ): string => JSON.stringify([search, scope, tags]);
 
+// The selection the URL last represented — MODULE-level, not a component ref, so
+// it survives `IndexScreen` remounts. The route's `Screen` swaps `<BrowseSeed>`
+// ⇄ `<IndexScreen>` on focus (the `useIsFocused` SSR-anchor gate), which remounts
+// `IndexScreen` every time the filter sheet opens/closes. A component `useRef`
+// would reset to `undefined` on that remount, so a return-from-sheet (unchanged
+// URL) would look like a fresh navigation and take the URL→store SEED branch —
+// wiping the tags the sheet just set. Keeping it at module scope preserves the
+// "did the URL change since we were last here?" signal across those remounts.
+//
+// SSR-safe: it's only ever written inside the client-only focus effect and never
+// read during render, so — unlike the filter values themselves — it can't leak
+// across concurrent server requests.
+let lastKey: string | undefined;
+
 /**
  * Two-way sync between the `/artworks` URL query string and the browse filter
  * store, resolved on **focus** with a "which side changed?" check so a single
@@ -45,11 +59,13 @@ const filterKey = (
  *   We commit the store to the URL so the address bar stays a shareable link.
  *   Web only — native has no URL to reflect into.
  *
- * The `lastKey` ref is what distinguishes the two: it holds the selection the URL
- * last represented, so a genuine param change (seed) is told apart from a
- * reflect-driven one (which we record so it doesn't look like a new navigation on
- * the next focus). Uses `useNavigation().setParams` (not `router.setParams`) so
- * the params land on this screen's `/artworks` route.
+ * The module-level `lastKey` is what distinguishes the two: it holds the
+ * selection the URL last represented, so a genuine param change (seed) is told
+ * apart from a reflect-driven one (which we record so it doesn't look like a new
+ * navigation on the next focus). It's module scope, not a component ref, so it
+ * survives the `IndexScreen` remount the filter sheet triggers on open/close —
+ * see the note beside its declaration. Uses `useNavigation().setParams` (not
+ * `router.setParams`) so the params land on this screen's `/artworks` route.
  */
 export const useArtworkFiltersUrlSync = ({
   initialQuery,
@@ -57,9 +73,6 @@ export const useArtworkFiltersUrlSync = ({
   initialTags,
 }: UseArtworkFiltersUrlSyncArgs): void => {
   const navigation = useNavigation();
-
-  // The selection the URL last represented — seeded lazily on the first focus.
-  const lastKey = useRef<string | undefined>(undefined);
 
   useFocusEffect(
     useCallback(() => {
@@ -69,8 +82,8 @@ export const useArtworkFiltersUrlSync = ({
       const urlKey = filterKey(urlSearch, urlScope, urlTags);
 
       // URL → store: params changed (new navigation / deep link) → seed.
-      if (urlKey !== lastKey.current) {
-        lastKey.current = urlKey;
+      if (urlKey !== lastKey) {
+        lastKey = urlKey;
         setFilters({ tags: urlTags, search: urlSearch, scope: urlScope });
         return;
       }
@@ -82,7 +95,16 @@ export const useArtworkFiltersUrlSync = ({
       const search = getSearch();
       const searchScope = getSearchScope();
       const selectedTags = getSelectedTags();
-      lastKey.current = filterKey(search, searchScope, selectedTags);
+      const storeKey = filterKey(search, searchScope, selectedTags);
+      lastKey = storeKey;
+
+      // Only write when the URL doesn't already match the store. `setParams`
+      // re-renders the route (new params) → this focus effect re-runs, and an
+      // unconditional write would then reflect again on the now-updated URL and
+      // loop forever (React #185, "maximum update depth"). Once the URL mirrors
+      // the store, `storeKey === urlKey` and we stop.
+      if (storeKey === urlKey) return;
+
       const setParams = navigation.setParams as unknown as (params: {
         q?: string;
         scope?: SearchScope;

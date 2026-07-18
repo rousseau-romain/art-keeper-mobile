@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useIsFocused, useLocalSearchParams } from "expo-router";
 import type {
   GenerateMetadataFunction,
   LoaderFunction,
@@ -21,7 +21,7 @@ import { forwardedCookie } from "@/lib/api/ssr-auth";
 import { serverT } from "@/lib/i18n/server";
 import { requestOrigin } from "@/lib/seo/request-origin";
 import { browseTitle } from "@/lib/seo/titles";
-import { useLoaderArtworks } from "@/pages/app/artwork/hooks/useLoaderArtworks";
+import { BrowseSeed } from "@/pages/app/artwork/components/browse-seed/BrowseSeed";
 import { IndexScreen } from "@/pages/app/artwork/screens/IndexScreen";
 import { ScreenFallback } from "@/shared/ui/screen-fallback/ScreenFallback";
 
@@ -137,22 +137,33 @@ export default function Screen() {
     scope?: string;
     tag?: string | string[];
   }>();
-  // Read the loader page here and hand it down, so `IndexScreen` stays a plain
-  // props consumer (no router/loader coupling) — same split as the detail route.
-  // `useLoaderArtworks` is platform-split: it reads `useLoaderData` on web and is
-  // a no-op on native, where loaders don't run (a bare `useLoaderData` would try
-  // to fetch a relative `/_expo/loaders/…` URL and throw). It suspends on
-  // client-side navigation; the boundary shows a themed spinner meanwhile.
-  const page = useLoaderArtworks();
+  const focused = useIsFocused();
 
+  // This route is *also* rendered as the stack's seeded background anchor beneath a
+  // deep-linked nested sibling (`/artworks/[slug]/edit`, via
+  // `unstable_settings.initialRouteName`). There the server never prefetched this
+  // route's loader, so reading it (`useLoaderArtworks`, in `BrowseSeed`) suspends on
+  // a relative server `fetch` that rejects and fails the whole document ("Switched
+  // to client rendering…"). That anchor is occluded and never focused, so only mount
+  // the loader-reading `BrowseSeed` when this route is actually focused; otherwise
+  // render the screen loader-less (the client fetches client-side if it's ever
+  // shown). `useIsFocused` derives from the URL, so it's the same on the server and
+  // the client's first render — the branch is hydration-safe.
+  //
+  // When focused, `BrowseSeed` reads the SSR seed and suspends on client-side
+  // navigation — the `<Suspense>` shows a themed spinner meanwhile.
   return (
     <Suspense fallback={<ScreenFallback />}>
-      <IndexScreen
-        page={page}
-        initialQuery={q}
-        initialScope={scope}
-        initialTags={tag}
-      />
+      {focused ? (
+        <BrowseSeed initialQuery={q} initialScope={scope} initialTags={tag} />
+      ) : (
+        <IndexScreen
+          page={undefined}
+          initialQuery={q}
+          initialScope={scope}
+          initialTags={tag}
+        />
+      )}
     </Suspense>
   );
 }

@@ -49,5 +49,5 @@ export const ReviewStepScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
+  scroll: { padding: SpacingEnum.lg, gap: SpacingEnum.lg },
 });

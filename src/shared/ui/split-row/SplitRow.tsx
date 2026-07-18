@@ -1,5 +1,4 @@
 import { StyleSheet, View, type ViewProps } from "react-native";
-import { SpacingEnum } from "@/theme/enums/scale.enums";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
 export type SplitRowProps = ViewProps;
@@ -31,6 +30,5 @@ export const SplitRow = ({ style, children, ...rest }: SplitRowProps) => {
 const styles = StyleSheet.create({
   row: {
     display: "flex",
-    gap: SpacingEnum.lg,
   },
 });

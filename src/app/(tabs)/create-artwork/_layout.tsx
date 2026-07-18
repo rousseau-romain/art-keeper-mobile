@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 import { WizardHeader } from "@/pages/app/artwork/components/wizard-header/WizardHeader";
 import type { ArtworkValues } from "@/pages/app/artwork/form/ArtworkForm";
 import {
@@ -15,6 +16,7 @@ import {
 import { HeaderRight } from "@/shared/navigation/header-right/HeaderRight";
 import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
+import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -34,24 +36,33 @@ export default function Layout() {
   });
   const draft = useArtworkDraft({ methods });
   const router = useRouter();
+  const { wide } = useBreakpoint();
 
   // The auth guard lives one level up: `(tabs)/_layout` wraps this route in
   // `Tabs.Protected`, so signed-out visitors never reach it (deep links included).
+
+  // The settings entry point rides the header right on native + mobile web; on
+  // desktop web the top WebHeader owns navigation, so drop it there (matches the
+  // artworks stack). `wide` is hydration-safe (narrow until mounted), so the
+  // server + first client render agree before flipping post-mount.
+  const webHeader = Platform.OS === "web" && wide;
 
   return (
     <FormProvider {...methods}>
       <NewArtworkContext.Provider value={draft}>
         <Stack
           screenOptions={{
-            headerRight: () => (
-              <HeaderRight>
-                <IconButton
-                  name="Settings"
-                  onPress={() => router.push("/settings")}
-                  accessibilityLabel={tr("a11y.settings")}
-                />
-              </HeaderRight>
-            ),
+            headerRight: webHeader
+              ? undefined
+              : () => (
+                  <HeaderRight>
+                    <IconButton
+                      name="Settings"
+                      onPress={() => router.push("/settings")}
+                      accessibilityLabel={tr("a11y.settings")}
+                    />
+                  </HeaderRight>
+                ),
           }}
         >
           <Stack.Screen

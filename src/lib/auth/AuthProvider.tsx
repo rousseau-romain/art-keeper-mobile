@@ -72,7 +72,7 @@ type AuthContextValue = {
   signUp: (
     name: string,
     email: string,
-    password: string,
+    password: string
   ) => Promise<SignUpOutcome>;
   signInWithGoogle: () => Promise<GoogleSignInOutcome>;
   /** True while the interactive Google flow is in flight (for button spinners). */
@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(
         `[auth] token hydrated present=${!!tok} biometric=${pref} locked=${
           !!tok && pref
-        }`,
+        }`
       );
     })().finally(() => setHydrated(true));
   }, []);
@@ -161,7 +161,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setBiometricEnabledState(enabled);
       return true;
     },
-    [t],
+    [t]
   );
 
   // One-time, post-login nudge to turn on biometric unlock. Native-only, shown at
@@ -183,7 +183,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           text: t("common.enable"),
           onPress: () => void setBiometricEnabled(true),
         },
-      ],
+      ]
     );
   }, [t, setBiometricEnabled]);
 
@@ -226,19 +226,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     persistProfile(
       session.data
         ? { id: session.data.user.id, role: session.data.user.role }
-        : null,
+        : null
     );
   }, [session.data]);
 
   const status: AuthStatus = !hydrated
     ? "loading"
     : session.data !== undefined
-      ? user
-        ? "authenticated"
-        : "unauthenticated"
-      : session.isError
-        ? "unauthenticated"
-        : "loading";
+    ? user
+      ? "authenticated"
+      : "unauthenticated"
+    : session.isError
+    ? "unauthenticated"
+    : "loading";
 
   useEffect(() => {
     console.log(`[auth] status=${status} user=${user?.id ?? "-"}`);
@@ -258,7 +258,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const invalidateSession = useCallback(
     () => qc.invalidateQueries({ queryKey: SESSION_KEY }),
-    [qc],
+    [qc]
   );
 
   // Seed the session from the auth response so `status` flips to "authenticated"
@@ -269,12 +269,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // session object.
   const primeSession = useCallback(
     (u: User) =>
-      qc.setQueryData(
-        SESSION_KEY,
-        (prev: SessionResponse | null | undefined) =>
-          prev ? { ...prev, user: u } : ({ user: u } as SessionResponse),
+      qc.setQueryData(SESSION_KEY, (prev: SessionResponse | null | undefined) =>
+        prev ? { ...prev, user: u } : ({ user: u } as SessionResponse)
       ),
-    [qc],
+    [qc]
   );
 
   const signInMutation = useMutation({
@@ -282,7 +280,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signInEmail(email, password),
     onSuccess: async (data) => {
       console.log(
-        `[auth] sign-in success token=${!!data?.token} user=${data?.user?.id ?? "-"}`,
+        `[auth] sign-in success token=${!!data?.token} user=${
+          data?.user?.id ?? "-"
+        }`
       );
       // Native captures the token from the set-auth-token header (client
       // middleware); web reads it from the body, where CORS can't hide it.
@@ -308,7 +308,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onSuccess: async (data) => {
       console.log(
         `[auth] sign-up success token=${!!data?.token} ` +
-          `${data?.token ? "authenticated" : "needs-verification"}`,
+          `${data?.token ? "authenticated" : "needs-verification"}`
       );
       // With email verification required, sign-up returns no token and an
       // unverified user. Don't seed the session in that case — doing so flips
@@ -366,30 +366,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = useCallback(
     (email: string, password: string) =>
       signInMutation.mutateAsync({ email, password }).then(() => {}),
-    [signInMutation],
+    [signInMutation]
   );
 
   const signUp = useCallback(
     async (
       name: string,
       email: string,
-      password: string,
+      password: string
     ): Promise<SignUpOutcome> => {
       const data = await signUpMutation.mutateAsync({ name, email, password });
       return data?.token ? "authenticated" : "needs-verification";
     },
-    [signUpMutation],
+    [signUpMutation]
   );
 
   const signInWithGoogle = useCallback(
     () => signInGoogleMutation.mutateAsync(),
-    [signInGoogleMutation],
+    [signInGoogleMutation]
   );
 
   const resendVerification = useCallback(
     (email: string) =>
       resendVerificationMutation.mutateAsync(email).then(() => {}),
-    [resendVerificationMutation],
+    [resendVerificationMutation]
   );
 
   const signOut = useCallback(
@@ -399,12 +399,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .then(() => {})
         // Fire-and-forget at the call site (onPress); onSettled already cleared.
         .catch(() => {}),
-    [signOutMutation],
+    [signOutMutation]
   );
 
   const refresh = useCallback(
     () => invalidateSession().then(() => {}),
-    [invalidateSession],
+    [invalidateSession]
   );
 
   const value = useMemo<AuthContextValue>(
@@ -443,7 +443,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       resendVerificationMutation.isPending,
       signOut,
       refresh,
-    ],
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

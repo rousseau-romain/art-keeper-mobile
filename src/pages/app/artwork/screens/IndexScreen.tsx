@@ -83,11 +83,11 @@ export const IndexScreen = ({
   // from the same URL by `useArtworkFiltersUrlSync`, so the values converge.
   const urlFilters = useMemo(
     () => paramsToBrowseFilters(initialQuery, initialScope, initialTags),
-    [initialQuery, initialScope, initialTags],
+    [initialQuery, initialScope, initialTags]
   );
   const storeFilters = useMemo(
     () => paramsToBrowseFilters(search, searchScope, selectedTags),
-    [search, searchScope, selectedTags],
+    [search, searchScope, selectedTags]
   );
   const filters = hydrated ? storeFilters : urlFilters;
 
@@ -96,7 +96,7 @@ export const IndexScreen = ({
   const urlCount = useMemo(
     () =>
       toTagArray(initialTags).length + ((initialQuery ?? "").trim() ? 1 : 0),
-    [initialTags, initialQuery],
+    [initialTags, initialQuery]
   );
   const filterCount = hydrated ? storeCount : urlCount;
 
@@ -124,7 +124,7 @@ export const IndexScreen = ({
       haptic("selection");
       setSelectedId(artwork.id);
     },
-    [haptic],
+    [haptic]
   );
 
   // RefreshControl must reflect ONLY a user-initiated pull, not the background
@@ -185,5 +185,5 @@ export const IndexScreen = ({
     );
   };
 
-  return <WrapperView>{body()}</WrapperView>;
+  return <WrapperView main>{body()}</WrapperView>;
 };

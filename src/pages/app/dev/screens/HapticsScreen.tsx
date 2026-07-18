@@ -54,5 +54,5 @@ const styles = StyleSheet.create({
     gap: SpacingEnum.xs,
   },
   title: { textTransform: "uppercase" },
-  list: { marginTop: SpacingEnum.xl, gap: SpacingEnum.md },
+  list: { marginTop: SpacingEnum.lg, gap: SpacingEnum.lg },
 });

@@ -74,7 +74,7 @@ export const DetailsStepScreen = () => {
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: c.bg },
-    scroll: { padding: SpacingEnum.xl, gap: SpacingEnum.md },
+    scroll: { padding: SpacingEnum.lg, gap: SpacingEnum.lg },
     details: { gap: SpacingEnum.xl },
     detailsTitle: { textTransform: "uppercase" },
   });
