@@ -8,12 +8,12 @@ import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type EmptyStateProps = {
   /** True when the empty list is the result of active filters (not a bare wall). */
-  filtered?: boolean;
-  /** Clears the active filters — shown as a button only when `filtered`. */
+  isFiltered?: boolean;
+  /** Clears the active filters — shown as a button only when `isFiltered`. */
   onResetFilters?: () => void;
 };
 
-export const EmptyState = ({ filtered, onResetFilters }: EmptyStateProps) => {
+export const EmptyState = ({ isFiltered, onResetFilters }: EmptyStateProps) => {
   const { t: tr } = useTranslation();
 
   return (
@@ -22,7 +22,7 @@ export const EmptyState = ({ filtered, onResetFilters }: EmptyStateProps) => {
       <Text font="body" size="base" color="textSoft" style={styles.text}>
         {tr("artwork.empty")}
       </Text>
-      {filtered && onResetFilters && (
+      {isFiltered && onResetFilters && (
         <Button
           variant="ghost"
           label={tr("artwork.emptyReset")}

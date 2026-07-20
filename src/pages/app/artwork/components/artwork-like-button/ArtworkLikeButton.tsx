@@ -26,13 +26,13 @@ export const ArtworkLikeButton = ({ artwork }: ArtworkLikeButtonProps) => {
       router.push("/login");
       return;
     }
-    const liked = !artwork.likedByMe;
-    haptic(liked ? "success" : "light");
-    toggleLike.mutate({ id: artwork.id, liked });
+    const isLiked = !artwork.likedByMe;
+    haptic(isLiked ? "success" : "light");
+    toggleLike.mutate({ id: artwork.id, isLiked });
   };
   return (
     <ButtonLike
-      liked={artwork.likedByMe}
+      isLiked={artwork.likedByMe}
       count={artwork.likeCount}
       onPress={onPress}
     />

@@ -13,19 +13,19 @@ import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/Wrapp
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
-/** Step 1 — pick the photo; restored-draft banner lives here, on the first step. */
+/** Step 1 — pick the photo; isRestored-draft banner lives here, on the first step. */
 export const PhotoStepScreen = () => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const { control } = useFormContext<ArtworkValues>();
-  const { restored, discardDraft } = useNewArtwork();
+  const { isRestored, discardDraft } = useNewArtwork();
   const photo = useWatch({ control, name: "photo" });
 
   useDocumentTitle(tr("artwork.new.title.index"));
 
   return (
     <WrapperView>
-      {restored && <DraftBanner onDiscard={discardDraft} />}
+      {isRestored && <DraftBanner onDiscard={discardDraft} />}
 
       <WrapperScrollView
         contentContainerStyle={styles.scroll}
@@ -37,7 +37,7 @@ export const PhotoStepScreen = () => {
       <WizardFooter
         label={tr("artwork.new.next")}
         disabled={photo == null}
-        showArrow
+        hasArrow
         onPress={() => router.push("/create-artwork/location")}
       />
     </WrapperView>

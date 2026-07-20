@@ -12,6 +12,7 @@ trigger matches, to keep context lean.
 @.claude/rules/i18n-translation.md
 @.claude/rules/styling-stylesheet.md
 @.claude/rules/types-not-interface.md
+@.claude/rules/boolean-is-prefix.md
 @.claude/rules/export-const-functions.md
 @.claude/rules/component-module-structure.md
 @.claude/rules/one-component-per-file.md

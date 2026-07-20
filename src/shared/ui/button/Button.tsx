@@ -25,7 +25,7 @@ export type ButtonProps = Omit<PressableProps, "style"> & {
   size?: Size;
   iconBefore?: IconProps;
   iconAfter?: IconProps;
-  loading?: boolean;
+  isLoading?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -35,7 +35,7 @@ export const Button = ({
   size = "normal",
   iconBefore,
   iconAfter,
-  loading,
+  isLoading,
   disabled,
   style,
   ...rest
@@ -51,7 +51,7 @@ export const Button = ({
       accessibilityRole="button"
       accessibilityLabel={label}
       {...rest}
-      disabled={disabled || loading}
+      disabled={disabled || isLoading}
       style={(state) => [
         styles.base,
         {
@@ -64,7 +64,7 @@ export const Button = ({
         style,
       ]}
     >
-      {loading && <ActivityIndicator color={colors[fg]} size="small" />}
+      {isLoading && <ActivityIndicator color={colors[fg]} size="small" />}
 
       <View style={styles.row}>
         {iconBefore && (

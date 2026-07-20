@@ -26,17 +26,17 @@ export const Picker = <T extends string | number>({
   onChange,
   options,
 }: PickerProps<T>) => {
-  const [expanded, setExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const selected = options.find((option) => option.value === value);
 
   return (
     <Host matchContents>
       <DropdownMenu
-        expanded={expanded}
-        onDismissRequest={() => setExpanded(false)}
+        expanded={isExpanded}
+        onDismissRequest={() => setIsExpanded(false)}
       >
         <DropdownMenu.Trigger>
-          <TextButton onClick={() => setExpanded(true)}>
+          <TextButton onClick={() => setIsExpanded(true)}>
             <Text>{selected?.label ?? ""}</Text>
           </TextButton>
         </DropdownMenu.Trigger>
@@ -46,7 +46,7 @@ export const Picker = <T extends string | number>({
               key={String(option.value)}
               onClick={() => {
                 onChange(option.value);
-                setExpanded(false);
+                setIsExpanded(false);
               }}
             >
               <DropdownMenuItem.Text>

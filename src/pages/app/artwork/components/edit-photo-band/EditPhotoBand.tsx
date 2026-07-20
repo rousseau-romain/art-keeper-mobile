@@ -20,7 +20,11 @@ export const EditPhotoBand = ({ imageUrl }: EditPhotoBandProps) => {
 
   return (
     <View style={styles.band}>
-      <Image source={{ uri: imageUrl }} style={styles.thumb} contentFit="cover" />
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.thumb}
+        contentFit="cover"
+      />
       <Text font="mono" size="xs" color="textMuted" style={styles.caption}>
         {tr("artwork.edit.photoNote")}
       </Text>

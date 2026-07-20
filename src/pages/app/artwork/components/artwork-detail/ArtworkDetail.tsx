@@ -46,16 +46,16 @@ export const ArtworkDetail = ({
   const { wide } = useBreakpoint();
 
   return (
-    <WrapperScrollView main contentContainerStyle={styles.main}>
+    <WrapperScrollView isMain contentContainerStyle={styles.main}>
       <Article>
         <SplitRow style={styles.splitRow}>
-          <ArtworkHero imageUrl={artwork.imageUrl} wide={wide} />
-          <ArtworkMeta artwork={artwork} artist={artist} wide={wide} />
+          <ArtworkHero imageUrl={artwork.imageUrl} isWide={wide} />
+          <ArtworkMeta artwork={artwork} artist={artist} isWide={wide} />
         </SplitRow>
       </Article>
 
       <SplitRow style={styles.splitRow}>
-        <ArtworkLocationBand artwork={artwork} wide={wide} />
+        <ArtworkLocationBand artwork={artwork} isWide={wide} />
         <NearbyPanel artworks={nearby} radius={nearbyRadius} />
       </SplitRow>
 

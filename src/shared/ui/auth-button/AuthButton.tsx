@@ -15,7 +15,7 @@ export const AuthButton = (props: AuthButtonProps) => {
   const router = useRouter();
   const { t } = useTranslation();
   const haptic = useHaptics();
-  const [signingOut, setSigningOut] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const authed = status === "authenticated";
 
@@ -24,12 +24,12 @@ export const AuthButton = (props: AuthButtonProps) => {
       router.push("/login");
       return;
     }
-    setSigningOut(true);
+    setIsSigningOut(true);
     try {
       await signOut();
       haptic("success");
     } finally {
-      setSigningOut(false);
+      setIsSigningOut(false);
     }
   };
 
@@ -38,7 +38,7 @@ export const AuthButton = (props: AuthButtonProps) => {
       {...props}
       label={authed ? t("settings.signOut") : t("auth.signIn")}
       iconBefore={{ name: authed ? "LogOut" : "LogIn" }}
-      loading={signingOut}
+      isLoading={isSigningOut}
       onPress={onPress}
     />
   );

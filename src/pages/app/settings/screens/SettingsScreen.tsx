@@ -81,7 +81,7 @@ export const SettingsScreen = () => {
   const { t: tr } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { biometricEnabled, setBiometricEnabled, isReviewer, isAdmin } =
+  const { isBiometricEnabled, setBiometricEnabled, isReviewer, isAdmin } =
     useAuth();
   const { source, setSource } = useTagSource();
   const { reviewMode, setReviewMode } = useReviewMode();
@@ -109,7 +109,7 @@ export const SettingsScreen = () => {
   const [availability, setAvailability] =
     useState<BiometricAvailability | null>(null);
   const [kind, setKind] = useState<BiometricKind>("biometric");
-  const [busy, setBusy] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     getBiometricAvailability().then(setAvailability);
@@ -117,11 +117,11 @@ export const SettingsScreen = () => {
   }, []);
 
   const onToggle = async (next: boolean) => {
-    setBusy(true);
+    setIsBusy(true);
     // The provider verifies with a biometric prompt when enabling and only flips
-    // `biometricEnabled` on success, so the bound Switch reflects the real state.
+    // `isBiometricEnabled` on success, so the bound Switch reflects the real state.
     await setBiometricEnabled(next);
-    setBusy(false);
+    setIsBusy(false);
   };
 
   const method = tr(getBiometricLabelKey(kind));
@@ -146,9 +146,9 @@ export const SettingsScreen = () => {
                 ),
                 control: (
                   <Switch
-                    value={biometricEnabled}
+                    value={isBiometricEnabled}
                     onValueChange={onToggle}
-                    disabled={busy || availability !== "available"}
+                    disabled={isBusy || availability !== "available"}
                     trackColor={{
                       false: colors.border,
                       true: colors.primary,

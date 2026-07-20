@@ -47,16 +47,16 @@ export const LockScreen = () => {
   const styles = useThemeStyles(createStyles);
 
   const [kind, setKind] = useState<BiometricKind>("biometric");
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     getBiometricKind().then(setKind);
   }, []);
 
   const handleUnlock = useCallback(async () => {
-    setPending(true);
+    setIsPending(true);
     const ok = await unlock();
-    setPending(false);
+    setIsPending(false);
     if (ok) haptic("success");
   }, [unlock, haptic]);
 
@@ -75,7 +75,6 @@ export const LockScreen = () => {
     <WrapperView
       style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xxxl }]}
     >
-
       <View style={styles.center}>
         <View style={styles.brand}>
           <Icon name="Star" size="xl" color="primary" fill={colors.primary} />
@@ -105,7 +104,7 @@ export const LockScreen = () => {
         <Button
           label={tr("auth.unlockCta", { method })}
           variant="primary"
-          loading={pending}
+          isLoading={isPending}
           onPress={handleUnlock}
           iconBefore={{ name: METHOD_ICON[kind] }}
         />

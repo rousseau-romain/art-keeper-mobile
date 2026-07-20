@@ -13,7 +13,7 @@ export type LocationDiffRowProps = {
   /** Which panel this row belongs to — drives the tint + marker. */
   side: "before" | "after";
   /** Whether the proposal changes the location. */
-  changed: boolean;
+  isChanged: boolean;
 };
 
 /**
@@ -24,7 +24,7 @@ export type LocationDiffRowProps = {
 export const LocationDiffRow = ({
   value,
   side,
-  changed,
+  isChanged,
 }: LocationDiffRowProps) => {
   const { t: tr } = useTranslation();
   const router = useRouter();
@@ -46,7 +46,7 @@ export const LocationDiffRow = ({
       label={tr(FIELD_LABEL_KEY.location)}
       value={value ?? tr("moderation.noValue")}
       side={side}
-      changed={changed}
+      isChanged={isChanged}
       onPress={openMap}
       accessibilityLabel={tr("a11y.viewOnMap")}
     />

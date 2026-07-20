@@ -1,11 +1,22 @@
 import { StyleSheet, View, type ViewProps } from "react-native";
 
-/** `main` pose le landmark `<main>` (react-native-web mappe `role="main"` vers un
+/** `isMain` pose le landmark `<main>` (react-native-web mappe `role="main"` vers un
  *  vrai `<main>`) — un seul par page. */
-export type WrapperViewProps = ViewProps & { main?: boolean };
+export type WrapperViewProps = ViewProps & { isMain?: boolean };
 
-export const WrapperView = ({ style, main, role, ...rest }: WrapperViewProps) => {
-  return <View role={main ? "main" : role} style={[styles.screen, style]} {...rest} />;
+export const WrapperView = ({
+  style,
+  isMain,
+  role,
+  ...rest
+}: WrapperViewProps) => {
+  return (
+    <View
+      role={isMain ? "main" : role}
+      style={[styles.screen, style]}
+      {...rest}
+    />
+  );
 };
 
 const styles = StyleSheet.create({

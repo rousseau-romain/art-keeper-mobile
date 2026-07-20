@@ -46,7 +46,7 @@ export const MapCarousel = ({ artworks, selectedId }: MapCarouselProps) => {
         <MapThumb
           key={artwork.id}
           artwork={artwork}
-          active={artwork.id === selectedId}
+          isActive={artwork.id === selectedId}
         />
       ))}
     </ScrollView>

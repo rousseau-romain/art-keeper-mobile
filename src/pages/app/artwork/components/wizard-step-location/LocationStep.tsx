@@ -17,7 +17,7 @@ import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 export const LocationStep = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
-  const { setPin, useMyLocation, locating } = useDeviceLocation();
+  const { setPin, useMyLocation, isLocating } = useDeviceLocation();
   const haptic = useHaptics();
   const styles = useThemeStyles(createStyles);
 
@@ -59,7 +59,7 @@ export const LocationStep = () => {
       <Button
         label={tr("artwork.new.location.useMyLocation")}
         variant="ghost"
-        loading={locating}
+        isLoading={isLocating}
         iconBefore={{ name: "Globe" }}
         onPress={useMyLocation}
       />

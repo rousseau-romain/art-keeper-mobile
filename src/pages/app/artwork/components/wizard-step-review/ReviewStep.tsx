@@ -34,7 +34,7 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
   const description = useWatch({ control, name: "description" });
   const title = useWatch({ control, name: "title" });
   const artistHandle = useWatch({ control, name: "artistHandle" });
-  const rightsConfirmed = useWatch({ control, name: "rightsConfirmed" });
+  const isRightsConfirmed = useWatch({ control, name: "isRightsConfirmed" });
 
   const rows: {
     key: string;
@@ -117,8 +117,8 @@ export const ReviewStep = ({ onEdit }: ReviewStepProps) => {
       </View>
 
       <Checkbox
-        checked={rightsConfirmed}
-        onChange={(v) => setValue("rightsConfirmed", v)}
+        isChecked={isRightsConfirmed}
+        onChange={(v) => setValue("isRightsConfirmed", v)}
         label={tr("artwork.new.review.rights")}
       />
     </View>

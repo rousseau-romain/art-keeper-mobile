@@ -48,7 +48,10 @@ export const LocationPicker = ({
   // Recenter the map whenever the pin moves (EXIF auto-pin, "use my location").
   useEffect(() => {
     if (latitude != null && longitude != null) {
-      cameraRef.current?.easeTo({ center: [longitude, latitude], duration: 350 });
+      cameraRef.current?.easeTo({
+        center: [longitude, latitude],
+        duration: 350,
+      });
     }
   }, [latitude, longitude]);
 
@@ -61,10 +64,7 @@ export const LocationPicker = ({
 
   return (
     <MapView style={styles.map} mapStyle={OSM_STYLE} onPress={onMapPress}>
-      <Camera
-        ref={cameraRef}
-        initialViewState={{ center, zoom: ZOOM }}
-      />
+      <Camera ref={cameraRef} initialViewState={{ center, zoom: ZOOM }} />
       {hasPin && (
         <Marker lngLat={center}>
           <View style={styles.pin} />

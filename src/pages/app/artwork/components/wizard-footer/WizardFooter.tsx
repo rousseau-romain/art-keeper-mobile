@@ -9,8 +9,8 @@ import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 export type WizardFooterProps = {
   label: string;
   disabled?: boolean;
-  loading?: boolean;
-  showArrow?: boolean;
+  isLoading?: boolean;
+  hasArrow?: boolean;
   /**
    * Press haptic. Defaults to a light tap for advancing steps; the submit step
    * passes `null` so it doesn't double-buzz the success fired on creation.
@@ -23,8 +23,8 @@ export type WizardFooterProps = {
 export const WizardFooter = ({
   label,
   disabled,
-  loading,
-  showArrow,
+  isLoading,
+  hasArrow,
   haptic = "light",
   onPress,
 }: WizardFooterProps) => {
@@ -40,8 +40,8 @@ export const WizardFooter = ({
         label={label}
         variant="primary"
         disabled={disabled}
-        loading={loading}
-        iconAfter={showArrow ? { name: "ArrowRight" } : undefined}
+        isLoading={isLoading}
+        iconAfter={hasArrow ? { name: "ArrowRight" } : undefined}
         onPress={onPressWithHaptic}
       />
     </View>

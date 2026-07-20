@@ -15,10 +15,10 @@ export const useResendVerification = ({
 }: UseResendVerificationParams) => {
   const { t: tr } = useTranslation();
   const { show } = useToast();
-  const { resendVerification, resendPending } = useAuth();
+  const { resendVerification, isResendPending } = useAuth();
 
   const onResend = async () => {
-    if (!email || resendPending) return;
+    if (!email || isResendPending) return;
     try {
       await resendVerification(email);
       show(tr("auth.verifySentToast"));
@@ -27,5 +27,5 @@ export const useResendVerification = ({
     }
   };
 
-  return { onResend, resendPending };
+  return { onResend, isResendPending };
 };

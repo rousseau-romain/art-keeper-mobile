@@ -9,7 +9,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 export type ArtworkLeafletMarkerProps = {
   artwork: Artwork;
   /** This pin is the current selection (its marker scales up + popup opens). */
-  selected: boolean;
+  isSelected: boolean;
   onSelect: (artwork: Artwork) => void;
 };
 
@@ -32,7 +32,7 @@ const pinIcon = (active: boolean, c: Palette) => {
  */
 export const ArtworkLeafletMarker = ({
   artwork,
-  selected,
+  isSelected,
   onSelect,
 }: ArtworkLeafletMarkerProps) => {
   const markerRef = useRef<LeafletMarker>(null);
@@ -43,19 +43,19 @@ export const ArtworkLeafletMarker = ({
   useEffect(() => {
     const marker = markerRef.current;
     if (!marker) return;
-    if (selected) marker.openPopup();
+    if (isSelected) marker.openPopup();
     else marker.closePopup();
-  }, [selected]);
+  }, [isSelected]);
 
   return (
     <Marker
       ref={markerRef}
       position={[artwork.latitude, artwork.longitude]}
-      icon={pinIcon(selected, colors)}
+      icon={pinIcon(isSelected, colors)}
       eventHandlers={{ click: () => onSelect(artwork) }}
     >
       <Popup closeButton={false} autoPan={false}>
-        <MapThumb artwork={artwork} active />
+        <MapThumb artwork={artwork} isActive />
       </Popup>
     </Marker>
   );

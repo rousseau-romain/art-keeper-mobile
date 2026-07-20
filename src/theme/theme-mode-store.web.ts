@@ -1,6 +1,9 @@
 import { requestHeaders } from "expo-server";
 
-import { ThemeModeEnum, type ThemeModeEnumType } from "./enums/theme-mode.enums";
+import {
+  ThemeModeEnum,
+  type ThemeModeEnumType,
+} from "./enums/theme-mode.enums";
 import { THEME_MODE_COOKIE } from "./theme.constant";
 
 const normalize = (raw: string | null | undefined): ThemeModeEnumType =>

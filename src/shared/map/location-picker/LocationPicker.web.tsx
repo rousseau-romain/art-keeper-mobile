@@ -23,12 +23,12 @@ export const LocationPicker = ({
   onPick,
 }: LocationPickerProps) => {
   const { colors } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   return (
     <View style={styles.map}>
-      {mounted ? (
+      {isMounted ? (
         <Suspense fallback={null}>
           <LocationWebMap
             latitude={latitude}

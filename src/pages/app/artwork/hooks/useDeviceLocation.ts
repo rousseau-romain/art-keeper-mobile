@@ -22,7 +22,7 @@ export const useDeviceLocation = () => {
   const { t: tr } = useTranslation();
   const { setValue } = useFormContext<ArtworkValues>();
   const { show } = useToast();
-  const [locating, setLocating] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
 
   const reverseGeocode = async (latitude: number, longitude: number) => {
     if (Platform.OS === "web") return;
@@ -51,7 +51,7 @@ export const useDeviceLocation = () => {
   };
 
   const useMyLocation = async () => {
-    setLocating(true);
+    setIsLocating(true);
     try {
       const perm = await Location.requestForegroundPermissionsAsync();
       if (!perm.granted) {
@@ -63,9 +63,9 @@ export const useDeviceLocation = () => {
     } catch {
       show(tr("artwork.new.location.error"), "error");
     } finally {
-      setLocating(false);
+      setIsLocating(false);
     }
   };
 
-  return { setPin, reverseGeocode, useMyLocation, locating };
+  return { setPin, reverseGeocode, useMyLocation, isLocating };
 };

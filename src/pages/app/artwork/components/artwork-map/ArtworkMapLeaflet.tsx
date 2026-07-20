@@ -97,7 +97,7 @@ const ArtworkMapLeaflet = ({
         <ArtworkLeafletMarker
           key={artwork.id}
           artwork={artwork}
-          selected={artwork.id === selectedId}
+          isSelected={artwork.id === selectedId}
           onSelect={onSelect}
         />
       ))}

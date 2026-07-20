@@ -6,23 +6,23 @@ import { useTheme } from "@/theme/ThemeProvider";
 
 export type SegmentProps = PressableProps & {
   label: string;
-  active: boolean;
+  isActive: boolean;
 };
 
-export const Segment = ({ label, active, ...rest }: SegmentProps) => {
+export const Segment = ({ label, isActive, ...rest }: SegmentProps) => {
   const { colors } = useTheme();
   return (
     <Pressable
       {...rest}
       style={[
         styles.segment,
-        { backgroundColor: active ? colors.primary : colors.transparent },
+        { backgroundColor: isActive ? colors.primary : colors.transparent },
       ]}
     >
       <Text
         font="body"
         size="md"
-        color={active ? "primaryInk" : "textSoft"}
+        color={isActive ? "primaryInk" : "textSoft"}
         style={styles.segmentLabel}
       >
         {label}

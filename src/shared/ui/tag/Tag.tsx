@@ -5,13 +5,13 @@ import { type TagState, useGetTagColors } from "./hooks/useGetTagColors";
 
 export type TagProps = PressableProps & {
   label: string;
-  hash?: boolean;
+  hasHash?: boolean;
   state?: TagState;
 };
 
 export const Tag = ({
   label,
-  hash = true,
+  hasHash = true,
   state = "muted",
   onPress,
   ...rest
@@ -24,7 +24,7 @@ export const Tag = ({
       size="sm"
       style={[styles.tag, { color: fg, borderColor, backgroundColor: bg }]}
     >
-      {hash ? `#${label}` : label}
+      {hasHash ? `#${label}` : label}
     </Text>
   );
 

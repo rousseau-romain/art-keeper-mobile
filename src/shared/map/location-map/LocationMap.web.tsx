@@ -17,12 +17,12 @@ export type LocationMapProps = {
 /** Read-only location preview (web) — a Leaflet map with a single accent pin. */
 export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
   const { colors } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   return (
     <View style={styles.map}>
-      {mounted ? (
+      {isMounted ? (
         <Suspense fallback={null}>
           <LocationWebMap
             latitude={latitude}

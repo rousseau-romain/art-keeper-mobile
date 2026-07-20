@@ -13,7 +13,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 
 export type ProposalListItemProps = {
   proposal: ArtworkChangeProposal;
-  active: boolean;
+  isActive: boolean;
   onPress: () => void;
 };
 
@@ -50,7 +50,7 @@ const badgeColors = (
  */
 export const ProposalListItem = ({
   proposal,
-  active,
+  isActive,
   onPress,
 }: ProposalListItemProps) => {
   const { t: tr } = useTranslation();
@@ -59,7 +59,7 @@ export const ProposalListItem = ({
   const shortId = `#${proposal.id.slice(0, 6)}`;
   const descriptor =
     buildProposalDiff(proposal)
-      .filter((field) => field.changed)
+      .filter((field) => field.isChanged)
       .map((field) => tr(FIELD_LABEL_KEY[field.key]))
       .join(" · ") || shortId;
 
@@ -74,7 +74,7 @@ export const ProposalListItem = ({
         styles.card,
         {
           backgroundColor: colors.surface,
-          borderColor: active ? colors.primary : colors.borderSoft,
+          borderColor: isActive ? colors.primary : colors.borderSoft,
         },
       ]}
     >

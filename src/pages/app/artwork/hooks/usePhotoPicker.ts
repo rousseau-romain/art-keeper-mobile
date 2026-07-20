@@ -57,7 +57,7 @@ export const usePhotoPicker = () => {
   // useWatch so the preview re-renders the moment a photo is set (the React
   // Compiler memoizes the watch() fn form otherwise).
   const photo = useWatch({ control, name: "photo" });
-  const [exifPinned, setExifPinned] = useState(false);
+  const [isExifPinned, setIsExifPinned] = useState(false);
 
   const handleResult = async (result: ImagePicker.ImagePickerResult) => {
     if (result.canceled) return;
@@ -76,7 +76,7 @@ export const usePhotoPicker = () => {
       // Route through setPin so the address label gets filled (coords, upgraded
       // to a street address by the native reverse-geocoder) just like a manual pin.
       setPin(gps.latitude, gps.longitude);
-      setExifPinned(true);
+      setIsExifPinned(true);
     }
   };
 
@@ -134,5 +134,5 @@ export const usePhotoPicker = () => {
     ]);
   };
 
-  return { photo, addPhoto, pickFromLibrary, takePhoto, exifPinned };
+  return { photo, addPhoto, pickFromLibrary, takePhoto, isExifPinned };
 };

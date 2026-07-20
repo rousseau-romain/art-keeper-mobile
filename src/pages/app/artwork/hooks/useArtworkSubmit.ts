@@ -46,7 +46,7 @@ export const useArtworkSubmit = ({
       show(tr("artwork.new.errors.locationRequired"), "warning");
       return;
     }
-    if (!values.rightsConfirmed) {
+    if (!values.isRightsConfirmed) {
       show(tr("artwork.new.errors.rightsRequired"), "warning");
       return;
     }

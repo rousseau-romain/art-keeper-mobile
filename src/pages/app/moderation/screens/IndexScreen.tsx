@@ -139,7 +139,7 @@ export const IndexScreen = () => {
             variant="ghost"
             style={styles.action}
             onPress={() => decide("rejected")}
-            loading={
+            isLoading={
               review.isPending && review.variables?.decision === "rejected"
             }
             accessibilityLabel={tr("a11y.rejectChanges")}
@@ -150,7 +150,7 @@ export const IndexScreen = () => {
             style={styles.action}
             iconBefore={{ name: "Check" }}
             onPress={() => decide("approved")}
-            loading={
+            isLoading={
               review.isPending && review.variables?.decision === "approved"
             }
             accessibilityLabel={tr("a11y.acceptChanges")}
@@ -172,7 +172,7 @@ export const IndexScreen = () => {
               <ProposalListItem
                 key={proposal.id}
                 proposal={proposal}
-                active={proposal.id === selected?.id}
+                isActive={proposal.id === selected?.id}
                 onPress={() => setSelectedId(proposal.id)}
               />
             ))}
@@ -237,13 +237,13 @@ export const IndexScreen = () => {
               <View style={styles.toggle}>
                 <Segment
                   label={tr("moderation.before")}
-                  active={mode === "before"}
+                  isActive={mode === "before"}
                   onPress={() => setMode("before")}
                   accessibilityLabel={tr("a11y.reviewBefore")}
                 />
                 <Segment
                   label={tr("moderation.after")}
-                  active={mode === "after"}
+                  isActive={mode === "after"}
                   onPress={() => setMode("after")}
                   accessibilityLabel={tr("a11y.reviewAfter")}
                 />
@@ -262,11 +262,11 @@ export const IndexScreen = () => {
                     key={selected.id}
                     onAccept={() => decide("approved")}
                     onReject={() => decide("rejected")}
-                    acceptPending={
+                    isAcceptPending={
                       review.isPending &&
                       review.variables?.decision === "approved"
                     }
-                    rejectPending={
+                    isRejectPending={
                       review.isPending &&
                       review.variables?.decision === "rejected"
                     }
@@ -287,11 +287,7 @@ export const IndexScreen = () => {
     );
   };
 
-  return (
-    <WrapperView style={styles.screen}>
-      {renderBody()}
-    </WrapperView>
-  );
+  return <WrapperView style={styles.screen}>{renderBody()}</WrapperView>;
 };
 
 const createStyles = (c: Palette) =>

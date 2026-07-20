@@ -64,7 +64,7 @@ export const DetailsStepScreen = () => {
 
       <WizardFooter
         label={tr("artwork.new.reviewCta")}
-        showArrow
+        hasArrow
         onPress={onReview}
       />
     </KeyboardAvoidingView>

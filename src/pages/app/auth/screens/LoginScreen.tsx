@@ -69,8 +69,8 @@ export const LoginScreen = () => {
     methods,
     isCreate,
   });
-  const { onGoogle, googlePending } = useGoogleSignIn();
-  const { onResend, resendPending } = useResendVerification({
+  const { onGoogle, isGooglePending } = useGoogleSignIn();
+  const { onResend, isResendPending } = useResendVerification({
     email: verifyEmail,
   });
 
@@ -96,12 +96,12 @@ export const LoginScreen = () => {
       <View style={styles.toggle}>
         <Segment
           label={tr("auth.signIn")}
-          active={!isCreate}
+          isActive={!isCreate}
           onPress={() => setMode("sign-in")}
         />
         <Segment
           label={tr("auth.createAccount")}
-          active={isCreate}
+          isActive={isCreate}
           onPress={() => setMode("create")}
         />
       </View>
@@ -111,7 +111,7 @@ export const LoginScreen = () => {
       <Button
         label={isCreate ? tr("auth.createAccount") : tr("auth.signIn")}
         variant="primary"
-        loading={isSubmitting}
+        isLoading={isSubmitting}
         onPress={onSubmit}
       />
 
@@ -127,7 +127,7 @@ export const LoginScreen = () => {
       <Button
         label={tr("auth.continueWithGoogle")}
         variant="ghost"
-        loading={googlePending}
+        isLoading={isGooglePending}
         onPress={onGoogle}
       />
     </FormProvider>
@@ -163,7 +163,7 @@ export const LoginScreen = () => {
       <Button
         label={tr("auth.verifyResend")}
         variant="ghost"
-        loading={resendPending}
+        isLoading={isResendPending}
         onPress={onResend}
       />
     </View>

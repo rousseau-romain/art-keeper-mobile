@@ -14,7 +14,7 @@ export const TextInput = ({ label, error, ...input }: TextInputProps) => (
     <Text font="mono" size="xs" style={styles.fieldLabel}>
       {label}
     </Text>
-    <Input {...input} invalid={!!error} />
+    <Input {...input} isInvalid={!!error} />
     {error ? (
       <Text font="body" size="xs" color="danger">
         {error}

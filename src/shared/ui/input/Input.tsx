@@ -16,7 +16,7 @@ import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type InputProps = RNTextInputProps & {
-  invalid?: boolean;
+  isInvalid?: boolean;
   /**
    * Debounce `onChangeText` by this many ms. The field still updates instantly
    * (a local mirror drives the text); only the callback is deferred. `0` (the
@@ -29,7 +29,7 @@ export type InputProps = RNTextInputProps & {
 
 export const Input = ({
   ref,
-  invalid,
+  isInvalid,
   debounce = 0,
   value,
   onChangeText,
@@ -64,7 +64,7 @@ export const Input = ({
       placeholderTextColor={placeholderTextColor ?? colors.textMuted}
       style={[
         styles.input,
-        { borderColor: invalid ? colors.danger : colors.borderSoft },
+        { borderColor: isInvalid ? colors.danger : colors.borderSoft },
         style,
       ]}
     />

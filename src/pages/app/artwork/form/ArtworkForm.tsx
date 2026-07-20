@@ -22,7 +22,7 @@ export type ArtworkValues = {
   artistHandle: string;
   tags: string[];
   description: string;
-  rightsConfirmed: boolean;
+  isRightsConfirmed: boolean;
 };
 
 /** Details step — title, artist autocomplete, preset tag chips, optional note. */

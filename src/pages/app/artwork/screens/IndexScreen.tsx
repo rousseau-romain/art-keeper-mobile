@@ -46,7 +46,7 @@ export const IndexScreen = ({
   const { t: tr } = useTranslation();
   const haptic = useHaptics();
   const router = useRouter();
-  const hydrated = useIsHydrated();
+  const isHydrated = useIsHydrated();
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
   const {
     selectedTags,
@@ -86,22 +86,22 @@ export const IndexScreen = ({
   // from the same URL by `useArtworkFiltersUrlSync`, so the values converge.
   const urlFilters = useMemo(
     () => paramsToBrowseFilters(initialQuery, initialScope, initialTags),
-    [initialQuery, initialScope, initialTags]
+    [initialQuery, initialScope, initialTags],
   );
   const storeFilters = useMemo(
     () => paramsToBrowseFilters(search, searchScope, selectedTags),
-    [search, searchScope, selectedTags]
+    [search, searchScope, selectedTags],
   );
-  const filters = hydrated ? storeFilters : urlFilters;
+  const filters = isHydrated ? storeFilters : urlFilters;
 
   // Filter-pill badge follows the same URL→store hand-off so it matches the SSR
   // HTML on the first render.
   const urlCount = useMemo(
     () =>
       toTagArray(initialTags).length + ((initialQuery ?? "").trim() ? 1 : 0),
-    [initialTags, initialQuery]
+    [initialTags, initialQuery],
   );
-  const filterCount = hydrated ? storeCount : urlCount;
+  const filterCount = isHydrated ? storeCount : urlCount;
 
   const {
     artworks,
@@ -115,7 +115,12 @@ export const IndexScreen = ({
     // `filters` is already the fully-merged query shape, so pass it verbatim (no
     // extra search/scope). Seed only on the first render, where `filters` equals
     // the params the loader prefetched — after hydration the cache already holds it.
-  } = useBrowseArtworks(filters, "", "all", hydrated ? undefined : initialPage);
+  } = useBrowseArtworks(
+    filters,
+    "",
+    "all",
+    isHydrated ? undefined : initialPage,
+  );
 
   const onOpenFilters = useCallback(() => {
     haptic("light");
@@ -144,7 +149,7 @@ export const IndexScreen = ({
       haptic("selection");
       setSelectedId(artwork.id);
     },
-    [haptic]
+    [haptic],
   );
 
   // RefreshControl must reflect ONLY a user-initiated pull, not the background
@@ -152,14 +157,14 @@ export const IndexScreen = ({
   // liking an artwork makes the pull-to-refresh spinner "wiggle". `isRefetching`
   // is true for any refetch-with-data in TanStack Query v5, so we track the
   // manual pull explicitly instead.
-  const [manualRefreshing, setManualRefreshing] = useState(false);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
-    setManualRefreshing(true);
+    setIsManualRefreshing(true);
     haptic("medium");
     try {
       await refetch();
     } finally {
-      setManualRefreshing(false);
+      setIsManualRefreshing(false);
     }
   }, [refetch, haptic]);
 
@@ -198,7 +203,7 @@ export const IndexScreen = ({
         filterCount={filterCount}
         onOpenFilters={onOpenFilters}
         onResetFilters={onResetFilters}
-        refreshing={manualRefreshing}
+        isRefreshing={isManualRefreshing}
         onRefresh={onRefresh}
         onEndReached={onEndReached}
         isFetchingNextPage={isFetchingNextPage}
@@ -206,5 +211,5 @@ export const IndexScreen = ({
     );
   };
 
-  return <WrapperView main>{body()}</WrapperView>;
+  return <WrapperView isMain>{body()}</WrapperView>;
 };

@@ -9,7 +9,7 @@ import { Platform } from "react-native";
  * pour garder le premier render déterministe (cf. web-ssr-hydration.md).
  */
 export const useIsHydrated = () => {
-  const [hydrated, setHydrated] = useState(Platform.OS !== "web");
-  useEffect(() => setHydrated(true), []);
-  return hydrated;
+  const [isHydrated, setIsHydrated] = useState(Platform.OS !== "web");
+  useEffect(() => setIsHydrated(true), []);
+  return isHydrated;
 };

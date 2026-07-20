@@ -17,15 +17,15 @@ export type ArtworkMetaProps = {
   artwork: Artwork;
   artist?: Artist;
   /** Wide layout: the meta sits beside the hero, so it grows via `flex`. */
-  wide?: boolean;
+  isWide?: boolean;
 };
 
-export const ArtworkMeta = ({ artwork, artist, wide }: ArtworkMetaProps) => {
+export const ArtworkMeta = ({ artwork, artist, isWide }: ArtworkMetaProps) => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const handle = artist ? `@${artist.slug}` : "";
   return (
-    <View style={[styles.meta, wide && styles.metaWide]}>
+    <View style={[styles.meta, isWide && styles.metaWide]}>
       <H1 style={styles.title}>{artwork.title}</H1>
 
       {artist && (

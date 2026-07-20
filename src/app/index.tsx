@@ -7,7 +7,7 @@ import { Redirect } from "expo-router";
  *
  * The redirect target is auth-independent, so forward immediately without reading
  * `status` — waiting on it would re-introduce the get-session delay on the entry
- * route that the new `hydrated` gate was made to remove.
+ * route that the new `isHydrated` gate was made to remove.
  */
 export default function Index() {
   return <Redirect href="/artworks" />;

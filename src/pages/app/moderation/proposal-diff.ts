@@ -21,7 +21,7 @@ export type DiffField = {
   key: ProposalFieldKey;
   before: string | null;
   after: string | null;
-  changed: boolean;
+  isChanged: boolean;
 };
 
 // Field key → its `moderation.field.*` i18n key, so `t()` stays type-checked.
@@ -113,7 +113,7 @@ export const parseCoords = (
  * Build the per-field before/after diff for a proposal. Every field the artwork
  * has is included so both panels show the full record; a field the proposal
  * doesn't touch mirrors its `previous` value into the "after" side (so it reads
- * identically on both sides and stays neutral). `changed` — the red/green tint —
+ * identically on both sides and stays neutral). `isChanged` — the red/green tint —
  * is true only when the proposal edits the field and the value actually differs.
  * Works whether the API sends `changes` as a full snapshot or only the edited keys.
  */
@@ -125,5 +125,5 @@ export const buildProposalDiff = (
     const after = isTouched(proposal.changes, key)
       ? format(key, proposal.changes)
       : before;
-    return { key, before, after, changed: before !== after };
+    return { key, before, after, isChanged: before !== after };
   }).filter((field) => field.before !== null || field.after !== null);

@@ -23,7 +23,7 @@ export const EMPTY_ARTWORK_DRAFT: ArtworkValues = {
   artistHandle: "",
   tags: [],
   description: "",
-  rightsConfirmed: false,
+  isRightsConfirmed: false,
 };
 
 const SAVE_DEBOUNCE_MS = 500;
@@ -44,15 +44,15 @@ const isPristineDraft = (v: ArtworkValues): boolean =>
   !v.artistHandle &&
   v.tags.length === 0 &&
   !v.description &&
-  !v.rightsConfirmed;
+  !v.isRightsConfirmed;
 
 /**
  * Persists the in-progress wizard so the user doesn't lose their work if the app
  * is closed or the web tab reloads: restores a saved draft on mount (exposing a
- * `restored` flag for the banner) and debounce-saves on every field change.
+ * `isRestored` flag for the banner) and debounce-saves on every field change.
  */
 export const useArtworkDraft = ({ methods }: UseArtworkDraftParams) => {
-  const [restored, setRestored] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load once on mount, mirroring the i18n provider's read-on-init pattern.
@@ -60,7 +60,7 @@ export const useArtworkDraft = ({ methods }: UseArtworkDraftParams) => {
     loadArtworkDraft().then((draft) => {
       if (!draft) return;
       methods.reset(draft);
-      setRestored(true);
+      setIsRestored(true);
     });
   }, [methods]);
 
@@ -84,8 +84,8 @@ export const useArtworkDraft = ({ methods }: UseArtworkDraftParams) => {
   const discardDraft = () => {
     clearArtworkDraft();
     methods.reset(EMPTY_ARTWORK_DRAFT);
-    setRestored(false);
+    setIsRestored(false);
   };
 
-  return { restored, discardDraft };
+  return { isRestored, discardDraft };
 };

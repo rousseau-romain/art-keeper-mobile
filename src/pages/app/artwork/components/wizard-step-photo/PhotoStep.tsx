@@ -12,7 +12,7 @@ import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 /** Step 1 — pick a single photo (camera or library), show EXIF auto-pin. */
 export const PhotoStep = () => {
   const { t: tr } = useTranslation();
-  const { photo, addPhoto, exifPinned } = usePhotoPicker();
+  const { photo, addPhoto, isExifPinned } = usePhotoPicker();
   const styles = useThemeStyles(createStyles);
 
   return (
@@ -39,7 +39,7 @@ export const PhotoStep = () => {
             </View>
           </Pressable>
 
-          {exifPinned && (
+          {isExifPinned && (
             <View style={styles.exif}>
               <Icon name="MapPin" size="xs" color="primary" />
               <Text font="mono" size="sm" color="primary">

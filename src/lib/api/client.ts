@@ -67,7 +67,7 @@ export type RequestOptions = {
   form?: FormData;
   query?: Query;
   /** Send Authorization header (default true). */
-  auth?: boolean;
+  shouldSendAuth?: boolean;
   /** Expose response headers to the caller (e.g. to read set-auth-token). */
   onResponse?: (res: Response) => void;
 };
@@ -98,7 +98,14 @@ export const apiRequest = async <T = unknown>(
   path: string,
   opts: RequestOptions = {},
 ): Promise<T> => {
-  const { method = "GET", body, form, query, auth = true, onResponse } = opts;
+  const {
+    method = "GET",
+    body,
+    form,
+    query,
+    shouldSendAuth = true,
+    onResponse,
+  } = opts;
 
   const headers: Record<string, string> = {
     Accept: "application/json",
@@ -106,7 +113,7 @@ export const apiRequest = async <T = unknown>(
   };
   // Browsers set (and forbid overriding) Origin themselves; only native needs it.
   if (Platform.OS !== "web") headers.Origin = AUTH_ORIGIN;
-  if (auth) {
+  if (shouldSendAuth) {
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
   }

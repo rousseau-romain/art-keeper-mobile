@@ -10,7 +10,7 @@ export const useGoogleSignIn = () => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const { show } = useToast();
-  const { signInWithGoogle, googlePending } = useAuth();
+  const { signInWithGoogle, isGooglePending } = useAuth();
 
   const onGoogle = async () => {
     try {
@@ -31,5 +31,5 @@ export const useGoogleSignIn = () => {
     }
   };
 
-  return { onGoogle, googlePending };
+  return { onGoogle, isGooglePending };
 };

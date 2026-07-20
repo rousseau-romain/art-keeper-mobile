@@ -13,7 +13,7 @@ export type DiffRowProps = {
   /** Which panel this row belongs to — drives the tint + marker. */
   side: "before" | "after";
   /** Whether the proposal changes this field. */
-  changed: boolean;
+  isChanged: boolean;
   /** When set, the row is tappable and shows a chevron affordance. */
   onPress?: () => void;
   /** a11y label for the tappable row (required with `onPress`). */
@@ -31,7 +31,7 @@ export const DiffRow = ({
   label,
   value,
   side,
-  changed,
+  isChanged,
   onPress,
   accessibilityLabel,
 }: DiffRowProps) => {
@@ -43,7 +43,7 @@ export const DiffRow = ({
   const content = (
     <>
       <View style={styles.labelCol}>
-        {changed && (
+        {isChanged && (
           <Text
             font="mono"
             size="xs"
@@ -55,14 +55,17 @@ export const DiffRow = ({
         <Text
           font="mono"
           size="xs"
-          style={[styles.label, { color: changed ? accent : colors.textMuted }]}
+          style={[
+            styles.label,
+            { color: isChanged ? accent : colors.textMuted },
+          ]}
         >
           {label}
         </Text>
       </View>
       <Text
         size="base"
-        style={[styles.value, { color: changed ? accent : colors.text }]}
+        style={[styles.value, { color: isChanged ? accent : colors.text }]}
       >
         {value}
       </Text>
@@ -72,7 +75,7 @@ export const DiffRow = ({
 
   const rowStyle = [
     styles.row,
-    { backgroundColor: changed ? accentBg : colors.transparent },
+    { backgroundColor: isChanged ? accentBg : colors.transparent },
   ];
 
   if (onPress) {

@@ -26,7 +26,10 @@ const OPTIONS = Object.keys(ReviewModeEnum) as ReviewModeEnumType[];
  * or use the footer buttons) — a thin domain wrapper mapping `ReviewModeEnum` to
  * the shared native `Picker`.
  */
-export const ReviewModePicker = ({ value, onChange }: ReviewModePickerProps) => {
+export const ReviewModePicker = ({
+  value,
+  onChange,
+}: ReviewModePickerProps) => {
   const { t: tr } = useTranslation();
 
   const options = OPTIONS.map((option) => ({

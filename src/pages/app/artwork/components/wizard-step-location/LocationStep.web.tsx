@@ -16,7 +16,7 @@ import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
 export const LocationStep = () => {
   const { t: tr } = useTranslation();
   const { control } = useFormContext<ArtworkValues>();
-  const { setPin, useMyLocation, locating } = useDeviceLocation();
+  const { setPin, useMyLocation, isLocating } = useDeviceLocation();
   const styles = useThemeStyles(createStyles);
 
   // useWatch so the React Compiler re-renders this component on each pin change.
@@ -49,7 +49,7 @@ export const LocationStep = () => {
       <Button
         label={tr("artwork.new.location.useMyLocation")}
         variant="ghost"
-        loading={locating}
+        isLoading={isLocating}
         iconBefore={{ name: "Globe" }}
         onPress={useMyLocation}
       />

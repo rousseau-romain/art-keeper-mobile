@@ -24,7 +24,7 @@ export type EditProposalValues = {
   longitude: number | null;
   address: string;
   note: string;
-  accuracyConfirmed: boolean;
+  isAccuracyConfirmed: boolean;
 };
 
 export type ProposeEditFormProps = {
@@ -63,10 +63,10 @@ export const ProposeEditForm = ({ slug }: ProposeEditFormProps) => {
 
       <Controller
         control={control}
-        name="accuracyConfirmed"
+        name="isAccuracyConfirmed"
         render={({ field }) => (
           <Checkbox
-            checked={field.value}
+            isChecked={field.value}
             onChange={field.onChange}
             label={tr("artwork.edit.accuracy")}
           />

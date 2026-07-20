@@ -29,7 +29,7 @@ export const LocationStepScreen = () => {
       <WizardFooter
         label={tr("artwork.new.next")}
         disabled={!hasPin}
-        showArrow
+        hasArrow
         onPress={() => router.push("/create-artwork/details")}
       />
     </WrapperView>

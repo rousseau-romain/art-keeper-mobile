@@ -1,6 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { ThemeModeEnum, type ThemeModeEnumType } from "./enums/theme-mode.enums";
+import {
+  ThemeModeEnum,
+  type ThemeModeEnumType,
+} from "./enums/theme-mode.enums";
 import { THEME_MODE_STORAGE_KEY } from "./theme.constant";
 
 const normalize = (raw: string | null | undefined): ThemeModeEnumType =>

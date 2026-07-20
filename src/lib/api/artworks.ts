@@ -56,8 +56,8 @@ export const PAGE_SIZE = 20;
 // SDK functions reject (throwOnError → ApiError) on non-2xx, so `data` is
 // defined on resolve; the cast drops the client's `T | undefined` success type.
 
-async function setLike(id: string, liked: boolean): Promise<Artwork> {
-  const { data } = liked
+async function setLike(id: string, isLiked: boolean): Promise<Artwork> {
+  const { data } = isLiked
     ? await postArtworksByIdLike({ path: { id } })
     : await deleteArtworksByIdLike({ path: { id } });
   return data as Artwork;
@@ -71,9 +71,13 @@ const slugDetailKey = [
 ];
 
 /** Apply a like/unlike to a cached artwork (count + flag stay in sync). */
-function withLike(a: Artwork, liked: boolean): Artwork {
-  if (a.likedByMe === liked) return a;
-  return { ...a, likedByMe: liked, likeCount: a.likeCount + (liked ? 1 : -1) };
+function withLike(a: Artwork, isLiked: boolean): Artwork {
+  if (a.likedByMe === isLiked) return a;
+  return {
+    ...a,
+    likedByMe: isLiked,
+    likeCount: a.likeCount + (isLiked ? 1 : -1),
+  };
 }
 
 // --- Hooks ----------------------------------------------------------------
@@ -88,7 +92,7 @@ export const useArtworks = (
   options?: { enabled?: boolean },
   // Web SSR: the route `loader` prefetches the first page; seeding it as
   // `initialData` renders the list from the server HTML (no client fetch first).
-  initialData?: ArtworkPage
+  initialData?: ArtworkPage,
 ) => {
   const query = useInfiniteQuery({
     ...getArtworksInfiniteOptions({ query: { ...filters, limit: PAGE_SIZE } }),
@@ -139,7 +143,7 @@ const SEARCH_SCOPES: readonly SearchScope[] = ["all", "title", "artist"];
 
 /** Narrow a raw `scope` query param to a `SearchScope` (defaults handled by callers). */
 export const isSearchScope = (
-  value: string | undefined
+  value: string | undefined,
 ): value is SearchScope =>
   value !== undefined && SEARCH_SCOPES.includes(value as SearchScope);
 
@@ -164,7 +168,7 @@ export const toTagArray = (raw: string | string[] | undefined): string[] => {
 export const paramsToBrowseFilters = (
   q?: string,
   scope?: string,
-  tag?: string | string[]
+  tag?: string | string[],
 ): ArtworkFilters => {
   const tags = toTagArray(tag);
   const searchScope: SearchScope = isSearchScope(scope) ? scope : "all";
@@ -185,12 +189,12 @@ export const useBrowseArtworks = (
   filters: ArtworkFilters = {},
   search = "",
   scope: SearchScope = "all",
-  initialData?: ArtworkPage
+  initialData?: ArtworkPage,
 ) =>
   useArtworks(
     { ...filters, ...searchFilter(search.trim(), scope) },
     undefined,
-    initialData
+    initialData,
   );
 
 /** Radius (metres) for the detail screen's "nearby pieces" lookup. Capped at the API's max (≤ 100000). */
@@ -220,14 +224,14 @@ export const excludeArtwork = (list: Artwork[], id: string): Artwork[] =>
  */
 export const useNearbyArtworks = (
   artwork: Artwork | undefined,
-  initialData?: ArtworkPage
+  initialData?: ArtworkPage,
 ) => {
   const query = useArtworks(
     artwork
       ? { lat: artwork.latitude, lng: artwork.longitude, radius: NEARBY_RADIUS }
       : {},
     { enabled: !!artwork },
-    initialData
+    initialData,
   );
   const nearby = artwork
     ? excludeArtwork(query.artworks, artwork.id)
@@ -249,12 +253,12 @@ export const useNearbyArtworks = (
  */
 export const useArtworksByArtist = (
   artistId: string,
-  initialData?: ArtworkPage
+  initialData?: ArtworkPage,
 ) =>
   useArtworks(
     { artistId: artistId || undefined },
     { enabled: !!artistId },
-    initialData
+    initialData,
   );
 
 /** What the new-artwork flow collects before it can submit. */
@@ -460,10 +464,10 @@ export const useToggleArtworkLike = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, liked }: { id: string; liked: boolean }) =>
-      setLike(id, liked),
+    mutationFn: ({ id, isLiked }: { id: string; isLiked: boolean }) =>
+      setLike(id, isLiked),
 
-    onMutate: async ({ id, liked }) => {
+    onMutate: async ({ id, isLiked }) => {
       const detailKey = getArtworksByIdQueryKey({ path: { id } });
       const listsKey = getArtworksInfiniteQueryKey();
 
@@ -482,10 +486,10 @@ export const useToggleArtworkLike = () => {
       });
 
       if (previousDetail) {
-        qc.setQueryData(detailKey, withLike(previousDetail, liked));
+        qc.setQueryData(detailKey, withLike(previousDetail, isLiked));
       }
       qc.setQueriesData<Artwork>({ queryKey: slugDetailKey }, (old) =>
-        old && old.id === id ? withLike(old, liked) : old
+        old && old.id === id ? withLike(old, isLiked) : old,
       );
       qc.setQueriesData<InfiniteData<ArtworkPage>>(
         { queryKey: listsKey },
@@ -495,10 +499,10 @@ export const useToggleArtworkLike = () => {
             pages: old.pages.map((page) => ({
               ...page,
               data: page.data.map((a) =>
-                a.id === id ? withLike(a, liked) : a
+                a.id === id ? withLike(a, isLiked) : a,
               ),
             })),
-          }
+          },
       );
 
       return { previousDetail, previousLists, previousBySlug };
@@ -508,7 +512,7 @@ export const useToggleArtworkLike = () => {
       if (ctx?.previousDetail) {
         qc.setQueryData(
           getArtworksByIdQueryKey({ path: { id } }),
-          ctx.previousDetail
+          ctx.previousDetail,
         );
       }
       ctx?.previousLists?.forEach(([key, data]) => {

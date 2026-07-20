@@ -10,7 +10,7 @@ export type ArtistDiffRowProps = {
   /** Which panel this row belongs to — drives the tint + marker. */
   side: "before" | "after";
   /** Whether the proposal changes the artist. */
-  changed: boolean;
+  isChanged: boolean;
 };
 
 /**
@@ -22,7 +22,7 @@ export type ArtistDiffRowProps = {
 export const ArtistDiffRow = ({
   artistId,
   side,
-  changed,
+  isChanged,
 }: ArtistDiffRowProps) => {
   const { t: tr } = useTranslation();
   const { data: artist } = useArtist(artistId);
@@ -32,7 +32,7 @@ export const ArtistDiffRow = ({
       label={tr(FIELD_LABEL_KEY.artist)}
       value={artist?.name ?? tr("moderation.noValue")}
       side={side}
-      changed={changed}
+      isChanged={isChanged}
     />
   );
 };

@@ -4,19 +4,19 @@ import { Image, StyleSheet } from "react-native";
 export type ArtworkHeroProps = {
   imageUrl: string;
   /** Wide layout: the hero sits beside the meta, so it grows via `flex`. */
-  wide?: boolean;
+  isWide?: boolean;
 };
 
-export const ArtworkHero = ({ imageUrl, wide }: ArtworkHeroProps) => {
+export const ArtworkHero = ({ imageUrl, isWide }: ArtworkHeroProps) => {
   const [aspectRatio, setAspectRatio] = useState<number | undefined>();
 
   useEffect(() => {
-    let active = true;
+    let isActive = true;
     Image.getSize(imageUrl, (width, height) => {
-      if (active && height > 0) setAspectRatio(width / height);
+      if (isActive && height > 0) setAspectRatio(width / height);
     });
     return () => {
-      active = false;
+      isActive = false;
     };
   }, [imageUrl]);
 
@@ -26,7 +26,11 @@ export const ArtworkHero = ({ imageUrl, wide }: ArtworkHeroProps) => {
       // Wide: `flex` claims a share of the row. Stacked (mobile): full width +
       // aspectRatio drives the height — `flex` here would collapse to 0 in the
       // scroll column and the image would vanish.
-      style={[styles.hero, { aspectRatio }, wide ? styles.wide : styles.full]}
+      style={[
+        styles.hero,
+        { aspectRatio },
+        isWide ? styles.isWide : styles.full,
+      ]}
       resizeMode="contain"
     />
   );
@@ -39,6 +43,6 @@ const styles = StyleSheet.create({
   hero: {
     maxHeight: HERO_MAX_HEIGHT,
   },
-  wide: { flex: 3 },
+  isWide: { flex: 3 },
   full: { width: "100%" },
 });

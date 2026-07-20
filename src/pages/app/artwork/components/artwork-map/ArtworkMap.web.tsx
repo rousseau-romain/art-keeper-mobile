@@ -12,12 +12,12 @@ export const ArtworkMap = ({
   selectedId,
   onSelect,
 }: ArtworkMapProps) => {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   return (
     <View style={styles.map}>
-      {mounted ? (
+      {isMounted ? (
         <Suspense fallback={null}>
           <ArtworkMapLeaflet
             artworks={artworks}

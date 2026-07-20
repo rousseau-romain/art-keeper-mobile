@@ -25,7 +25,7 @@ export const EditLocationSheetScreen = () => {
   const { t: tr } = useTranslation();
   const router = useRouter();
   const { control } = useFormContext<EditProposalValues>();
-  const { setPin, useMyLocation, locating } = useDeviceLocation();
+  const { setPin, useMyLocation, isLocating } = useDeviceLocation();
   const haptic = useHaptics();
   const styles = useThemeStyles(createStyles);
 
@@ -68,7 +68,7 @@ export const EditLocationSheetScreen = () => {
       <Button
         label={tr("artwork.new.location.useMyLocation")}
         variant="ghost"
-        loading={locating}
+        isLoading={isLocating}
         iconBefore={{ name: "Globe" }}
         onPress={useMyLocation}
       />

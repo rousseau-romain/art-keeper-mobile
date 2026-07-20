@@ -14,7 +14,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 export type MapThumbProps = {
   artwork: Artwork;
   /** Highlighted (its pin is selected on the map). */
-  active: boolean;
+  isActive: boolean;
 };
 
 /**
@@ -22,7 +22,7 @@ export type MapThumbProps = {
  * and floating over a selected pin. Tapping it opens the artwork detail
  * (`Link asChild` → a real `<a href>` on web, a router push on native).
  */
-export const MapThumb = ({ artwork, active }: MapThumbProps) => {
+export const MapThumb = ({ artwork, isActive }: MapThumbProps) => {
   const { colors } = useTheme();
   const styles = useThemeStyles(createStyles);
   return (
@@ -35,7 +35,7 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
         <View
           style={[
             styles.frame,
-            { borderColor: active ? colors.primary : colors.borderSoft },
+            { borderColor: isActive ? colors.primary : colors.borderSoft },
           ]}
         >
           <Image
@@ -48,7 +48,7 @@ export const MapThumb = ({ artwork, active }: MapThumbProps) => {
           font="mono"
           size="xs"
           numberOfLines={1}
-          color={active ? "primary" : "textMuted"}
+          color={isActive ? "primary" : "textMuted"}
           style={styles.label}
         >
           {artwork.title}

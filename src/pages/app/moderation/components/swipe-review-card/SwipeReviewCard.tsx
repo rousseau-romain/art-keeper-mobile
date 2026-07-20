@@ -13,9 +13,9 @@ export type SwipeReviewCardProps = {
   /** Commit the "reject" decision (fired on confirm-tap). */
   onReject: () => void;
   /** The approve mutation is in flight. */
-  acceptPending?: boolean;
+  isAcceptPending?: boolean;
   /** The reject mutation is in flight. */
-  rejectPending?: boolean;
+  isRejectPending?: boolean;
   /** The review card content (before/after toggle + diff panel). */
   children: ReactNode;
 };
@@ -29,8 +29,8 @@ export type SwipeReviewCardProps = {
 export const SwipeReviewCard = ({
   onAccept,
   onReject,
-  acceptPending = false,
-  rejectPending = false,
+  isAcceptPending = false,
+  isRejectPending = false,
   children,
 }: SwipeReviewCardProps) => {
   const { t: tr } = useTranslation();
@@ -53,7 +53,7 @@ export const SwipeReviewCard = ({
         <SwipeConfirmAction
           variant="accept"
           onConfirm={() => confirm(onAccept)}
-          loading={acceptPending}
+          isLoading={isAcceptPending}
           accessibilityLabel={tr("a11y.acceptChanges")}
         />
       )}
@@ -61,7 +61,7 @@ export const SwipeReviewCard = ({
         <SwipeConfirmAction
           variant="reject"
           onConfirm={() => confirm(onReject)}
-          loading={rejectPending}
+          isLoading={isRejectPending}
           accessibilityLabel={tr("a11y.rejectChanges")}
         />
       )}

@@ -40,7 +40,7 @@ export const ReviewStepScreen = () => {
 
       <WizardFooter
         label={tr("artwork.new.submitCta")}
-        loading={submitting}
+        isLoading={submitting}
         haptic={null}
         onPress={onSubmit}
       />

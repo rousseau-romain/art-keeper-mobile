@@ -56,7 +56,7 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const [fontsLoaded, fontError] = useAppFonts();
-  const { status, hydrated, locked } = useAuth();
+  const { status, isHydrated, isLocked } = useAuth();
   const { scheme } = useTheme();
   const styles = useThemeStyles(createStyles);
 
@@ -65,11 +65,11 @@ function RootNavigator() {
 
   // Gate on the local token hydration, NOT on `status` — waiting for `status`
   // meant waiting for the `get-session` network round-trip before rendering
-  // anything, even the public artwork detail. `hydrated` is synchronous on web
+  // anything, even the public artwork detail. `isHydrated` is synchronous on web
   // (localStorage) and a fast keychain read on native, so public content (and
   // its LCP hero image) paints as soon as fonts + the token are ready; the
   // session resolves in the background and personalizes afterwards.
-  const ready = (fontsLoaded || !!fontError) && hydrated;
+  const ready = (fontsLoaded || !!fontError) && isHydrated;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync().catch(() => {});
@@ -77,11 +77,11 @@ function RootNavigator() {
 
   if (!ready) return <View style={styles.screen} />;
 
-  // Biometric gate: `locked` is decided at hydration (a stored token + the opt-in
+  // Biometric gate: `isLocked` is decided at hydration (a stored token + the opt-in
   // + enrolled biometrics) — independent of the session query — so the Lock screen
   // shows immediately, before get-session resolves. The session loads behind it,
   // ready the moment they unlock. (Web is never locked: biometrics are native-only.)
-  if (locked) {
+  if (isLocked) {
     return (
       <View style={styles.screen}>
         <StatusBar style={barStyle} />

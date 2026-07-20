@@ -126,7 +126,10 @@ export const ArtworkMap = ({
   }, [selectedId]);
 
   return (
-    <MapView style={[styles.map, style]} mapStyle={basemapStyle(scheme, colors.bg)}>
+    <MapView
+      style={[styles.map, style]}
+      mapStyle={basemapStyle(scheme, colors.bg)}
+    >
       <Camera ref={cameraRef} initialViewState={initialViewState} />
       {artworks.map((artwork) => {
         const active = artwork.id === selectedId;
@@ -156,7 +159,7 @@ export const ArtworkMap = ({
                 anchor="bottom"
               >
                 <View style={styles.callout} pointerEvents="box-none">
-                  <MapThumb artwork={artwork} active />
+                  <MapThumb artwork={artwork} isActive />
                 </View>
               </Marker>
             ) : null}

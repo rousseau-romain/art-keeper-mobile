@@ -36,7 +36,7 @@ export const EditProposalFormHost = ({
       longitude: artwork.longitude,
       address: "",
       note: "",
-      accuracyConfirmed: false,
+      isAccuracyConfirmed: false,
     },
   });
 

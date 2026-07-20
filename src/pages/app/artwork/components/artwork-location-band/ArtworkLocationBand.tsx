@@ -12,21 +12,21 @@ const BAND_HEIGHT = 250;
 export type ArtworkLocationBandProps = {
   artwork: Artwork;
   /** Wide layout: the band shares the row with the nearby panel via `flex`. */
-  wide?: boolean;
+  isWide?: boolean;
 };
 
 /**
  * The location context band: a read-only map of the piece with its coordinates
- * overlaid. On wide screens the "nearby" panel sits to the right of the map; on
+ * overlaid. On isWide screens the "nearby" panel sits to the right of the map; on
  * mobile the panel is rendered separately above and this shows only the map.
  */
 export const ArtworkLocationBand = ({
   artwork,
-  wide,
+  isWide,
 }: ArtworkLocationBandProps) => {
   const styles = useThemeStyles(createStyles);
   return (
-    <View style={[styles.band, wide && styles.bandWide]}>
+    <View style={[styles.band, isWide && styles.bandWide]}>
       <View style={styles.mapWrap}>
         <LocationMap
           latitude={artwork.latitude}

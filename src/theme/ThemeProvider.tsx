@@ -40,11 +40,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // cookie (so an explicit light/dark choice renders with no flash), native starts
   // on the default and applies the stored value on launch (below).
   const [mode, setModeState] = useState<ThemeModeEnumType>(getInitialThemeMode);
-  const [mounted, setMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const device = useColorScheme();
 
   useEffect(() => {
-    setMounted(true);
+    setIsMounted(true);
     // Native only (web resolved the mode synchronously from the cookie above).
     readPersistedThemeMode()
       .then((m) => {
@@ -62,7 +62,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // client's first render agree (deterministic dark) rather than the server having
   // to guess a system preference it can't read. Explicit light/dark are immediate.
   const scheme: ThemeScheme =
-    mode === "auto" ? (mounted && device === "light" ? "light" : "dark") : mode;
+    mode === "auto"
+      ? isMounted && device === "light"
+        ? "light"
+        : "dark"
+      : mode;
 
   const value = useMemo<ThemeContextValue>(
     () => ({

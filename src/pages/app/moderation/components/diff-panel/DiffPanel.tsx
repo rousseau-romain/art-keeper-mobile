@@ -62,7 +62,7 @@ export const DiffPanel = ({ side, fields }: DiffPanelProps) => {
       <View
         style={[
           styles.photo,
-          { borderColor: photo?.changed ? accent : colors.borderSoft },
+          { borderColor: photo?.isChanged ? accent : colors.borderSoft },
         ]}
       >
         {photoUrl ? (
@@ -70,7 +70,7 @@ export const DiffPanel = ({ side, fields }: DiffPanelProps) => {
         ) : (
           <Icon name="ImageOff" size="xl" color="textMuted" />
         )}
-        {photo?.changed && (
+        {photo?.isChanged && (
           <View
             style={[styles.photoCaption, { backgroundColor: colors.scrim }]}
           >
@@ -93,7 +93,7 @@ export const DiffPanel = ({ side, fields }: DiffPanelProps) => {
                 key={field.key}
                 artistId={value}
                 side={side}
-                changed={field.changed}
+                isChanged={field.isChanged}
               />
             );
           }
@@ -104,7 +104,7 @@ export const DiffPanel = ({ side, fields }: DiffPanelProps) => {
                 key={field.key}
                 value={value}
                 side={side}
-                changed={field.changed}
+                isChanged={field.isChanged}
               />
             );
           }
@@ -115,7 +115,7 @@ export const DiffPanel = ({ side, fields }: DiffPanelProps) => {
               label={tr(FIELD_LABEL_KEY[field.key])}
               value={value ?? tr("moderation.noValue")}
               side={side}
-              changed={field.changed}
+              isChanged={field.isChanged}
             />
           );
         })}

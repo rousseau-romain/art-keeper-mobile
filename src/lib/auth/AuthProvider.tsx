@@ -55,32 +55,32 @@ export type SignUpOutcome = "authenticated" | "needs-verification";
 type AuthContextValue = {
   status: AuthStatus;
   /** True once the stored token has been loaded (sync on web, async on native). */
-  hydrated: boolean;
+  isHydrated: boolean;
   user: User | null;
   isAdmin: boolean;
   /** True when the user can moderate — carries the `reviewer` role. */
   isReviewer: boolean;
   /** True when a session exists but the user hasn't passed the biometric gate. */
-  locked: boolean;
-  /** Prompt for biometrics; on success clears `locked`. Resolves the outcome. */
+  isLocked: boolean;
+  /** Prompt for biometrics; on success clears `isLocked`. Resolves the outcome. */
   unlock: () => Promise<boolean>;
   /** Whether the user has opted into biometric app-lock. */
-  biometricEnabled: boolean;
+  isBiometricEnabled: boolean;
   /** Toggle the opt-in. Enabling verifies with biometrics first; resolves success. */
   setBiometricEnabled: (enabled: boolean) => Promise<boolean>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     name: string,
     email: string,
-    password: string
+    password: string,
   ) => Promise<SignUpOutcome>;
   signInWithGoogle: () => Promise<GoogleSignInOutcome>;
   /** True while the interactive Google flow is in flight (for button spinners). */
-  googlePending: boolean;
+  isGooglePending: boolean;
   /** (Re)send the verification email for an unverified account. */
   resendVerification: (email: string) => Promise<void>;
   /** True while a resend request is in flight (for button spinners). */
-  resendPending: boolean;
+  isResendPending: boolean;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -91,10 +91,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const qc = useQueryClient();
   const { t } = useTranslation();
 
-  // Biometric app-lock: `biometricEnabled` is the persisted opt-in, `locked` is
+  // Biometric app-lock: `isBiometricEnabled` is the persisted opt-in, `isLocked` is
   // the live gate (a session exists but biometrics haven't been passed yet).
-  const [biometricEnabled, setBiometricEnabledState] = useState(false);
-  const [locked, setLocked] = useState(false);
+  const [isBiometricEnabled, setBiometricEnabledState] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   // The bearer token must be in the in-memory mirror before the session query
   // can authenticate, so gate the query on a one-shot hydration flag. In the same
@@ -102,21 +102,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // biometrics means the app starts behind the Lock screen (the session still
   // loads in the background so it's ready the moment they unlock).
   // Web hydrates synchronously: `token-store` seeds its mirror from localStorage
-  // at module load, and biometric app-lock is native-only (`locked` stays false),
+  // at module load, and biometric app-lock is native-only (`isLocked` stays false),
   // so the gate can pass on the first render — enabling public SSR content without
   // awaiting anything. Native still reads the encrypted keychain asynchronously.
-  const [hydrated, setHydrated] = useState(Platform.OS === "web");
+  const [isHydrated, setHydrated] = useState(Platform.OS === "web");
   useEffect(() => {
-    if (Platform.OS === "web") return; // already hydrated synchronously above
+    if (Platform.OS === "web") return; // already isHydrated synchronously above
     (async () => {
       const tok = await hydrateToken();
       const pref = await getBiometricPref();
       setBiometricEnabledState(pref);
-      if (tok && pref && (await isBiometricAvailable())) setLocked(true);
+      if (tok && pref && (await isBiometricAvailable())) setIsLocked(true);
       console.log(
-        `[auth] token hydrated present=${!!tok} biometric=${pref} locked=${
+        `[auth] token isHydrated present=${!!tok} biometric=${pref} isLocked=${
           !!tok && pref
-        }`
+        }`,
       );
     })().finally(() => setHydrated(true));
   }, []);
@@ -136,18 +136,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (
         since !== null &&
         Date.now() - since > LOCK_TIMEOUT_MS &&
-        biometricEnabled &&
+        isBiometricEnabled &&
         getToken()
       ) {
-        setLocked(true);
+        setIsLocked(true);
       }
     });
     return () => sub.remove();
-  }, [biometricEnabled]);
+  }, [isBiometricEnabled]);
 
   const unlock = useCallback(async (): Promise<boolean> => {
     const ok = await authenticate(t("auth.unlockPrompt"));
-    if (ok) setLocked(false);
+    if (ok) setIsLocked(false);
     return ok;
   }, [t]);
 
@@ -161,7 +161,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setBiometricEnabledState(enabled);
       return true;
     },
-    [t]
+    [t],
   );
 
   // One-time, post-login nudge to turn on biometric unlock. Native-only, shown at
@@ -183,7 +183,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           text: t("common.enable"),
           onPress: () => void setBiometricEnabled(true),
         },
-      ]
+      ],
     );
   }, [t, setBiometricEnabled]);
 
@@ -203,7 +203,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const session = useQuery({
     queryKey: SESSION_KEY,
     queryFn: getSession,
-    enabled: hydrated,
+    enabled: isHydrated,
     // A *partial* user, cast like `primeSession` does. Load-bearing: nothing reads
     // `useAuth().user` today — consumers take `status` / `isAdmin` / `isReviewer`,
     // all of which this covers. Widen `SessionProfile` before reading another field.
@@ -226,19 +226,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     persistProfile(
       session.data
         ? { id: session.data.user.id, role: session.data.user.role }
-        : null
+        : null,
     );
   }, [session.data]);
 
-  const status: AuthStatus = !hydrated
+  const status: AuthStatus = !isHydrated
     ? "loading"
     : session.data !== undefined
-    ? user
-      ? "authenticated"
-      : "unauthenticated"
-    : session.isError
-    ? "unauthenticated"
-    : "loading";
+      ? user
+        ? "authenticated"
+        : "unauthenticated"
+      : session.isError
+        ? "unauthenticated"
+        : "loading";
 
   useEffect(() => {
     console.log(`[auth] status=${status} user=${user?.id ?? "-"}`);
@@ -258,7 +258,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const invalidateSession = useCallback(
     () => qc.invalidateQueries({ queryKey: SESSION_KEY }),
-    [qc]
+    [qc],
   );
 
   // Seed the session from the auth response so `status` flips to "authenticated"
@@ -269,10 +269,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // session object.
   const primeSession = useCallback(
     (u: User) =>
-      qc.setQueryData(SESSION_KEY, (prev: SessionResponse | null | undefined) =>
-        prev ? { ...prev, user: u } : ({ user: u } as SessionResponse)
+      qc.setQueryData(
+        SESSION_KEY,
+        (prev: SessionResponse | null | undefined) =>
+          prev ? { ...prev, user: u } : ({ user: u } as SessionResponse),
       ),
-    [qc]
+    [qc],
   );
 
   const signInMutation = useMutation({
@@ -282,7 +284,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(
         `[auth] sign-in success token=${!!data?.token} user=${
           data?.user?.id ?? "-"
-        }`
+        }`,
       );
       // Native captures the token from the set-auth-token header (client
       // middleware); web reads it from the body, where CORS can't hide it.
@@ -308,7 +310,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onSuccess: async (data) => {
       console.log(
         `[auth] sign-up success token=${!!data?.token} ` +
-          `${data?.token ? "authenticated" : "needs-verification"}`
+          `${data?.token ? "authenticated" : "needs-verification"}`,
       );
       // With email verification required, sign-up returns no token and an
       // unverified user. Don't seed the session in that case — doing so flips
@@ -335,8 +337,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("[auth] sign-out — clearing token + session");
       await clearToken();
       // Drop the lock gate too — there's no session left to protect, and a stale
-      // `locked` would strand the next Login screen behind the Lock screen.
-      setLocked(false);
+      // `isLocked` would strand the next Login screen behind the Lock screen.
+      setIsLocked(false);
       qc.setQueryData(SESSION_KEY, null);
     },
   });
@@ -366,30 +368,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = useCallback(
     (email: string, password: string) =>
       signInMutation.mutateAsync({ email, password }).then(() => {}),
-    [signInMutation]
+    [signInMutation],
   );
 
   const signUp = useCallback(
     async (
       name: string,
       email: string,
-      password: string
+      password: string,
     ): Promise<SignUpOutcome> => {
       const data = await signUpMutation.mutateAsync({ name, email, password });
       return data?.token ? "authenticated" : "needs-verification";
     },
-    [signUpMutation]
+    [signUpMutation],
   );
 
   const signInWithGoogle = useCallback(
     () => signInGoogleMutation.mutateAsync(),
-    [signInGoogleMutation]
+    [signInGoogleMutation],
   );
 
   const resendVerification = useCallback(
     (email: string) =>
       resendVerificationMutation.mutateAsync(email).then(() => {}),
-    [resendVerificationMutation]
+    [resendVerificationMutation],
   );
 
   const signOut = useCallback(
@@ -399,41 +401,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .then(() => {})
         // Fire-and-forget at the call site (onPress); onSettled already cleared.
         .catch(() => {}),
-    [signOutMutation]
+    [signOutMutation],
   );
 
   const refresh = useCallback(
     () => invalidateSession().then(() => {}),
-    [invalidateSession]
+    [invalidateSession],
   );
 
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
-      hydrated,
+      isHydrated,
       user,
       isAdmin: user?.role === "admin",
       isReviewer: user?.role === "reviewer",
-      locked,
+      isLocked,
       unlock,
-      biometricEnabled,
+      isBiometricEnabled,
       setBiometricEnabled,
       signIn,
       signUp,
       signInWithGoogle,
-      googlePending: signInGoogleMutation.isPending,
+      isGooglePending: signInGoogleMutation.isPending,
       resendVerification,
-      resendPending: resendVerificationMutation.isPending,
+      isResendPending: resendVerificationMutation.isPending,
       signOut,
       refresh,
     }),
     [
       status,
-      hydrated,
+      isHydrated,
       user,
-      locked,
+      isLocked,
       unlock,
-      biometricEnabled,
+      isBiometricEnabled,
       setBiometricEnabled,
       signIn,
       signUp,
@@ -443,7 +445,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       resendVerificationMutation.isPending,
       signOut,
       refresh,
-    ]
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

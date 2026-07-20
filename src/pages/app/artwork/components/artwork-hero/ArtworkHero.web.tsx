@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 export type ArtworkHeroProps = {
   imageUrl: string;
   /** Wide layout: the hero sits beside the meta, so it grows via `flex`. */
-  wide?: boolean;
+  isWide?: boolean;
 };
 
 // Web renders a real <img> (not react-native-web's `Image`, which paints a
@@ -17,7 +17,7 @@ export type ArtworkHeroProps = {
 // carries `display: contents` so it generates NO box: the `<img>` keeps its exact
 // responsive styles (and stays the flex child of the `SplitRow` in wide mode) and
 // its LCP eligibility, while the `<figure>` still lands in the HTML for crawlers.
-export const ArtworkHero = ({ imageUrl, wide }: ArtworkHeroProps) => (
+export const ArtworkHero = ({ imageUrl, isWide }: ArtworkHeroProps) => (
   <figure style={figureStyle}>
     <img
       src={imageUrl}
@@ -25,7 +25,7 @@ export const ArtworkHero = ({ imageUrl, wide }: ArtworkHeroProps) => (
       fetchPriority="high"
       loading="eager"
       decoding="async"
-      style={wide ? wideStyle : fullStyle}
+      style={isWide ? wideStyle : fullStyle}
     />
   </figure>
 );

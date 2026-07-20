@@ -39,14 +39,14 @@ export type DetailScreenProps = {
  */
 export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
   const { t: tr } = useTranslation();
-  const hydrated = useIsHydrated();
+  const isHydrated = useIsHydrated();
 
   const { data: artwork, isLoading } = useArtworkBySlug(slug, initial?.artwork);
   const { data: artist } = useArtist(artwork?.artistId, initial?.artist);
   const { nearby, radius } = useNearbyArtworks(artwork, initial?.nearbyPage);
   const { artworks: byArtist } = useArtworksByArtist(
     artwork?.artistId ?? "",
-    initial?.moreByArtistPage
+    initial?.moreByArtistPage,
   );
 
   // Mirrors the three render branches below, computed before them (hooks can't
@@ -56,13 +56,13 @@ export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
   // only a client-side navigation actually changes it.
   useDocumentTitle(
     artwork?.title ??
-      (!hydrated || isLoading ? undefined : tr("artwork.notFound"))
+      (!isHydrated || isLoading ? undefined : tr("artwork.notFound")),
   );
 
-  // Data first, and deliberately before the `hydrated` gate: with a loader seed
+  // Data first, and deliberately before the `isHydrated` gate: with a loader seed
   // the artwork is there on the server render AND on the client's first render
   // (same payload, same query key), so both produce this tree — the SSR hero
-  // survives hydration. Gating on `hydrated` here instead would blank it.
+  // survives hydration. Gating on `isHydrated` here instead would blank it.
   if (artwork) {
     return (
       <ArtworkDetail
@@ -75,10 +75,10 @@ export const DetailScreen = ({ slug, initial }: DetailScreenProps) => {
     );
   }
 
-  // No seed: native, or a loader that came back empty. `hydrated` is false during
+  // No seed: native, or a loader that came back empty. `isHydrated` is false during
   // the server render AND the client's first render, so both sides show the
   // spinner — the tree matches (no #418) and the author never reads "not found"
   // about a piece that is about to appear on their own authenticated fetch.
-  if (!hydrated || isLoading) return <ScreenFallback />;
+  if (!isHydrated || isLoading) return <ScreenFallback />;
   return <ArtworkNotFound />;
 };

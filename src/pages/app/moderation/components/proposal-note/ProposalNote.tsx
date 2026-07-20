@@ -26,12 +26,7 @@ export const ProposalNote = ({ note }: ProposalNoteProps) => {
     <View style={styles.card}>
       <View style={styles.header}>
         <Icon name="MessageSquare" size="sm" color="textSoft" />
-        <Text
-          font="mono"
-          size="xs"
-          color="textSoft"
-          style={styles.label}
-        >
+        <Text font="mono" size="xs" color="textSoft" style={styles.label}>
           {tr("moderation.note")}
         </Text>
       </View>

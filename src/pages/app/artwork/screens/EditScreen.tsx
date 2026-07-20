@@ -60,9 +60,9 @@ export const EditScreen = ({ slug }: EditScreenProps) => {
 
       <WizardFooter
         label={tr("artwork.edit.submitCta")}
-        showArrow
+        hasArrow
         haptic={null}
-        loading={submitting}
+        isLoading={submitting}
         onPress={onSubmit}
       />
     </WrapperKeyboardAvoidingView>

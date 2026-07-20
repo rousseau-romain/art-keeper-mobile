@@ -11,13 +11,13 @@ import {
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type CheckboxProps = Omit<PressableProps, "style" | "onPress"> & {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  isChecked: boolean;
+  onChange: (isChecked: boolean) => void;
   label?: string;
 };
 
 export const Checkbox = ({
-  checked,
+  isChecked,
   onChange,
   label,
   ...rest
@@ -26,9 +26,9 @@ export const Checkbox = ({
   return (
     <Pressable
       accessibilityRole="checkbox"
-      accessibilityState={{ checked }}
+      accessibilityState={{ checked: isChecked }}
       hitSlop={8}
-      onPress={() => onChange(!checked)}
+      onPress={() => onChange(!isChecked)}
       {...rest}
       style={styles.row}
     >
@@ -36,12 +36,12 @@ export const Checkbox = ({
         style={[
           styles.box,
           {
-            backgroundColor: checked ? colors.primary : colors.transparent,
-            borderColor: checked ? colors.primary : colors.border,
+            backgroundColor: isChecked ? colors.primary : colors.transparent,
+            borderColor: isChecked ? colors.primary : colors.border,
           },
         ]}
       >
-        {checked && (
+        {isChecked && (
           <CheckIcon
             size={IconSizeEnum.xs}
             color={colors.primaryInk}

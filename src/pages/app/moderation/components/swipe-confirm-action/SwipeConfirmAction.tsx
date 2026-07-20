@@ -13,7 +13,7 @@ export type SwipeConfirmActionProps = {
   /** Commit the decision (fired on tap). */
   onConfirm: () => void;
   /** Show a spinner while the mutation for this decision is in flight. */
-  loading?: boolean;
+  isLoading?: boolean;
   /** a11y label for the confirm button. */
   accessibilityLabel: string;
 };
@@ -28,8 +28,18 @@ const VARIANT: Record<
     label: "moderation.accept" | "moderation.reject";
   }
 > = {
-  accept: { fg: "success", bg: "successBg", icon: "Check", label: "moderation.accept" },
-  reject: { fg: "danger", bg: "dangerBg", icon: "X", label: "moderation.reject" },
+  accept: {
+    fg: "success",
+    bg: "successBg",
+    icon: "Check",
+    label: "moderation.accept",
+  },
+  reject: {
+    fg: "danger",
+    bg: "dangerBg",
+    icon: "X",
+    label: "moderation.reject",
+  },
 };
 
 /**
@@ -40,7 +50,7 @@ const VARIANT: Record<
 export const SwipeConfirmAction = ({
   variant,
   onConfirm,
-  loading = false,
+  isLoading = false,
   accessibilityLabel,
 }: SwipeConfirmActionProps) => {
   const { t: tr } = useTranslation();
@@ -52,11 +62,11 @@ export const SwipeConfirmAction = ({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onConfirm}
-      disabled={loading}
+      disabled={isLoading}
       style={[styles.action, { backgroundColor: colors[v.bg] }]}
     >
       <View style={styles.content}>
-        {loading ? (
+        {isLoading ? (
           <ActivityIndicator color={colors[v.fg]} />
         ) : (
           <Icon name={v.icon} size="xl" color={v.fg} />
@@ -77,5 +87,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   content: { alignItems: "center", gap: SpacingEnum.xs },
-  label: { textTransform: "uppercase", letterSpacing: 0.5, textAlign: "center" },
+  label: {
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    textAlign: "center",
+  },
 });

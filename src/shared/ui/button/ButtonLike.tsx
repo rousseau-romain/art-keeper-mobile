@@ -3,18 +3,18 @@ import { Button } from "./Button";
 import { useButtonLikeIcon } from "./hooks/useButtonLikeIcon";
 
 export type ButtonLikeProps = ViewProps & {
-  liked: boolean;
+  isLiked: boolean;
   count: number;
   onPress: (event: GestureResponderEvent) => void;
 };
 
 export function ButtonLike({
-  liked,
+  isLiked,
   count,
   onPress,
   ...rest
 }: ButtonLikeProps) {
-  const iconBefore = useButtonLikeIcon(liked);
+  const iconBefore = useButtonLikeIcon(isLiked);
   return (
     <View {...rest}>
       <Button

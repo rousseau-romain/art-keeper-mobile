@@ -30,7 +30,7 @@ export type GridViewProps = {
   filterCount: number;
   onOpenFilters: () => void;
   onResetFilters: () => void;
-  refreshing: boolean;
+  isRefreshing: boolean;
   onRefresh: () => void;
   onEndReached: () => void;
   isFetchingNextPage: boolean;
@@ -43,14 +43,14 @@ export const GridView = ({
   filterCount,
   onOpenFilters,
   onResetFilters,
-  refreshing,
+  isRefreshing,
   onRefresh,
   onEndReached,
   isFetchingNextPage,
 }: GridViewProps) => {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const hydrated = useIsHydrated();
+  const isHydrated = useIsHydrated();
   const { colors } = useTheme();
 
   // Responsive grid: derive a column count from the window width, then size each
@@ -65,7 +65,7 @@ export const GridView = ({
   // (an accepted reflow, since there's no reliable server viewport). A single
   // column takes the full available width (no explicit itemWidth), which is also
   // the deterministic SSR render.
-  const numColumns = hydrated
+  const numColumns = isHydrated
     ? Math.max(1, Math.floor(width / MIN_CARD_WIDTH))
     : 1;
   const itemWidth =
@@ -95,7 +95,7 @@ export const GridView = ({
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={isRefreshing}
             onRefresh={onRefresh}
             tintColor={colors.primary}
           />
@@ -110,7 +110,7 @@ export const GridView = ({
         // --- Empty: loaded successfully but no rows ---
         ListEmptyComponent={
           <EmptyState
-            filtered={filterCount > 0}
+            isFiltered={filterCount > 0}
             onResetFilters={onResetFilters}
           />
         }
