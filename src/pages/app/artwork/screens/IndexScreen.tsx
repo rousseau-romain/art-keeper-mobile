@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 import {
   type Artwork,
   type ArtworkPage,
   paramsToBrowseFilters,
+  type SearchScope,
   toTagArray,
   useBrowseArtworks,
 } from "@/lib/api/artworks";
@@ -51,6 +53,7 @@ export const IndexScreen = ({
     search,
     searchScope,
     count: storeCount,
+    clear,
   } = useArtworkFilters();
 
   // Same helper the route's `generateMetadata` builds the initial <title> from,
@@ -119,6 +122,23 @@ export const IndexScreen = ({
     router.push("/(tabs)/artworks/filters");
   }, [haptic, router]);
 
+  // Reset from the empty state: drop the store filters (the list re-fetches
+  // unfiltered) and, on web, strip the URL query so the address bar matches —
+  // `setParams` (History replaceState), no reload. Native has no address bar.
+  const onResetFilters = useCallback(() => {
+    haptic("light");
+    clear();
+    if (Platform.OS === "web") {
+      (
+        router.setParams as unknown as (p: {
+          q?: string;
+          scope?: SearchScope;
+          tag?: string[];
+        }) => void
+      )({ q: undefined, scope: undefined, tag: undefined });
+    }
+  }, [clear, haptic, router]);
+
   const onSelectArtwork = useCallback(
     (artwork: Artwork) => {
       haptic("selection");
@@ -177,6 +197,7 @@ export const IndexScreen = ({
         onChangeView={onChangeView}
         filterCount={filterCount}
         onOpenFilters={onOpenFilters}
+        onResetFilters={onResetFilters}
         refreshing={manualRefreshing}
         onRefresh={onRefresh}
         onEndReached={onEndReached}

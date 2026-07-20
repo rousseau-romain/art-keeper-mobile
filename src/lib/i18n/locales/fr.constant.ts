@@ -94,6 +94,7 @@ export const fr: Resources = {
     loadError: "Impossible de charger les œuvres.",
     empty:
       "Aucune œuvre ici pour l'instant.\nSoyez le premier à cataloguer ce mur.",
+    emptyReset: "Réinitialiser les filtres",
     like: "J'aime",
     unlike: "Je n'aime plus",
     notFound: "Œuvre introuvable.",

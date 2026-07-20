@@ -29,6 +29,7 @@ export type GridViewProps = {
   onChangeView: (view: ArtworkView) => void;
   filterCount: number;
   onOpenFilters: () => void;
+  onResetFilters: () => void;
   refreshing: boolean;
   onRefresh: () => void;
   onEndReached: () => void;
@@ -41,6 +42,7 @@ export const GridView = ({
   onChangeView,
   filterCount,
   onOpenFilters,
+  onResetFilters,
   refreshing,
   onRefresh,
   onEndReached,
@@ -106,7 +108,12 @@ export const GridView = ({
           </View>
         )}
         // --- Empty: loaded successfully but no rows ---
-        ListEmptyComponent={<EmptyState />}
+        ListEmptyComponent={
+          <EmptyState
+            filtered={filterCount > 0}
+            onResetFilters={onResetFilters}
+          />
+        }
         // --- Load-more spinner ---
         ListFooterComponent={
           isFetchingNextPage ? (

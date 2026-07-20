@@ -101,6 +101,7 @@ export const en = {
     loading: "Loading the wall…",
     loadError: "Couldn't load artworks.",
     empty: "No artworks here yet.\nBe the first to catalog this wall.",
+    emptyReset: "Reset filters",
     like: "Like",
     unlike: "Unlike",
     notFound: "Artwork not found.",

@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
+import { useTagDraft } from "@/pages/app/artwork/hooks/useTagDraft";
 import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
-import { normalizeTag } from "@/pages/app/artwork/normalize-tag";
 import { Input } from "@/shared/ui/input/Input";
 import { Tag } from "@/shared/ui/tag/Tag";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -24,7 +23,7 @@ export type TagPickerProps = {
  */
 export const TagPicker = ({ value, onChange }: TagPickerProps) => {
   const { t: tr } = useTranslation();
-  const [draft, setDraft] = useState("");
+  const { draft, setDraft, inputRef, commit } = useTagDraft();
 
   const { source, setSource, chips } = useTagSource();
 
@@ -33,11 +32,10 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
       value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag],
     );
 
-  const addDraft = () => {
-    const tag = normalizeTag(draft);
-    if (tag && !value.includes(tag)) onChange([...value, tag]);
-    setDraft("");
-  };
+  const addDraft = () =>
+    commit((tag) => {
+      if (!value.includes(tag)) onChange([...value, tag]);
+    });
 
   // Custom tags = selected tags that aren't quick-pick chips; shown as active
   // chips after the chips so they're visible and removable (tap to remove).
@@ -65,6 +63,7 @@ export const TagPicker = ({ value, onChange }: TagPickerProps) => {
         ))}
       </View>
       <Input
+        ref={inputRef}
         value={draft}
         onChangeText={setDraft}
         onSubmitEditing={addDraft}

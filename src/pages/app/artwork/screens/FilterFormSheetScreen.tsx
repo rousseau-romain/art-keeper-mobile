@@ -1,12 +1,14 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import type { SearchScope } from "@/lib/api/artworks";
+import { TagSourcePicker } from "@/pages/app/artwork/components/tag-source-picker/TagSourcePicker";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useFilterLabel } from "@/pages/app/artwork/hooks/useFilterLabel";
-import { ARTWORK_TAG_PRESETS } from "@/pages/app/artwork/tags.constant";
+import { useReflectFiltersToUrl } from "@/pages/app/artwork/hooks/useReflectFiltersToUrl";
+import { useTagDraft } from "@/pages/app/artwork/hooks/useTagDraft";
+import { useTagSource } from "@/pages/app/artwork/hooks/useTagSource";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { Button } from "@/shared/ui/button/Button";
 import { Input } from "@/shared/ui/input/Input";
@@ -14,9 +16,6 @@ import { Tag } from "@/shared/ui/tag/Tag";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperFormSheet } from "@/shared/ui/wrapper/wrapper-form-sheet/WrapperFormSheet";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
-
-// Widened view of the preset tuple so `.includes(aString)` type-checks.
-const PRESETS: readonly string[] = ARTWORK_TAG_PRESETS;
 
 // The single-select search scopes, in display order: "all" (title OR artist via
 // the API's `q`), then the two single-field narrows.
@@ -48,19 +47,28 @@ export const FilterFormSheetScreen = () => {
     clear,
   } = useArtworkFilters();
   const { applied: appliedLabel } = useFilterLabel(count);
-  const [draft, setDraft] = useState("");
+  const { draft, setDraft, inputRef, commit } = useTagDraft();
+  const { source, setSource, chips } = useTagSource();
 
-  // Custom tags = active filters that aren't preset chips; shown after the
-  // presets so a free-form filter stays visible and removable (tap to remove).
-  const customTags = selectedTags.filter((tag) => !PRESETS.includes(tag));
+  // Keep the URL query in sync with the filters live, without a reload (web).
+  useReflectFiltersToUrl({ selectedTags, search, searchScope });
+
+  // Custom tags = active filters that aren't suggestion chips; shown after the
+  // chips so a free-form filter stays visible and removable (tap to remove).
+  const customTags = selectedTags.filter((tag) => !chips.includes(tag));
 
   const addDraft = () => {
-    const tag = draft.trim().toLowerCase();
-    if (tag) {
+    commit((tag) => {
       haptic("selection");
       addTag(tag);
-    }
-    setDraft("");
+    });
+    // Keep focus so several tags can be added in a row (this field uses
+    // `submitBehavior="submit"`). Deferred twice: RN(-web) blurs the field
+    // *after* the submit handler, and that blur itself lands a frame late — a
+    // single rAF races it, so refocus after the next frame's layout/paint.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => inputRef.current?.focus()),
+    );
   };
 
   return (
@@ -108,8 +116,9 @@ export const FilterFormSheetScreen = () => {
         <Text font="mono" size="sm" color="textMuted" style={styles.label}>
           {tr("artwork.filters.tagsLabel")}
         </Text>
+        <TagSourcePicker value={source} onChange={setSource} />
         <View style={styles.tags}>
-          {ARTWORK_TAG_PRESETS.map((tag) => (
+          {chips.map((tag) => (
             <Tag
               key={tag}
               label={tag}
@@ -133,6 +142,7 @@ export const FilterFormSheetScreen = () => {
           ))}
         </View>
         <Input
+          ref={inputRef}
           value={draft}
           onChangeText={setDraft}
           onSubmitEditing={addDraft}
