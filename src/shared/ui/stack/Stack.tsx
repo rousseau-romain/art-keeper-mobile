@@ -2,6 +2,7 @@ import { Stack as ExpoStack } from "expo-router";
 import type { ComponentProps } from "react";
 import { StyleSheet } from "react-native";
 
+import { StackHeaderTitle } from "@/shared/ui/stack-header-title/StackHeaderTitle";
 import type { Palette } from "@/theme/enums/color.enums";
 import { FONTS } from "@/theme/fonts.constant";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
@@ -26,6 +27,9 @@ export const Stack = ({ screenOptions, ...rest }: StackProps) => {
         headerStyle: styles.header,
         headerTintColor: colors.primary,
         headerTitleStyle: styles.headerTitle,
+        // Renders exactly like upstream's, minus the `<h1>` it forces on web —
+        // see StackHeaderTitle. Set here so every navigator in the app inherits it.
+        headerTitle: (props) => <StackHeaderTitle {...props} />,
         contentStyle: styles.content,
         ...screenOptions,
       }}

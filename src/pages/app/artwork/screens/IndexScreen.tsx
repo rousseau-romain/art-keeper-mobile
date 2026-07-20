@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
+import { useIsFocused, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import {
   type Artwork,
   type ArtworkPage,
@@ -23,7 +23,10 @@ import { useDefaultBrowseView } from "@/pages/app/artwork/hooks/useDefaultBrowse
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
+import { H1 } from "@/shared/ui/seo/h1/H1";
+import { Text } from "@/shared/ui/text/Text";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
+import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type IndexScreenProps = {
   /**
@@ -47,6 +50,7 @@ export const IndexScreen = ({
   const haptic = useHaptics();
   const router = useRouter();
   const isHydrated = useIsHydrated();
+  const isFocused = useIsFocused();
   useArtworkFiltersUrlSync({ initialQuery, initialScope, initialTags });
   const {
     selectedTags,
@@ -102,6 +106,14 @@ export const IndexScreen = ({
     [initialTags, initialQuery],
   );
   const filterCount = isHydrated ? storeCount : urlCount;
+
+  // The page's own H1. Follows the same URL→store hand-off as `filters` above, so
+  // the heading in the SSR HTML is what the client's first render produces too,
+  // and it's built by the same helper as the <title> — the outline and the tab
+  // agree on what this page is.
+  const heading = isHydrated
+    ? browseTitle(tr, selectedTags, search)
+    : browseTitle(tr, toTagArray(initialTags), initialQuery);
 
   const {
     artworks,
@@ -211,5 +223,51 @@ export const IndexScreen = ({
     );
   };
 
-  return <WrapperView isMain>{body()}</WrapperView>;
+  return (
+    <WrapperView isMain>
+      {/* The listing's page title, above the grid.
+
+          Web + grid only. Native already shows the title in its navigator header,
+          so rendering it again here would just duplicate it; the map is full-bleed
+          and a title bar above it would only eat viewport. Neither branch costs
+          anything in SEO: a crawler carries no `browse-view` cookie, so it always
+          lands on the `grid` default (see `browse-view-store.web.ts`) — the H1 is
+          in the crawled HTML every time.
+
+          It carries the *heading semantics* only when this screen is the focused
+          route: the same screen is also seeded behind a deep-linked sibling
+          (`ssr-loader-anchor.md`), and an unfocused anchor's <h1> would land in
+          that document's outline ahead of the real one — putting "Browse" above
+          the artwork's own title. The text renders either way, so the title never
+          blinks out from under the `filters` sheet (a formsheet overlays the
+          listing, which stays visible); only its role changes, and that URL is not
+          an indexed document anyway.
+
+          Every condition is deterministic on the server and the client's first
+          render — `Platform` is a constant, `view` is cookie-seeded, and
+          `useIsFocused` derives from the URL — so the branch is hydration-safe. */}
+      {Platform.OS === "web" &&
+        view === "grid" &&
+        (isFocused ? (
+          <H1 style={styles.title}>{heading}</H1>
+        ) : (
+          <Text font="display" size="xxl" style={styles.title}>
+            {heading}
+          </Text>
+        ))}
+      {body()}
+    </WrapperView>
+  );
 };
+
+const styles = StyleSheet.create({
+  // Uppercase to match the detail page's H1 (`ArtworkMeta`). The bottom padding is
+  // the smaller step because `GridView`/`MapView` overlay their controls row at
+  // the top of their own container, right under this.
+  title: {
+    textTransform: "uppercase",
+    paddingHorizontal: SpacingEnum.lg,
+    paddingTop: SpacingEnum.lg,
+    paddingBottom: SpacingEnum.sm,
+  },
+});

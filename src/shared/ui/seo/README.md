@@ -150,6 +150,45 @@ font face.
    h1")` resolves and the node's `tagName` is the expected element (not `DIV`).
    On native, check the accessibility inspector shows the role.
 
+## Exactly one `<h1>` per document — the navigator does not provide it
+
+The page's `<H1>` must come from **this** family, rendered by the page screen.
+Two things used to inject extra ones, and both are now handled — don't reintroduce
+either:
+
+- **The navigator header is not a heading.** expo-router's `HeaderTitle` hardcodes
+  `role="heading" aria-level="1"`, so every `Stack.Screen`'s `options.title`
+  rendered a real `<h1>` on web. `@/shared/ui/stack/Stack` now defaults
+  `headerTitle` to `StackHeaderTitle`, which drops those attributes on web (native
+  keeps the heading role). Any navigator that bypasses this `Stack` wrapper brings
+  the stray `<h1>` back.
+- **A seeded stack anchor renders its screen into someone else's document.** A
+  deep link to a nested route renders the stack's `initialRouteName` screen behind
+  it (see `.claude/rules/ssr-loader-anchor.md`), so the anchor's `<H1>` lands in
+  that page's outline ahead of the real one. **A loader-bearing anchor screen that
+  renders an `<H1>` needs a `useIsFocused()` gate** — URL-derived, so it's
+  hydration-safe.
+
+  Gate the **role, not the text**. `IndexScreen` renders its title as `<H1>` when
+  focused and as a plain `<Text font="display" size="xxl">` otherwise (`Heading` is
+  just `Text` with those defaults, so the two render identically). Gating the whole
+  element would blank the listing's visible title from under the `filters`
+  formsheet, which overlays the listing rather than replacing it.
+
+Build the title from the same helper as the route's `<title>` (`browseTitle`), or
+the outline and the tab disagree about what the page is.
+
+**A heading may be scoped to where it belongs visually, as long as a crawler still
+gets it.** `IndexScreen`'s title renders on **web, grid view only** — native
+already shows it in the navigator header, and the map is full-bleed. That's SEO-safe
+because a crawler sends no `browse-view` cookie and therefore always lands on the
+`grid` default (`browse-view-store.web.ts`). Check that reasoning before scoping a
+heading behind any preference: it holds only while the crawler's cookie-less path
+is the one that renders the heading.
+
+Verify with `curl <route> | grep -o '<h1.*</h1>'` against the **prod export**: one
+match per page, matching the `<title>`.
+
 ## Where they fit in the SEO stack
 
 These are the **document body**; the `<head>` is
