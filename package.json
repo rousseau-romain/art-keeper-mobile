@@ -61,16 +61,16 @@
   },
   "scripts": {
     "prebuild": "expo prebuild --clean",
-    "prestart": "bun run sync:leaflet",
+    "prestart": "bun run sync:web",
     "start": "expo start --dev-client",
     "start:tunel": "expo start --dev-client --tunnel",
     "start:mcp": "EXPO_UNSTABLE_MCP_SERVER=1 expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "preweb": "bun run sync:leaflet",
+    "preweb": "bun run sync:web",
     "web": "expo start --web",
     "export:web": "expo export -p web",
-    "preserve:dist": "bun run sync:leaflet",
+    "preserve:dist": "bun run sync:web",
     "serve:dist": "bun run export:web && bun expo serve dist",
     "lint": "biome lint . && bun scripts/check-unused-styles.ts",
     "lint:styles": "bun scripts/check-unused-styles.ts",
@@ -79,7 +79,9 @@
     "format": "biome format --write .",
     "gen:api": "openapi-ts",
     "sync:leaflet": "bun scripts/copy-leaflet-assets.ts",
-    "postinstall": "bun -e \"require('node:fs').existsSync('scripts/copy-leaflet-assets.ts')&&require('node:child_process').execSync('bun run sync:leaflet',{stdio:'inherit'})\""
+    "sync:icon": "bun scripts/copy-web-icon.ts",
+    "sync:web": "bun run sync:leaflet && bun run sync:icon",
+    "postinstall": "bun -e \"require('node:fs').existsSync('scripts/copy-leaflet-assets.ts')&&require('node:child_process').execSync('bun run sync:web',{stdio:'inherit'})\""
   },
   "private": true,
   "packageManager": "bun@1.3.14"

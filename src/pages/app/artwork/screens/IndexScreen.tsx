@@ -16,6 +16,7 @@ import { ErrorState } from "@/pages/app/artwork/components/error-state/ErrorStat
 import { GridView } from "@/pages/app/artwork/components/grid-view/GridView";
 import { LoadingState } from "@/pages/app/artwork/components/loading-state/LoadingState";
 import { MapView } from "@/pages/app/artwork/components/map-view/MapView";
+import { SiteJsonLd } from "@/pages/app/artwork/components/site-json-ld/SiteJsonLd";
 import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
@@ -225,6 +226,12 @@ export const IndexScreen = ({
 
   return (
     <WrapperView isMain>
+      {/* Site-level Organization + WebSite structured data (web-only; no-op on
+          native). Only on the focused browse — the app's real entry document —
+          never on the seeded background anchor behind a deep-linked sibling, whose
+          canonical is the artwork, not the site. `useIsFocused` derives from the
+          URL, so the branch is hydration-safe. */}
+      {isFocused && <SiteJsonLd />}
       {/* The listing's page title, above the grid.
 
           Web + grid only. Native already shows the title in its navigator header,

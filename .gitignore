@@ -38,6 +38,10 @@ yarn-error.*
 
 example
 
+# self-hosted web logo, copied from assets/images/icon.png by `sync:icon`
+# (git-ignored: a byte-for-byte copy of an already-committed asset — see the script)
+/public/icon.png
+
 # generated native folders
 /ios
 /android

@@ -9,6 +9,12 @@ RUN bun install --frozen-lockfile
 
 COPY . .
 
+# Regenerate the self-hosted web assets from source before the export. `sync:web`
+# = leaflet (from node_modules) + the logo (public/icon.png, git-ignored and copied
+# from assets/images/icon.png). `postinstall` can't do this: `bun install` above runs
+# before `COPY . .`, so the scripts aren't present yet and its guard no-ops.
+RUN bun run sync:web
+
 # EXPO_PUBLIC_* are INLINED into the JS at export time, so they must be present
 # during `expo export` — pass them as build args (set the values in Dokploy).
 ARG EXPO_PUBLIC_WEB_ORIGIN
