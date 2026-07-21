@@ -5,10 +5,7 @@ FROM oven/bun:1.3.14 AS build
 WORKDIR /app
 
 COPY package.json bun.lock ./
-# BuildKit cache mount on bun's global install cache (~/.bun/install/cache): when
-# the lockfile changes, packages aren't re-downloaded — only re-linked/extracted.
-RUN --mount=type=cache,target=/root/.bun/install/cache \
-    bun install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 
@@ -31,24 +28,15 @@ ARG EXPO_PUBLIC_SEO_NOINDEX
 # full-screen. Defaults on; overridable as a Dokploy build arg.
 ARG EXPO_UNSTABLE_WEB_MODAL=1
 
-# Cache-bust for the export layer. Dokploy passes the deployed commit sha here so
-# BuildKit *always* re-runs the export on a new commit — even if the platform
-# would otherwise reuse a cached image/layer and silently ship a `dist` from an
-# earlier build (the observed bug: prod served a bundle from before a commit,
-# rendering the old H1 outline). Referenced in the RUN below so it takes part in
-# the layer's cache key; harmless (`dev`) when unset for local builds.
-ARG GIT_SHA=dev
-
-# Cache mounts on Metro's *content-addressed* FileStores only: /tmp/metro-cache
-# (default) and node_modules/.cache. A stale entry there is a cache *miss*, never
-# a wrong output, so persisting them across builds is safe and speeds up the
-# heaviest step. `/app/.expo` is deliberately NOT mounted: it isn't a pure cache
-# (it holds expo-router's generated router manifest/types and export intermediate
-# state, not reliably re-invalidated when the source jumps between builds), so
-# persisting it risks feeding a stale server bundle into the export.
-RUN --mount=type=cache,target=/tmp/metro-cache \
-    --mount=type=cache,target=/app/node_modules/.cache \
-    echo "export build ${GIT_SHA}" && bun expo export -p web
+# No BuildKit cache mounts anywhere in this file — on purpose. A `--mount=type=cache`
+# on the export step made the produced `dist` false-hit the runtime
+# `COPY --from=build /app/dist ./dist` (BuildKit deduplicated the copy against a
+# previous build), so the runtime image — and prod — stayed pinned to the previous
+# build's bundle even though the export re-ran. Without cache mounts every build is
+# fully fresh: a source change busts `COPY . .`, the export re-runs, and its new
+# `dist` layer content busts the runtime copy. The export is only ~10s, so the lost
+# caching is negligible.
+RUN bun expo export -p web
 
 # ---- runtime: serve dist/ (SSR + API routes) with the Expo server ----
 FROM oven/bun:1.3.14-slim AS runtime
@@ -60,8 +48,7 @@ ENV NODE_ENV=production
 # 2.7 GB build node_modules (dev deps + Metro caches included), install prod-only
 # deps here. The dist/server bundle is self-contained after export.
 COPY package.json bun.lock ./
-RUN --mount=type=cache,target=/root/.bun/install/cache \
-    bun install --frozen-lockfile --production
+RUN bun install --frozen-lockfile --production
 
 COPY --from=build /app/dist ./dist
 
