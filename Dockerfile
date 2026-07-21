@@ -30,15 +30,25 @@ ARG EXPO_PUBLIC_SEO_NOINDEX
 # dockerignored, so it must be passed here or the web filter sheet renders
 # full-screen. Defaults on; overridable as a Dokploy build arg.
 ARG EXPO_UNSTABLE_WEB_MODAL=1
-# Cache mounts on Metro's caches (the heaviest step). Metro's default FileStore is
-# os.tmpdir()/metro-cache (/tmp/metro-cache); node_modules/.cache and .expo are
-# mounted too for robustness across @expo/metro-config's cache stores. These only
-# speed things up when the BuildKit cache persists between builds — neutral (no
-# regression) otherwise.
+
+# Cache-bust for the export layer. Dokploy passes the deployed commit sha here so
+# BuildKit *always* re-runs the export on a new commit — even if the platform
+# would otherwise reuse a cached image/layer and silently ship a `dist` from an
+# earlier build (the observed bug: prod served a bundle from before a commit,
+# rendering the old H1 outline). Referenced in the RUN below so it takes part in
+# the layer's cache key; harmless (`dev`) when unset for local builds.
+ARG GIT_SHA=dev
+
+# Cache mounts on Metro's *content-addressed* FileStores only: /tmp/metro-cache
+# (default) and node_modules/.cache. A stale entry there is a cache *miss*, never
+# a wrong output, so persisting them across builds is safe and speeds up the
+# heaviest step. `/app/.expo` is deliberately NOT mounted: it isn't a pure cache
+# (it holds expo-router's generated router manifest/types and export intermediate
+# state, not reliably re-invalidated when the source jumps between builds), so
+# persisting it risks feeding a stale server bundle into the export.
 RUN --mount=type=cache,target=/tmp/metro-cache \
     --mount=type=cache,target=/app/node_modules/.cache \
-    --mount=type=cache,target=/app/.expo \
-    bun expo export -p web
+    echo "export build ${GIT_SHA}" && bun expo export -p web
 
 # ---- runtime: serve dist/ (SSR + API routes) with the Expo server ----
 FROM oven/bun:1.3.14-slim AS runtime
