@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import type { Artist } from "@/lib/api/artists";
 import type { Artwork } from "@/lib/api/artworks";
+import { ArtworkBreadcrumbJsonLd } from "@/pages/app/artwork/components/artwork-breadcrumb-json-ld/ArtworkBreadcrumbJsonLd";
 import { ArtworkHero } from "@/pages/app/artwork/components/artwork-hero/ArtworkHero";
 import { ArtworkJsonLd } from "@/pages/app/artwork/components/artwork-json-ld/ArtworkJsonLd";
 import { ArtworkLocationBand } from "@/pages/app/artwork/components/artwork-location-band/ArtworkLocationBand";
@@ -60,9 +61,18 @@ export const ArtworkDetail = ({
       <Article>
         {/* Verified only: an unverified piece is noindex, so it gets no
             indexable structured data either (web-only; no-op on native). */}
-        {artwork.verified && <ArtworkJsonLd artwork={artwork} artist={artist} />}
+        {artwork.verified && (
+          <>
+            <ArtworkJsonLd artwork={artwork} artist={artist} />
+            <ArtworkBreadcrumbJsonLd artwork={artwork} />
+          </>
+        )}
         <SplitRow style={styles.splitRow}>
-          <ArtworkHero imageUrl={artwork.imageUrl} alt={heroAlt} isWide={wide} />
+          <ArtworkHero
+            imageUrl={artwork.imageUrl}
+            alt={heroAlt}
+            isWide={wide}
+          />
           <ArtworkMeta artwork={artwork} artist={artist} isWide={wide} />
         </SplitRow>
       </Article>

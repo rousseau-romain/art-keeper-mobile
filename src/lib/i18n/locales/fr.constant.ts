@@ -69,6 +69,10 @@ export const fr: Resources = {
       descriptionFallback: "Découvrez {{title}} sur ArtKeeper.",
       tagTitle: "Street art {{tag}}",
       tagDescription: "Parcourez le street art taggé {{tag}} sur ArtKeeper.",
+      breadcrumb: {
+        home: "Accueil",
+        list: "Œuvres",
+      },
     },
     map: {
       toggleMap: "Carte",

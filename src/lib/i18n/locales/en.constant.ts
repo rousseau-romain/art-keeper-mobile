@@ -76,6 +76,10 @@ export const en = {
       descriptionFallback: "Discover {{title}} on ArtKeeper.",
       tagTitle: "{{tag}} street art",
       tagDescription: "Browse street art tagged {{tag}} on ArtKeeper.",
+      breadcrumb: {
+        home: "Home",
+        list: "Artworks",
+      },
     },
     // Browse map ⇄ grid view.
     map: {
