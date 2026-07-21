@@ -40,7 +40,7 @@ useDocumentTitle(
 
 - **It's an effect, never a render** — it runs neither on the server nor on the
   client's first render, so it can't cause a hydration mismatch
-  ([web-ssr-hydration](web-ssr-hydration.md)).
+  ([web-ssr-hydration](../web-ssr-hydration.md)).
 - **`undefined` leaves the title alone**, so the SSR title stands during a load
   instead of flashing a generic label.
 - **It's gated on focus** (`useIsFocused`): a Stack keeps the previous screen
@@ -83,16 +83,16 @@ export const generateMetadata: GenerateMetadataFunction = async (
 
 - **It's an exported `const` arrow** typed `GenerateMetadataFunction` — the
   `export default function Screen()` exception in
-  [export-const-functions](export-const-functions.md) covers the route's
+  [export-const-functions](../export-const-functions.md) covers the route's
   component only, not its server exports.
 - **`generateMetadata` is a route export, like `loader`** — it's one of the few
   things allowed in a `src/app/**` file beside the navigator config and the
-  screen delegation ([app-route-page-screens](app-route-page-screens.md)). The
+  screen delegation ([app-route-page-screens](../app-route-page-screens.md)). The
   page screen never renders SEO tags itself.
 - **Web-only, server-only.** Native ignores it. It resolves **outside the React
   tree**, so it can't call hooks — no `useTranslation`, no `useQuery`. Fetch with
   the generated SDK and translate with `serverT`, exactly as a `loader` does
-  ([data-fetching](data-fetching.md)).
+  ([data-fetching](../data-fetching.md)).
 - **`import "@/lib/api/client"`** at the top of any route whose
   `generateMetadata` hits the API — the client is configured by a module
   side-effect, and `_layout`'s import may not have run before metadata resolves.
@@ -102,10 +102,10 @@ export const generateMetadata: GenerateMetadataFunction = async (
 ## Copy is translated, like everywhere else
 
 Every literal in the metadata goes through i18next
-([i18n-translation](i18n-translation.md)) — but via **`serverT(acceptLanguage)`**
+([i18n-translation](../i18n-translation.md)) — but via **`serverT(acceptLanguage)`**
 (`src/lib/i18n/server.ts`), not the `t` from `useTranslation`. The request's
 `Accept-Language` picks the locale, matching the language the SSR render itself
-uses ([web-ssr-hydration](web-ssr-hydration.md)). Content pulled from the API
+uses ([web-ssr-hydration](../web-ssr-hydration.md)). Content pulled from the API
 (an artwork's title/description) is already server copy — pass it through as-is.
 
 ## The canonical — `origin()` + a template literal
@@ -131,7 +131,7 @@ alternates: {
   *inside* `generateMetadata` / `loader`, **never** at module scope or in a
   component.
 - **The path is a sitemap URL** — leading slash, route-group parens stripped
-  ([router-navigation-paths](router-navigation-paths.md)): `/artworks/:slug`,
+  ([router-navigation-paths](../router-navigation-paths.md)): `/artworks/:slug`,
   never `/(tabs)/artworks/…`.
 - **Build the path from the resolved entity, not the raw param**
   (`artwork.slug`), so an alternate/legacy slug points at the real URL.
@@ -194,10 +194,10 @@ branch that genuinely ships is the **soft 404** — an unknown slug returns HTTP
 3. `alternates.canonical` via `canonicalUrl(<sitemap path>)`.
 4. `openGraph` + `twitter` when the page is meant to be shared — every tag is
    declared explicitly (nothing falls back to `title` / `description`). See
-   [seo-open-graph](seo-open-graph.md).
+   [open-graph](open-graph.md).
 5. Verify against the **prod export**, not the dev server: `curl` the route and
    confirm the tags are in the HTML source (see
-   [web-prod-export](web-prod-export.md)).
+   [web-prod-export](../web-prod-export.md)).
 
 **Authenticated routes** (the create-artwork wizard, admin, `[slug]/edit`) get
 **no** `generateMetadata` — there is no crawler-reachable document to describe.
@@ -205,7 +205,7 @@ Same for the `filters` formsheet (its URL just renders the listing behind it) an
 the entry `index.tsx` (a pure `<Redirect>` — no document to describe).
 
 `generateMetadata` **resolves as the caller**, exactly like the `loader` beside it
-([web-ssr-hydration](web-ssr-hydration.md)) — it passes `forwardedCookie(request)`
+([web-ssr-hydration](../web-ssr-hydration.md)) — it passes `forwardedCookie(request)`
 to its fetch. **Both server phases of one request must agree about who is
 asking.** They were once split (the loader authenticated, the metadata anonymous)
 and the mismatch was visible: an author opened their own unverified artwork, the
@@ -219,7 +219,7 @@ because **a crawler carries no cookie** — it gets the anonymous 404 and the
 What personalizing it does *not* license: **a private page must never declare
 itself indexable.** An unverified artwork is readable by its author and admins
 alone, so it returns its real `title` + `description` and then stops — `noindex,
-follow`, no canonical, no `openGraph` (see [seo-open-graph](seo-open-graph.md)).
+follow`, no canonical, no `openGraph` (see [open-graph](open-graph.md)).
 Branch on the entity's own visibility, not on whether a cookie was sent:
 
 ```ts
@@ -236,7 +236,7 @@ not inferred from an access rule two systems away.
 
 Because the tags are now per-visitor, the document must not be cached and handed
 to the next visitor — the `loader`'s `Cache-Control: private, no-store` already
-covers this, and the CDN caveats in [web-ssr-hydration](web-ssr-hydration.md)
+covers this, and the CDN caveats in [web-ssr-hydration](../web-ssr-hydration.md)
 apply to the metadata for the same reason they apply to the loader.
 
 ## `robots` — always explicit, by kind of page
@@ -271,7 +271,7 @@ The canonical is built from the **request's own origin**, so staging declares
 *itself* as the canonical version of content that also exists in production —
 two hosts competing over one corpus. The environment therefore opts out of the
 index wholesale: `EXPO_PUBLIC_SEO_NOINDEX=1` (a **build-time** Docker arg, see
-[web-prod-export](web-prod-export.md)) makes `src/app/+html.tsx` emit
+[web-prod-export](../web-prod-export.md)) makes `src/app/+html.tsx` emit
 `<meta name="robots" content="noindex, nofollow">`. Unset in production.
 
 It lives in the **shell**, not in the routes, for two reasons:
@@ -292,6 +292,6 @@ reconcile them.
 | Route | Metadata |
 | --- | --- |
 | `(tabs)/artworks/index.tsx` | title + `index, follow` + canonical; per-param policy (see above) — one `tag` is self-canonical, `q` / multi-tag are `noindex, follow` |
-| `(tabs)/artworks/[slug]/index.tsx` | title + description + `index, follow` + canonical + `openGraph` + `twitter` ([seo-open-graph](seo-open-graph.md)), from the fetched artwork; its not-found / outage branches are `noindex, follow` |
+| `(tabs)/artworks/[slug]/index.tsx` | title + description + `index, follow` + canonical + `openGraph` + `twitter` ([open-graph](open-graph.md)), from the fetched artwork; its not-found / outage branches are `noindex, follow` |
 | `(auth)/login.tsx` | title + description (`auth.tagline`) + `noindex, nofollow` |
 | `settings.tsx` | title + `noindex, nofollow` |

@@ -314,6 +314,8 @@ export const en = {
     viewMap: "Show map view",
     viewGrid: "Show grid view",
     selectArtwork: "Show {{title}}",
+    heroAlt: "Street art “{{title}}”",
+    heroAltBy: "Street art “{{title}}” by {{artist}}",
     searchTag: "Browse artworks tagged {{tag}}",
     share: "Share this artwork",
     flag: "Report this artwork",

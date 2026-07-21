@@ -51,7 +51,7 @@ RUN bun expo export -p web
   (`+html.tsx`). Staging serves the same content as prod and is **self-canonical**
   (the canonical is built from the request's own origin), so without it the two
   hosts compete over identical content. **Leave it unset in production** — absent
-  means indexable. See [seo-generate-metadata](seo-generate-metadata.md).
+  means indexable. See [generate-metadata](seo/generate-metadata.md).
 
 - **`EXPO_PUBLIC_AUTH_ORIGIN` is not needed on web** — `AUTH_ORIGIN` in
   `src/lib/api/client.ts` is only attached to requests on native

@@ -50,16 +50,23 @@ Open these when the trigger applies (they are intentionally not imported):
   route. The seeded stack anchor renders a loader-bearing screen server-side with
   no prefetched data → a relative `fetchLoader` that rejects on Node. Gate the
   loader read on `useIsFocused` (an ErrorBoundary does **not** help).
-- **`.claude/rules/seo-generate-metadata.md`** — when touching a public web
+- **`.claude/rules/seo/generate-metadata.md`** — when touching a public web
   route's SEO: a route's `generateMetadata` export, a page `<title>` /
   description / Open Graph tags, or an `alternates.canonical` (built inline from
   `origin()`). Server-only, translated with `serverT`, canonical from the
   request's own origin.
-- **`.claude/rules/seo-open-graph.md`** — when touching a public route's social
+- **`.claude/rules/seo/open-graph.md`** — when touching a public route's social
   share preview: an `openGraph` / `twitter` block in a `generateMetadata`, a
   share image, or an `og:type` / `og:url`. Expo infers nothing — every tag is
   declared, `og:title` does *not* fall back to the page title, and the
   `article:*` tags ship only under `type: "article"`.
+- **`.claude/rules/seo/json-ld.md`** — when adding/editing Schema.org JSON-LD
+  (structured data / rich results): a `<Name>JsonLd` component or a
+  `<script type="application/ld+json">`. It's a **server-rendered `<script>` in
+  the tree** (web-only `.web.tsx`, native no-op), gated on the entity's
+  indexability — *not* in `generateMetadata` (no such field) and *not* in the
+  `loader` (data + headers only). JSON-LD ≠ Open Graph (different format, vocab,
+  and consumers — both ship). Origin resolved server/client for hydration safety.
 - **`src/shared/ui/seo/README.md`** — when rendering a web-facing screen's
   document body: reaching for a heading (`Heading` / `H1`…`H6`) or a semantic
   landmark/container (`Main`, `Banner`, `Nav`, `Article`, `Section`, `Aside`,

@@ -301,6 +301,8 @@ export const fr: Resources = {
     viewMap: "Afficher la carte",
     viewGrid: "Afficher la grille",
     selectArtwork: "Afficher {{title}}",
+    heroAlt: "Street art « {{title}} »",
+    heroAltBy: "Street art « {{title}} » par {{artist}}",
     searchTag: "Parcourir les œuvres taguées {{tag}}",
     share: "Partager cette œuvre",
     flag: "Signaler cette œuvre",

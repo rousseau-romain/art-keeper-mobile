@@ -185,7 +185,7 @@ export const loader: LoaderFunction<DataArtworkPageLoaded> = async (request, par
   `undefined`), and a genuinely unknown slug must still land on the not-found.
 - **`generateMetadata` stays anonymous** — a crawler is anonymous anyway, so a private page
   keeps its `notFound` title + `robots: noindex, follow`
-  ([seo-generate-metadata](seo-generate-metadata.md)). Known cost: an author sees their
+  ([generate-metadata](seo/generate-metadata.md)). Known cost: an author sees their
   artwork render fully under a "not found" `<title>`. Forward the cookie there too if that
   ever matters more than the extra round-trip.
 

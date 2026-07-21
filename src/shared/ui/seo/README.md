@@ -3,7 +3,7 @@
 Wrapper components that render **real HTML elements** on web — `<main>`,
 `<article>`, `<h1>`…`<h6>`, `<nav>`, `<figure>`, … — instead of the generic
 `<div>`/`<span>` a bare `View`/`Text` produces. They give the SSR'd public pages
-(see `.claude/rules/seo-generate-metadata.md`,
+(see `.claude/rules/seo/generate-metadata.md`,
 `.claude/rules/web-ssr-hydration.md`) a **crawlable document outline** and proper
 accessibility landmarks. On native the same components pose the ARIA role for
 VoiceOver / TalkBack and render exactly like their base primitive.
@@ -192,6 +192,6 @@ match per page, matching the `<title>`.
 ## Where they fit in the SEO stack
 
 These are the **document body**; the `<head>` is
-`.claude/rules/seo-generate-metadata.md` / `.claude/rules/seo-open-graph.md`, and
+`.claude/rules/seo/generate-metadata.md` / `.claude/rules/seo/open-graph.md`, and
 the per-page tab title is `useDocumentTitle`. All three describe the same page and
 must agree.

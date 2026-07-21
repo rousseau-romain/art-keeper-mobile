@@ -3,11 +3,13 @@ import { Image, StyleSheet } from "react-native";
 
 export type ArtworkHeroProps = {
   imageUrl: string;
+  /** Descriptive alt text — sets the image's accessibility label on native. */
+  alt: string;
   /** Wide layout: the hero sits beside the meta, so it grows via `flex`. */
   isWide?: boolean;
 };
 
-export const ArtworkHero = ({ imageUrl, isWide }: ArtworkHeroProps) => {
+export const ArtworkHero = ({ imageUrl, alt, isWide }: ArtworkHeroProps) => {
   const [aspectRatio, setAspectRatio] = useState<number | undefined>();
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export const ArtworkHero = ({ imageUrl, isWide }: ArtworkHeroProps) => {
   return (
     <Image
       source={{ uri: imageUrl }}
+      alt={alt}
       // Wide: `flex` claims a share of the row. Stacked (mobile): full width +
       // aspectRatio drives the height — `flex` here would collapse to 0 in the
       // scroll column and the image would vanish.

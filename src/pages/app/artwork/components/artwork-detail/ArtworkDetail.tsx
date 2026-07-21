@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import type { Artist } from "@/lib/api/artists";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkHero } from "@/pages/app/artwork/components/artwork-hero/ArtworkHero";
+import { ArtworkJsonLd } from "@/pages/app/artwork/components/artwork-json-ld/ArtworkJsonLd";
 import { ArtworkLocationBand } from "@/pages/app/artwork/components/artwork-location-band/ArtworkLocationBand";
 import { ArtworkMeta } from "@/pages/app/artwork/components/artwork-meta/ArtworkMeta";
 import { MoreByArtist } from "@/pages/app/artwork/components/more-by-artist/MoreByArtist";
@@ -43,13 +45,24 @@ export const ArtworkDetail = ({
   nearbyRadius,
   moreByArtist,
 }: ArtworkDetailProps) => {
+  const { t: tr } = useTranslation();
   const { wide } = useBreakpoint();
+
+  // Descriptive alt for the hero — the artwork *is* the page's content, so an
+  // empty alt would drop it from screen readers and Google Images. Names the
+  // artist when known.
+  const heroAlt = artist
+    ? tr("a11y.heroAltBy", { title: artwork.title, artist: artist.name })
+    : tr("a11y.heroAlt", { title: artwork.title });
 
   return (
     <WrapperScrollView isMain contentContainerStyle={styles.main}>
       <Article>
+        {/* Verified only: an unverified piece is noindex, so it gets no
+            indexable structured data either (web-only; no-op on native). */}
+        {artwork.verified && <ArtworkJsonLd artwork={artwork} artist={artist} />}
         <SplitRow style={styles.splitRow}>
-          <ArtworkHero imageUrl={artwork.imageUrl} isWide={wide} />
+          <ArtworkHero imageUrl={artwork.imageUrl} alt={heroAlt} isWide={wide} />
           <ArtworkMeta artwork={artwork} artist={artist} isWide={wide} />
         </SplitRow>
       </Article>

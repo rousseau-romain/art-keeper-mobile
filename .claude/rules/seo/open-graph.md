@@ -2,7 +2,7 @@
 
 A page's social preview (Slack, iMessage, WhatsApp, X, Facebook) comes from the
 `openGraph` / `twitter` fields of the `Metadata` a route's **`generateMetadata`**
-returns. Everything in [seo-generate-metadata](seo-generate-metadata.md) applies
+returns. Everything in [generate-metadata](generate-metadata.md) applies
 unchanged — it's the same server-only export, resolving outside the React tree,
 with copy from `serverT` and the origin from `origin()`. This rule covers only
 what's specific to the preview.
@@ -73,7 +73,7 @@ return {
   documented Expo snippet uses `request.url`; we don't.
 - **`siteName` is a brand, not copy** — the literal `"ArtKeeper"`, **not**
   translated. It's the explicit exception to
-  [i18n-translation](i18n-translation.md); `title` / `description` still go
+  [i18n-translation](../i18n-translation.md); `title` / `description` still go
   through `serverT`.
 
 ## Images: absolute URL, object form, always `alt`
@@ -133,14 +133,14 @@ const artist = artwork.artistId
 
 Without the local catch it lands in `generateMetadata`'s enclosing `catch`, whose
 whole job is to degrade the page to a static title + **`noindex`**
-([seo-generate-metadata](seo-generate-metadata.md)). A failed artist lookup would
+([generate-metadata](generate-metadata.md)). A failed artist lookup would
 then deindex a perfectly good artwork. **An optional tag must never be able to
 fail the page.**
 
 ## No `og:locale`, no `alternates.languages`
 
 One URL serves both `fr` and `en` — the SSR render picks the language from the
-request's `Accept-Language` ([web-ssr-hydration](web-ssr-hydration.md)). An
+request's `Accept-Language` ([web-ssr-hydration](../web-ssr-hydration.md)). An
 `og:locale` would therefore describe the language of *one crawler's fetch*, not a
 property of the URL, and `alternates.languages` would advertise per-language URLs
 that don't exist. Both come back the day the app has `/fr/…` / `/en/…` routes.
@@ -156,7 +156,7 @@ that don't exist. Both come back the day the app has `/fr/…` / `/en/…` route
 ## Verifying
 
 Against the **prod export**, never the dev server (see
-[web-prod-export](web-prod-export.md)) — the tags must be in the HTML source,
+[web-prod-export](../web-prod-export.md)) — the tags must be in the HTML source,
 since crawlers don't run the client JS:
 
 ```sh

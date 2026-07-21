@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 
 export type ArtworkHeroProps = {
   imageUrl: string;
+  /** Descriptive alt text (the artwork is the page's content, never decorative). */
+  alt: string;
   /** Wide layout: the hero sits beside the meta, so it grows via `flex`. */
   isWide?: boolean;
 };
@@ -17,11 +19,11 @@ export type ArtworkHeroProps = {
 // carries `display: contents` so it generates NO box: the `<img>` keeps its exact
 // responsive styles (and stays the flex child of the `SplitRow` in wide mode) and
 // its LCP eligibility, while the `<figure>` still lands in the HTML for crawlers.
-export const ArtworkHero = ({ imageUrl, isWide }: ArtworkHeroProps) => (
+export const ArtworkHero = ({ imageUrl, alt, isWide }: ArtworkHeroProps) => (
   <figure style={figureStyle}>
     <img
       src={imageUrl}
-      alt=""
+      alt={alt}
       fetchPriority="high"
       loading="eager"
       decoding="async"
