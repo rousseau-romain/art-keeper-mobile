@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { DataArtistPageLoaded } from "@/app/artists/[slug]";
+import type { DataArtistPageLoaded } from "@/app/(tabs)/artists/[slug]";
 import { useArtistBySlug } from "@/lib/api/artists";
 import { useArtworksByArtist } from "@/lib/api/artworks";
 import { ArtistDetail } from "@/pages/app/artist/components/artist-detail/ArtistDetail";

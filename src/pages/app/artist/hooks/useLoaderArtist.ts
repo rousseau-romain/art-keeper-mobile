@@ -1,4 +1,4 @@
-import type { DataArtistPageLoaded } from "@/app/artists/[slug]";
+import type { DataArtistPageLoaded } from "@/app/(tabs)/artists/[slug]";
 
 /**
  * Native no-op. Expo Router loaders are web-only: on native `useLoaderData` finds

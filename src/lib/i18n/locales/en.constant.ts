@@ -221,6 +221,7 @@ export const en = {
     },
   },
   artist: {
+    tab: "Artists",
     title: {
       detail: "Artist",
     },

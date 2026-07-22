@@ -213,6 +213,7 @@ export const fr: Resources = {
     },
   },
   artist: {
+    tab: "Artistes",
     title: {
       detail: "Artiste",
     },

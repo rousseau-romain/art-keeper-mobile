@@ -1,6 +1,6 @@
 import { useLoaderData } from "expo-router";
 import type { LoaderFunction } from "expo-router/server";
-import type { DataArtistPageLoaded } from "@/app/artists/[slug]";
+import type { DataArtistPageLoaded } from "@/app/(tabs)/artists/[slug]";
 
 type ArtistLoader = LoaderFunction<DataArtistPageLoaded>;
 

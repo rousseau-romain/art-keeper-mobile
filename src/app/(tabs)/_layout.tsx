@@ -3,6 +3,7 @@ import {
   Map as MapIcon,
   Plus as PlusIcon,
   Shield as ShieldIcon,
+  SprayCan as SprayCanIcon,
   Vibrate as VibrateIcon,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -64,6 +65,20 @@ export default function TabsLayout() {
           title: tr("artwork.tab"),
           tabBarIcon: ({ color, size }) => (
             <MapIcon size={size} color={color} strokeWidth={1.8} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="artists"
+        options={{
+          // Detail-only route (no artist list yet) — hide the tab like admin/dev.
+          // The route stays in (tabs) so the chrome (bottom bar / WebHeader) shows
+          // on the artist detail, reached via <Link> from an artwork. Drop this
+          // line once an `artists/index.tsx` list exists to reveal the tab.
+          href: null,
+          title: tr("artist.tab"),
+          tabBarIcon: ({ color, size }) => (
+            <SprayCanIcon size={size} color={color} strokeWidth={1.8} />
           ),
         }}
       />
