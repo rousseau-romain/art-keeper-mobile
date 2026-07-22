@@ -373,6 +373,7 @@ export type Artist = {
     verified: boolean;
     userId: string;
     followerCount: number;
+    artworkCount: number;
     followedByMe: boolean;
     createdAt: string;
     updatedAt: string;
@@ -396,6 +397,7 @@ export type ArtistPage = {
         verified: boolean;
         userId: string;
         followerCount: number;
+        artworkCount: number;
         followedByMe: boolean;
         createdAt: string;
         updatedAt: string;
@@ -783,6 +785,9 @@ export type GetArtworksData = {
         q?: string;
         lat?: number;
         lng?: number;
+        /**
+         * Search radius in kilometres. Requires lat and lng; mutually exclusive with polygon.
+         */
         radius?: number;
         /**
          * JSON array of GeoJSON [lng, lat] points (>= 3) bounding a search area. Mutually exclusive with lat/lng/radius.

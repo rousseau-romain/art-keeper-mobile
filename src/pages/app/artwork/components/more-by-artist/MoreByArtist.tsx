@@ -38,7 +38,7 @@ export const MoreByArtist = ({ artist, artworks }: MoreByArtistProps) => {
           {title}
         </H2>
         <Link
-          href={{ pathname: "/artworks", params: { artist: artist.name } }}
+          href={{ pathname: "/artists/[slug]", params: { slug: artist.slug } }}
           asChild
         >
           <Pressable accessibilityLabel={tr("a11y.viewProfile", { handle })}>

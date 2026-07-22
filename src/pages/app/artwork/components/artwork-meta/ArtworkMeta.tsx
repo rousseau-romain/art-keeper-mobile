@@ -7,9 +7,7 @@ import { ArtworkActions } from "@/pages/app/artwork/components/artwork-actions/A
 import { Button } from "@/shared/ui/button/Button";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { H1 } from "@/shared/ui/seo/h1/H1";
-import { List } from "@/shared/ui/seo/list/List";
-import { ListItem } from "@/shared/ui/seo/list-item/ListItem";
-import { Tag } from "@/shared/ui/tag/Tag";
+import { TagList } from "@/shared/ui/tag-list/TagList";
 import { Text } from "@/shared/ui/text/Text";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
@@ -30,7 +28,7 @@ export const ArtworkMeta = ({ artwork, artist, isWide }: ArtworkMetaProps) => {
 
       {artist && (
         <Link
-          href={{ pathname: "/artworks", params: { artist: artist.name } }}
+          href={{ pathname: "/artists/[slug]", params: { slug: artist.slug } }}
           asChild
         >
           <Pressable
@@ -47,20 +45,7 @@ export const ArtworkMeta = ({ artwork, artist, isWide }: ArtworkMetaProps) => {
         </Link>
       )}
 
-      {artwork.tags.length > 0 ? (
-        <List style={styles.tags}>
-          {artwork.tags.map((tag) => (
-            <ListItem key={tag}>
-              <Link href={{ pathname: "/artworks", params: { tag } }} asChild>
-                <Tag
-                  label={tag}
-                  accessibilityLabel={tr("a11y.searchTag", { tag })}
-                />
-              </Link>
-            </ListItem>
-          ))}
-        </List>
-      ) : null}
+      <TagList tags={artwork.tags} />
 
       {artwork.description && (
         <Text color="textSoft">{artwork.description}</Text>
@@ -96,7 +81,6 @@ const styles = StyleSheet.create({
   metaWide: { flex: 1 },
   title: { textTransform: "uppercase" },
   handle: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xs },
-  tags: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
   coords: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xs },
   proposeEdit: { alignSelf: "flex-start" },
 });

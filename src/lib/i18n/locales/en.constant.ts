@@ -7,6 +7,12 @@ export const en = {
     notNow: "Not now",
     enable: "Enable",
     close: "Close",
+    // Shared detail-rail actions (artwork + artist share/flag buttons).
+    share: "Share",
+    flag: "Flag",
+    flagComingSoon: "Reporting isn't available yet.",
+    shareFailed: "Couldn't share. Try again.",
+    linkCopied: "Link copied",
   },
   auth: {
     tagline: "A living map of street art.",
@@ -135,11 +141,6 @@ export const en = {
     },
     // Immersive detail screen (photo + metadata rail + map/nearby band).
     detail: {
-      share: "Share",
-      flag: "Flag",
-      flagComingSoon: "Reporting isn't available yet.",
-      shareFailed: "Couldn't share. Try again.",
-      linkCopied: "Link copied",
       viewProfile: "view profile →",
       proposeEdit: "Propose an edit →",
       nearbyTitle: "Nearby",
@@ -218,6 +219,28 @@ export const en = {
         noArtist: "No artist credited. Continue without one.",
       },
     },
+  },
+  artist: {
+    title: {
+      detail: "Artist",
+    },
+    meta: {
+      descriptionFallback: "Discover {{name}}'s street art on ArtKeeper.",
+    },
+    // Immersive profile screen (header + tags + links + territory map/grid).
+    detail: {
+      follow: "Follow",
+      following: "Following",
+      pieceLabel_one: "piece",
+      pieceLabel_other: "pieces",
+      followerLabel_one: "follower",
+      followerLabel_other: "followers",
+      territory: "Territory",
+      noPieces: "No pieces yet.",
+    },
+    notFound: "Artist not found.",
+    notFoundHint: "It may have been removed, or the link may be wrong.",
+    notFoundCta: "Browse artworks",
   },
   settings: {
     title: {
@@ -324,6 +347,11 @@ export const en = {
     share: "Share this artwork",
     flag: "Report this artwork",
     viewProfile: "See more by {{handle}}",
+    follow: "Follow this artist",
+    unfollow: "Unfollow this artist",
+    shareArtist: "Share this artist",
+    flagArtist: "Report this artist",
+    socialLink: "Open {{platform}}",
     filters: "Open tag filters",
     settings: "Open settings",
     signIn: "Sign in",

@@ -1,8 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
-import { ArtworkFlagButton } from "@/pages/app/artwork/components/artwork-flag-button/ArtworkFlagButton";
 import { ArtworkLikeButton } from "@/pages/app/artwork/components/artwork-like-button/ArtworkLikeButton";
-import { ArtworkShareButton } from "@/pages/app/artwork/components/artwork-share-button/ArtworkShareButton";
+import { FlagButton } from "@/shared/ui/flag-button/FlagButton";
+import { ShareButton } from "@/shared/ui/share-button/ShareButton";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type ArtworkActionsProps = {
@@ -10,15 +11,22 @@ export type ArtworkActionsProps = {
 };
 
 /** The detail rail's action row: like · share · flag. */
-export const ArtworkActions = ({ artwork }: ArtworkActionsProps) => (
-  <View style={styles.row}>
-    <ArtworkLikeButton artwork={artwork} />
-    <View style={styles.group}>
-      <ArtworkShareButton artwork={artwork} />
-      <ArtworkFlagButton />
+export const ArtworkActions = ({ artwork }: ArtworkActionsProps) => {
+  const { t: tr } = useTranslation();
+  return (
+    <View style={styles.row}>
+      <ArtworkLikeButton artwork={artwork} />
+      <View style={styles.group}>
+        <ShareButton
+          title={artwork.title}
+          path={`/artworks/${artwork.slug}`}
+          accessibilityLabel={tr("a11y.share")}
+        />
+        <FlagButton accessibilityLabel={tr("a11y.flag")} />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   row: {

@@ -8,6 +8,12 @@ export const fr: Resources = {
     notNow: "Plus tard",
     enable: "Activer",
     close: "Fermer",
+    // Shared detail-rail actions (artwork + artist share/flag buttons).
+    share: "Partager",
+    flag: "Signaler",
+    flagComingSoon: "Le signalement n'est pas encore disponible.",
+    shareFailed: "Partage impossible. Réessayez.",
+    linkCopied: "Lien copié",
   },
   auth: {
     tagline: "Une carte vivante du street art.",
@@ -128,11 +134,6 @@ export const fr: Resources = {
     },
     // Écran détail immersif (photo + rail métadonnées + bande carte/nearby).
     detail: {
-      share: "Partager",
-      flag: "Signaler",
-      flagComingSoon: "Le signalement n'est pas encore disponible.",
-      shareFailed: "Partage impossible. Réessayez.",
-      linkCopied: "Lien copié",
       viewProfile: "voir le profil →",
       proposeEdit: "Proposer une modification →",
       nearbyTitle: "À proximité",
@@ -210,6 +211,28 @@ export const fr: Resources = {
         noArtist: "Aucun artiste crédité. Continuer sans.",
       },
     },
+  },
+  artist: {
+    title: {
+      detail: "Artiste",
+    },
+    meta: {
+      descriptionFallback: "Découvrez le street art de {{name}} sur ArtKeeper.",
+    },
+    // Écran profil immersif (en-tête + tags + liens + carte/grille territoire).
+    detail: {
+      follow: "Suivre",
+      following: "Suivi",
+      pieceLabel_one: "œuvre",
+      pieceLabel_other: "œuvres",
+      followerLabel_one: "abonné",
+      followerLabel_other: "abonnés",
+      territory: "Territoire",
+      noPieces: "Pas encore d'œuvre.",
+    },
+    notFound: "Artiste introuvable.",
+    notFoundHint: "Il a peut-être été supprimé, ou le lien est erroné.",
+    notFoundCta: "Parcourir les œuvres",
   },
   settings: {
     title: {
@@ -311,6 +334,11 @@ export const fr: Resources = {
     share: "Partager cette œuvre",
     flag: "Signaler cette œuvre",
     viewProfile: "Voir plus de {{handle}}",
+    follow: "Suivre cet artiste",
+    unfollow: "Ne plus suivre cet artiste",
+    shareArtist: "Partager cet artiste",
+    flagArtist: "Signaler cet artiste",
+    socialLink: "Ouvrir {{platform}}",
     filters: "Ouvrir les filtres par tag",
     settings: "Ouvrir les réglages",
     signIn: "Se connecter",

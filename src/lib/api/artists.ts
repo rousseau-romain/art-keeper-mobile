@@ -8,11 +8,22 @@ import {
   getArtistsByIdOptions,
   getArtistsInfiniteOptions,
   getArtistsInfiniteQueryKey,
+  getArtistsSlugBySlugOptions,
+  getArtistsSlugBySlugQueryKey,
 } from "./generated/@tanstack/react-query.gen";
-import { postArtists } from "./generated/sdk.gen";
-import type { Artist, ArtistPage, GetArtistsData } from "./generated/types.gen";
+import {
+  deleteArtistsByIdFollow,
+  postArtists,
+  postArtistsByIdFollow,
+} from "./generated/sdk.gen";
+import type {
+  Artist,
+  ArtistPage,
+  GetArtistsData,
+  SocialLinks,
+} from "./generated/types.gen";
 
-export type { Artist, ArtistPage };
+export type { Artist, ArtistPage, SocialLinks };
 
 /** A single row of the artists list response (the list returns a leaner shape
  * than the full `Artist` detail). */
@@ -90,6 +101,94 @@ export const useCreateArtist = () => {
       return data as Artist;
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: getArtistsInfiniteQueryKey() });
+    },
+  });
+};
+
+/**
+ * A single artist by slug — the public, SEO-friendly lookup used by the artist
+ * profile route. The fetched artist still carries `.id`, so writes (follow) key
+ * off that.
+ *
+ * `initialData` seeds the cache from the route's server `loader` (web SSR), so the
+ * profile header renders in the initial HTML instead of after a client fetch.
+ * `initialDataUpdatedAt: 0` backdates the seed so it's stale on arrival and
+ * refetched on mount — see `useArtworkBySlug` for why that line is load-bearing.
+ */
+export const useArtistBySlug = (slug: string, initialData?: Artist) =>
+  useQuery({
+    ...getArtistsSlugBySlugOptions({ path: { slug } }),
+    enabled: !!slug,
+    initialData,
+    initialDataUpdatedAt: initialData ? 0 : undefined,
+  });
+
+// The profile detail is cached by slug (DetailScreen → useArtistBySlug), but a
+// follow only knows the id — so match every slug-detail query by its endpoint id
+// (partial key) and patch the one whose artist `.id` matches. Mirrors the
+// `slugDetailKey` pattern in `artworks.ts`.
+const slugDetailKey = [
+  { _id: getArtistsSlugBySlugQueryKey({ path: { slug: "" } })[0]._id },
+];
+
+/** Apply a follow/unfollow to a cached artist (count + flag stay in sync). */
+function withFollow(a: Artist, isFollowing: boolean): Artist {
+  if (a.followedByMe === isFollowing) return a;
+  return {
+    ...a,
+    followedByMe: isFollowing,
+    followerCount: a.followerCount + (isFollowing ? 1 : -1),
+  };
+}
+
+// SDK functions reject (throwOnError → ApiError) on non-2xx, so `data` is defined
+// on resolve; both follow endpoints return the updated `Artist`.
+async function setFollow(id: string, isFollowing: boolean): Promise<Artist> {
+  const { data } = isFollowing
+    ? await postArtistsByIdFollow({ path: { id } })
+    : await deleteArtistsByIdFollow({ path: { id } });
+  return data as Artist;
+}
+
+/**
+ * Follow / unfollow with an optimistic update: every cached slug-detail flips
+ * immediately, rolls back on error, and the artist lists + the touched detail are
+ * re-fetched on settle so the server's authoritative follower count wins. Mirrors
+ * `useToggleArtworkLike`, simpler (no infinite-list patch — the follow control
+ * lives on the detail).
+ */
+export const useToggleArtistFollow = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isFollowing }: { id: string; isFollowing: boolean }) =>
+      setFollow(id, isFollowing),
+
+    onMutate: async ({ id, isFollowing }) => {
+      // Stop in-flight refetches so they can't clobber the optimistic value.
+      await qc.cancelQueries({ queryKey: slugDetailKey });
+
+      const previousBySlug = qc.getQueriesData<Artist>({
+        queryKey: slugDetailKey,
+      });
+      qc.setQueriesData<Artist>({ queryKey: slugDetailKey }, (old) =>
+        old && old.id === id ? withFollow(old, isFollowing) : old,
+      );
+
+      return { previousBySlug };
+    },
+
+    onError: (_err, _vars, ctx) => {
+      ctx?.previousBySlug?.forEach(([key, data]) => {
+        qc.setQueryData(key, data);
+      });
+    },
+
+    onSettled: () => {
+      // Targeted invalidation: the slug-detail (the follow flag/count) and any
+      // artist list the row may sit in.
+      qc.invalidateQueries({ queryKey: slugDetailKey });
       qc.invalidateQueries({ queryKey: getArtistsInfiniteQueryKey() });
     },
   });
