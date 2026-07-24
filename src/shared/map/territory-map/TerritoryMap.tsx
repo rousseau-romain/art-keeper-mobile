@@ -11,7 +11,7 @@ import { StyleSheet, View } from "react-native";
 
 import type { Artwork } from "@/lib/api/artworks";
 import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
-import { OSM_STYLE } from "@/shared/map/osm-style.constant";
+import { cartoBasemapStyle } from "@/shared/map/basemap";
 import { IconSizeEnum, SpacingEnum } from "@/theme/enums/scale.enums";
 import { useTheme } from "@/theme/ThemeProvider";
 
@@ -80,7 +80,7 @@ export const TerritoryMap = ({
   selectedId,
   onSelect,
 }: TerritoryMapProps) => {
-  const { colors } = useTheme();
+  const { scheme, colors } = useTheme();
   const cameraRef = useRef<CameraRef>(null);
   const selected = artworks.find((a) => a.id === selectedId);
 
@@ -128,7 +128,10 @@ export const TerritoryMap = ({
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} mapStyle={OSM_STYLE}>
+      <MapView
+        style={styles.map}
+        mapStyle={cartoBasemapStyle(scheme, colors.bg)}
+      >
         <Camera ref={cameraRef} initialViewState={initialViewState} />
         <GeoJSONSource
           id="territory-pins"

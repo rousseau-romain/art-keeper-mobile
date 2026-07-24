@@ -9,10 +9,11 @@ import {
 import { useEffect, useRef } from "react";
 import { type NativeSyntheticEvent, StyleSheet, View } from "react-native";
 
-import { OSM_STYLE } from "@/shared/map/osm-style.constant";
+import { cartoBasemapStyle } from "@/shared/map/basemap";
 import type { Palette } from "@/theme/enums/color.enums";
 import { IconSizeEnum, RadiusEnum } from "@/theme/enums/scale.enums";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 // Paris fallback when no pin is set yet. MapLibre coords are [lng, lat] — the
 // reverse of react-native-maps / the form's { latitude, longitude }.
@@ -40,6 +41,7 @@ export const LocationPicker = ({
 }: LocationPickerProps) => {
   const cameraRef = useRef<CameraRef>(null);
   const styles = useThemeStyles(createStyles);
+  const { scheme, colors } = useTheme();
   const hasPin = latitude != null && longitude != null;
   // Inline the null checks (not `hasPin`) so TS narrows to a [number, number].
   const center: [number, number] =
@@ -63,7 +65,11 @@ export const LocationPicker = ({
   };
 
   return (
-    <MapView style={styles.map} mapStyle={OSM_STYLE} onPress={onMapPress}>
+    <MapView
+      style={styles.map}
+      mapStyle={cartoBasemapStyle(scheme, colors.bg)}
+      onPress={onMapPress}
+    >
       <Camera ref={cameraRef} initialViewState={{ center, zoom: ZOOM }} />
       {hasPin && (
         <Marker lngLat={center}>

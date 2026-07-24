@@ -22,7 +22,7 @@ export const LocationPicker = ({
   longitude,
   onPick,
 }: LocationPickerProps) => {
-  const { colors } = useTheme();
+  const { scheme, colors } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
@@ -34,6 +34,8 @@ export const LocationPicker = ({
             latitude={latitude}
             longitude={longitude}
             accent={colors.primary}
+            scheme={scheme}
+            background={colors.bg}
             onPick={onPick}
           />
         </Suspense>

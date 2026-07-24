@@ -7,10 +7,11 @@ import {
 import { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { OSM_STYLE } from "@/shared/map/osm-style.constant";
+import { cartoBasemapStyle } from "@/shared/map/basemap";
 import type { Palette } from "@/theme/enums/color.enums";
 import { IconSizeEnum, RadiusEnum } from "@/theme/enums/scale.enums";
 import { useThemeStyles } from "@/theme/hooks/useThemeStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 const ZOOM = 15;
 
@@ -27,6 +28,7 @@ export type LocationMapProps = {
  */
 export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
   const styles = useThemeStyles(createStyles);
+  const { scheme, colors } = useTheme();
   const cameraRef = useRef<CameraRef>(null);
   // MapLibre coords are [lng, lat] — the reverse of { latitude, longitude }.
   const center: [number, number] = [longitude, latitude];
@@ -39,7 +41,7 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
   }, [longitude, latitude]);
 
   return (
-    <MapView style={styles.map} mapStyle={OSM_STYLE}>
+    <MapView style={styles.map} mapStyle={cartoBasemapStyle(scheme, colors.bg)}>
       <Camera ref={cameraRef} initialViewState={{ center, zoom: ZOOM }} />
       <Marker lngLat={center}>
         <View style={styles.pin} />

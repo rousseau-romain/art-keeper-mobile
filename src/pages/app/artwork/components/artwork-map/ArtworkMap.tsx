@@ -4,16 +4,15 @@ import {
   type InitialViewState,
   Map as MapView,
   Marker,
-  type StyleSpecification,
 } from "@maplibre/maplibre-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
 import type { MapViewProps } from "@/pages/app/artwork/components/map-view/MapView";
+import { cartoBasemapStyle } from "@/shared/map/basemap";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { IconSizeEnum, SpacingEnum } from "@/theme/enums/scale.enums";
-import type { ThemeScheme } from "@/theme/enums/theme-mode.enums";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type ArtworkMapProps = {
@@ -23,32 +22,6 @@ export type ArtworkMapProps = {
   onSelect: (artwork: Artwork) => void;
   style?: MapViewProps["style"];
 };
-
-// Key-free CARTO basemap, skinned per theme — dark tiles under the dark theme,
-// light tiles under the light one, so the browse map never clashes with the UI.
-// A `background` layer under the raster fills the area exposed when the map is
-// over-panned past the world edge (otherwise MapLibre paints its default black).
-const basemapStyle = (
-  scheme: ThemeScheme,
-  background: string,
-): StyleSpecification => ({
-  version: 8,
-  sources: {
-    carto: {
-      type: "raster",
-      tiles: ["a", "b", "c"].map(
-        (s) =>
-          `https://${s}.basemaps.cartocdn.com/${scheme}_all/{z}/{x}/{y}.png`,
-      ),
-      tileSize: 256,
-      attribution: "© OpenStreetMap contributors © CARTO",
-    },
-  },
-  layers: [
-    { id: "bg", type: "background", paint: { "background-color": background } },
-    { id: "carto", type: "raster", source: "carto" },
-  ],
-});
 
 // MapLibre coords are [lng, lat] — the reverse of the artwork's { lat, lng }.
 const FALLBACK: [number, number] = [2.3522, 48.8566]; // Paris
@@ -128,7 +101,7 @@ export const ArtworkMap = ({
   return (
     <MapView
       style={[styles.map, style]}
-      mapStyle={basemapStyle(scheme, colors.bg)}
+      mapStyle={cartoBasemapStyle(scheme, colors.bg)}
     >
       <Camera ref={cameraRef} initialViewState={initialViewState} />
       {artworks.map((artwork) => {

@@ -4,12 +4,10 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 
 import type { Artwork } from "@/lib/api/artworks";
 import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
-import {
-  OSM_TILE_ATTRIBUTION,
-  OSM_TILE_URL,
-} from "@/shared/map/osm-style.constant";
+import { CARTO_ATTRIBUTION_HTML, cartoTileUrl } from "@/shared/map/basemap";
 import { mapDotIcon } from "@/shared/map/pin-icon";
 import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
+import type { ThemeScheme } from "@/theme/enums/theme-mode.enums";
 
 // Zoom used when there's a single point to show (bounds would be degenerate).
 const SINGLE_ZOOM = 15;
@@ -19,6 +17,10 @@ type TerritoryWebMapProps = {
   artworks: Artwork[];
   /** Accent colour for the pins (ColorEnum.primary). */
   accent: string;
+  /** Resolved theme — picks the CARTO tile skin (dark/light). */
+  scheme: ThemeScheme;
+  /** Page background (ColorEnum.bg) shown under the tiles when over-panned. */
+  background: string;
   /** The highlighted piece (drives the strip below and the thumb accent). */
   selectedId?: string;
   /** Fired when a pin is clicked — the parent tracks the selection. */
@@ -56,6 +58,8 @@ const MapController = ({
 const TerritoryWebMap = ({
   artworks,
   accent,
+  scheme,
+  background,
   selectedId,
   onSelect,
 }: TerritoryWebMapProps) => {
@@ -64,9 +68,13 @@ const TerritoryWebMap = ({
     <MapContainer
       center={first ? [first.latitude, first.longitude] : [0, 0]}
       zoom={SINGLE_ZOOM}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", background }}
     >
-      <TileLayer attribution={OSM_TILE_ATTRIBUTION} url={OSM_TILE_URL} />
+      <TileLayer
+        key={scheme}
+        attribution={CARTO_ATTRIBUTION_HTML}
+        url={cartoTileUrl(scheme)}
+      />
       <MapController artworks={artworks} />
       {artworks.map((artwork) => (
         <Marker

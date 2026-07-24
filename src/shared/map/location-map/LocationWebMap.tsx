@@ -3,12 +3,10 @@ import "leaflet/dist/leaflet.css";
 import { useEffect } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
-import {
-  OSM_TILE_ATTRIBUTION,
-  OSM_TILE_URL,
-} from "@/shared/map/osm-style.constant";
+import { CARTO_ATTRIBUTION_HTML, cartoTileUrl } from "@/shared/map/basemap";
 import { mapDotIcon } from "@/shared/map/pin-icon";
 import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
+import type { ThemeScheme } from "@/theme/enums/theme-mode.enums";
 
 const ZOOM = 15;
 
@@ -17,6 +15,10 @@ type LocationWebMapProps = {
   longitude: number;
   /** Accent colour for the pin (ColorEnum.primary). */
   accent: string;
+  /** Resolved theme — picks the CARTO tile skin (dark/light). */
+  scheme: ThemeScheme;
+  /** Page background (ColorEnum.bg) shown under the tiles when over-panned. */
+  background: string;
 };
 
 const MapController = ({
@@ -42,13 +44,19 @@ const LocationWebMap = ({
   latitude,
   longitude,
   accent,
+  scheme,
+  background,
 }: LocationWebMapProps) => (
   <MapContainer
     center={[latitude, longitude]}
     zoom={ZOOM}
-    style={{ height: "100%", width: "100%" }}
+    style={{ height: "100%", width: "100%", background }}
   >
-    <TileLayer attribution={OSM_TILE_ATTRIBUTION} url={OSM_TILE_URL} />
+    <TileLayer
+      key={scheme}
+      attribution={CARTO_ATTRIBUTION_HTML}
+      url={cartoTileUrl(scheme)}
+    />
     <MapController latitude={latitude} longitude={longitude} />
     <Marker position={[latitude, longitude]} icon={mapDotIcon(accent)} />
   </MapContainer>

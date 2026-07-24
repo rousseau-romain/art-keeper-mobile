@@ -9,12 +9,10 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-import {
-  OSM_TILE_ATTRIBUTION,
-  OSM_TILE_URL,
-} from "@/shared/map/osm-style.constant";
+import { CARTO_ATTRIBUTION_HTML, cartoTileUrl } from "@/shared/map/basemap";
 import { mapDotIcon } from "@/shared/map/pin-icon";
 import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
+import type { ThemeScheme } from "@/theme/enums/theme-mode.enums";
 
 // Paris fallback when no pin has been set yet — mirrors LocationPicker (native).
 const FALLBACK = { latitude: 48.8566, longitude: 2.3522 };
@@ -25,6 +23,10 @@ type LocationWebMapProps = {
   longitude?: number | null;
   /** Accent colour for the pin (ColorEnum.primary). */
   accent: string;
+  /** Resolved theme — picks the CARTO tile skin (dark/light). */
+  scheme: ThemeScheme;
+  /** Page background (ColorEnum.bg) shown under the tiles when over-panned. */
+  background: string;
   onPick: (latitude: number, longitude: number) => void;
 };
 
@@ -65,6 +67,8 @@ const LocationWebMap = ({
   latitude,
   longitude,
   accent,
+  scheme,
+  background,
   onPick,
 }: LocationWebMapProps) => {
   const hasPin = latitude != null && longitude != null;
@@ -76,9 +80,13 @@ const LocationWebMap = ({
     <MapContainer
       center={center}
       zoom={ZOOM}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", background }}
     >
-      <TileLayer attribution={OSM_TILE_ATTRIBUTION} url={OSM_TILE_URL} />
+      <TileLayer
+        key={scheme}
+        attribution={CARTO_ATTRIBUTION_HTML}
+        url={cartoTileUrl(scheme)}
+      />
       <ClickToPick onPick={onPick} />
       <MapController latitude={latitude} longitude={longitude} />
       {hasPin && (

@@ -110,9 +110,11 @@ export const ArtistTerritory = ({
         <ArtworkGrid
           artworks={artworks}
           style={
-            Platform.OS !== "web" && {
-              paddingBottom: contentPadding.paddingBottom,
-            }
+            Platform.OS !== "web"
+              ? {
+                  paddingBottom: contentPadding.paddingBottom,
+                }
+              : null
           }
         />
       )}

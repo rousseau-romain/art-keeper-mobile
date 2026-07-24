@@ -29,7 +29,7 @@ export type ArtworkGridProps = ViewProps & {
  * (#418); the real columns apply post-layout (an accepted reflow, as in
  * `GridView`).
  */
-export const ArtworkGrid = ({ artworks, ...rest }: ArtworkGridProps) => {
+export const ArtworkGrid = ({ artworks, style, ...rest }: ArtworkGridProps) => {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) =>
     setWidth(e.nativeEvent.layout.width);
@@ -44,7 +44,7 @@ export const ArtworkGrid = ({ artworks, ...rest }: ArtworkGridProps) => {
       : undefined;
 
   return (
-    <View style={styles.grid} onLayout={onLayout} {...rest}>
+    <View style={[styles.grid, style]} onLayout={onLayout} {...rest}>
       {artworks.map((artwork) => (
         <View
           key={artwork.id}

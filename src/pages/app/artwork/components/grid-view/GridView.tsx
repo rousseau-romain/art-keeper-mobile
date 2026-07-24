@@ -130,7 +130,10 @@ export const GridView = ({
 };
 
 const styles = StyleSheet.create({
-  listContent: { gap: SpacingEnum.lg, flexGrow: 1 },
-  columnWrapper: { gap: SpacingEnum.lg },
+  listContent: {
+    gap: SpacingEnum.lg,
+    flexGrow: 1,
+  },
+  columnWrapper: { gap: SpacingEnum.lg, justifyContent: "space-between" },
   footerSpinner: { marginVertical: SpacingEnum.md },
 });

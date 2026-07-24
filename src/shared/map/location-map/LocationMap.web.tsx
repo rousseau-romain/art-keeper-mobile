@@ -16,7 +16,7 @@ export type LocationMapProps = {
 
 /** Read-only location preview (web) — a Leaflet map with a single accent pin. */
 export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
-  const { colors } = useTheme();
+  const { scheme, colors } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
@@ -28,6 +28,8 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
             latitude={latitude}
             longitude={longitude}
             accent={colors.primary}
+            scheme={scheme}
+            background={colors.bg}
           />
         </Suspense>
       ) : null}

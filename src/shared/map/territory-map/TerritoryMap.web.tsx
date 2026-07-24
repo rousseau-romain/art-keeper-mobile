@@ -25,7 +25,7 @@ export const TerritoryMap = ({
   selectedId,
   onSelect,
 }: TerritoryMapProps) => {
-  const { colors } = useTheme();
+  const { scheme, colors } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
@@ -36,6 +36,8 @@ export const TerritoryMap = ({
           <TerritoryWebMap
             artworks={artworks}
             accent={colors.primary}
+            scheme={scheme}
+            background={colors.bg}
             selectedId={selectedId}
             onSelect={onSelect}
           />

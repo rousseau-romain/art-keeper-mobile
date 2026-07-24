@@ -5,6 +5,7 @@ import { useCallback, useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkLeafletMarker } from "@/pages/app/artwork/components/artwork-map/ArtworkLeafletMarker";
+import { CARTO_ATTRIBUTION_HTML, cartoTileUrl } from "@/shared/map/basemap";
 import { useLeafletAutosize } from "@/shared/map/useLeafletAutosize";
 import { useTheme } from "@/theme/ThemeProvider";
 
@@ -89,8 +90,8 @@ const ArtworkMapLeaflet = ({
     >
       <TileLayer
         key={scheme}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url={`https://{s}.basemaps.cartocdn.com/${scheme}_all/{z}/{x}/{y}.png`}
+        attribution={CARTO_ATTRIBUTION_HTML}
+        url={cartoTileUrl(scheme)}
       />
       <MapController artworks={artworks} selectedId={selectedId} />
       {artworks.map((artwork) => (
