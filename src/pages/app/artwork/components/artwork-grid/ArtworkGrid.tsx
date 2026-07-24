@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { type LayoutChangeEvent, StyleSheet, View } from "react-native";
+import {
+  type LayoutChangeEvent,
+  StyleSheet,
+  View,
+  type ViewProps,
+} from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkCard } from "@/pages/app/artwork/components/artwork-card/ArtworkCard";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
@@ -7,7 +12,7 @@ import { SpacingEnum } from "@/theme/enums/scale.enums";
 // Minimum card width that decides how many columns fit (mirrors `GridView`).
 const MIN_CARD_WIDTH = 360;
 
-export type ArtworkGridProps = {
+export type ArtworkGridProps = ViewProps & {
   artworks: Artwork[];
 };
 
@@ -24,7 +29,7 @@ export type ArtworkGridProps = {
  * (#418); the real columns apply post-layout (an accepted reflow, as in
  * `GridView`).
  */
-export const ArtworkGrid = ({ artworks }: ArtworkGridProps) => {
+export const ArtworkGrid = ({ artworks, ...rest }: ArtworkGridProps) => {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) =>
     setWidth(e.nativeEvent.layout.width);
@@ -39,7 +44,7 @@ export const ArtworkGrid = ({ artworks }: ArtworkGridProps) => {
       : undefined;
 
   return (
-    <View style={styles.grid} onLayout={onLayout}>
+    <View style={styles.grid} onLayout={onLayout} {...rest}>
       {artworks.map((artwork) => (
         <View
           key={artwork.id}

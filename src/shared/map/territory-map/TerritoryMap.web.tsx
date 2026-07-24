@@ -13,10 +13,18 @@ const TerritoryWebMap = lazy(() => import("./TerritoryWebMap"));
 export type TerritoryMapProps = {
   /** The artist's pieces — one accent pin per piece. */
   artworks: Artwork[];
+  /** The highlighted piece, driven from the parent (mirrors the native map). */
+  selectedId?: string;
+  /** Fired when a pin is clicked — the parent tracks the selection. */
+  onSelect: (artwork: Artwork) => void;
 };
 
 /** Read-only territory preview (web) — a Leaflet map with one pin per piece. */
-export const TerritoryMap = ({ artworks }: TerritoryMapProps) => {
+export const TerritoryMap = ({
+  artworks,
+  selectedId,
+  onSelect,
+}: TerritoryMapProps) => {
   const { colors } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -25,7 +33,12 @@ export const TerritoryMap = ({ artworks }: TerritoryMapProps) => {
     <View style={styles.map}>
       {isMounted ? (
         <Suspense fallback={null}>
-          <TerritoryWebMap artworks={artworks} accent={colors.primary} />
+          <TerritoryWebMap
+            artworks={artworks}
+            accent={colors.primary}
+            selectedId={selectedId}
+            onSelect={onSelect}
+          />
         </Suspense>
       ) : null}
     </View>

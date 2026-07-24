@@ -46,7 +46,7 @@ export const NearbyPanel = ({ artworks, radius }: NearbyPanelProps) => {
 };
 
 const styles = StyleSheet.create({
-  panel: { gap: SpacingEnum.sm },
+  panel: { gap: SpacingEnum.sm, paddingHorizontal: SpacingEnum.lg },
   eyebrow: { textTransform: "uppercase", letterSpacing: 1 },
   thumbs: { flexDirection: "row", flexWrap: "wrap", gap: SpacingEnum.sm },
 });

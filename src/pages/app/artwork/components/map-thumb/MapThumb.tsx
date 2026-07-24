@@ -1,7 +1,6 @@
 import { Link } from "expo-router";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import type { Artwork } from "@/lib/api/artworks";
-import { Text } from "@/shared/ui/text/Text";
 import type { Palette } from "@/theme/enums/color.enums";
 import {
   ControlHeightEnum,
@@ -44,15 +43,6 @@ export const MapThumb = ({ artwork, isActive }: MapThumbProps) => {
             resizeMode="cover"
           />
         </View>
-        <Text
-          font="mono"
-          size="xs"
-          numberOfLines={1}
-          color={isActive ? "primary" : "textMuted"}
-          style={styles.label}
-        >
-          {artwork.title}
-        </Text>
       </Pressable>
     </Link>
   );

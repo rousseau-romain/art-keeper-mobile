@@ -1,8 +1,9 @@
 import { latLngBounds } from "leaflet";
 import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 
 import type { Artwork } from "@/lib/api/artworks";
+import { MapThumb } from "@/pages/app/artwork/components/map-thumb/MapThumb";
 import {
   OSM_TILE_ATTRIBUTION,
   OSM_TILE_URL,
@@ -18,12 +19,18 @@ type TerritoryWebMapProps = {
   artworks: Artwork[];
   /** Accent colour for the pins (ColorEnum.primary). */
   accent: string;
+  /** The highlighted piece (drives the strip below and the thumb accent). */
+  selectedId?: string;
+  /** Fired when a pin is clicked — the parent tracks the selection. */
+  onSelect: (artwork: Artwork) => void;
 };
 
 // Frames the map to every pin (`fitBounds`) once the container is measured, or
 // centers on the single piece. Re-fits when the artwork set changes (the map
 // instance is reused across profile → profile navigation).
-const MapController = ({ artworks }: Pick<TerritoryWebMapProps, "artworks">) => {
+const MapController = ({
+  artworks,
+}: Pick<TerritoryWebMapProps, "artworks">) => {
   const map = useMap();
   useLeafletAutosize(map);
   useEffect(() => {
@@ -46,7 +53,12 @@ const MapController = ({ artworks }: Pick<TerritoryWebMapProps, "artworks">) => 
  * never during Expo's static (Node) prerender. One accent pin per piece, framed
  * to fit them all.
  */
-const TerritoryWebMap = ({ artworks, accent }: TerritoryWebMapProps) => {
+const TerritoryWebMap = ({
+  artworks,
+  accent,
+  selectedId,
+  onSelect,
+}: TerritoryWebMapProps) => {
   const first = artworks[0];
   return (
     <MapContainer
@@ -61,7 +73,13 @@ const TerritoryWebMap = ({ artworks, accent }: TerritoryWebMapProps) => {
           key={artwork.id}
           position={[artwork.latitude, artwork.longitude]}
           icon={mapDotIcon(accent)}
-        />
+          eventHandlers={{ click: () => onSelect(artwork) }}
+        >
+          {/* Click the pin → a popup card (photo + title) linking to the piece. */}
+          <Popup closeButton={false}>
+            <MapThumb artwork={artwork} isActive={artwork.id === selectedId} />
+          </Popup>
+        </Marker>
       ))}
     </MapContainer>
   );

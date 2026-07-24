@@ -7,6 +7,12 @@ import { IconButton } from "@/shared/ui/icon-button/IconButton";
 import { Stack } from "@/shared/ui/stack/Stack";
 import { useBreakpoint } from "@/theme/hooks/useBreakpoint";
 
+// Anchor the stack on the list, so a deep link to a nested `[slug]` seeds the
+// list behind it (a sane back target) — mirrors the artworks stack.
+export const unstable_settings = {
+  initialRouteName: "index",
+};
+
 export default function ArtistsLayout() {
   const { t: tr } = useTranslation();
   const router = useRouter();
@@ -23,8 +29,8 @@ export default function ArtistsLayout() {
     <Stack
       screenOptions={{
         headerShown: !webHeader,
-        // The profile is public; mirror the artworks stack's header-right entry
-        // points (Sign in for signed-out visitors + Settings).
+        // The list + profile are public; mirror the artworks stack's header-right
+        // entry points (Sign in for signed-out visitors + Settings).
         headerRight: () => (
           <HeaderRight>
             {status !== "authenticated" && (
@@ -43,6 +49,17 @@ export default function ArtistsLayout() {
         ),
       }}
     >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: tr("artist.title.index"),
+          // Le H1 du corps (IndexScreen) porte le titre sur web ; le header ne
+          // sert que de barre de boutons. Évite le doublon visuel en mobile web
+          // (header + H1) et le double <h1> sémantique (react-navigation force le
+          // titre du header en <h1> sur web).
+          headerTitle: Platform.OS === "web" ? () => null : undefined,
+        }}
+      />
       <Stack.Screen
         name="[slug]/index"
         options={{ title: tr("artist.title.detail") }}

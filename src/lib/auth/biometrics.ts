@@ -1,3 +1,5 @@
+import * as IntentLauncher from "expo-intent-launcher";
+import * as Linking from "expo-linking";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Platform } from "react-native";
 
@@ -69,6 +71,30 @@ export const getBiometricLabelKey = (
     default:
       return "auth.biometric";
   }
+};
+
+/**
+ * Open the native screen where the user can enroll a biometric, so a
+ * "not-enrolled" device can be made ready without leaving for the OS by hand.
+ * Android deep-links straight to the biometric enrollment flow (falling back to
+ * the security settings on pre-API-30 devices that lack the dedicated action).
+ * iOS forbids deep-linking to Face ID/Touch ID enrollment, so it opens the app's
+ * settings page — the copy points the user on to Settings › Face ID & Passcode.
+ */
+export const openBiometricEnrollment = async (): Promise<void> => {
+  if (Platform.OS === "android") {
+    try {
+      await IntentLauncher.startActivityAsync(
+        IntentLauncher.ActivityAction.BIOMETRIC_ENROLL,
+      );
+    } catch {
+      await IntentLauncher.startActivityAsync(
+        IntentLauncher.ActivityAction.SECURITY_SETTINGS,
+      );
+    }
+    return;
+  }
+  await Linking.openSettings();
 };
 
 /**

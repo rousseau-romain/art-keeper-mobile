@@ -7,7 +7,7 @@ import {
   Vibrate as VibrateIcon,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { WebHeader } from "@/shared/navigation/web-header/WebHeader";
@@ -32,7 +32,7 @@ export default function TabsLayout() {
   // render agree on the bottom bar — the swap is a structural (element-type)
   // branch that would throw a hydration mismatch otherwise — then flip to the
   // WebHeader post-mount.
-  const webHeader = Platform.OS === "web" && wide;
+  const webHeader = wide;
 
   // No blanket auth guard here: the `artworks` browse + detail routes are public
   // (SEO / shared links). `create-artwork` is gated below with `Tabs.Protected`
@@ -51,7 +51,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: [
           styles.tabBar,
-          Platform.OS === "web" && {
+          {
             height: ControlHeightEnum.lg + insets.bottom,
             paddingBottom: insets.bottom,
           },
@@ -71,11 +71,6 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="artists"
         options={{
-          // Detail-only route (no artist list yet) — hide the tab like admin/dev.
-          // The route stays in (tabs) so the chrome (bottom bar / WebHeader) shows
-          // on the artist detail, reached via <Link> from an artwork. Drop this
-          // line once an `artists/index.tsx` list exists to reveal the tab.
-          href: null,
           title: tr("artist.tab"),
           tabBarIcon: ({ color, size }) => (
             <SprayCanIcon size={size} color={color} strokeWidth={1.8} />
@@ -132,9 +127,8 @@ export default function TabsLayout() {
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     tabBar: {
-      borderTopWidth: 1.5,
+      borderTopWidth: 0,
       backgroundColor: c.surface,
-      borderTopColor: c.borderSoft,
     },
     tabLabel: { fontSize: FontSizeEnum.xs, fontFamily: FONTS.mono },
   });

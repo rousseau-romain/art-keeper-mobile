@@ -215,8 +215,14 @@ export const fr: Resources = {
   artist: {
     tab: "Artistes",
     title: {
+      index: "Artistes",
       detail: "Artiste",
     },
+    // L'onglet liste des artistes.
+    loading: "Chargement des artistes…",
+    loadError: "Impossible de charger les artistes.",
+    empty: "Aucun artiste pour l'instant.",
+    retry: "Réessayer",
     meta: {
       descriptionFallback: "Découvrez le street art de {{name}} sur ArtKeeper.",
     },
@@ -228,7 +234,7 @@ export const fr: Resources = {
       pieceLabel_other: "œuvres",
       followerLabel_one: "abonné",
       followerLabel_other: "abonnés",
-      territory: "Territoire",
+      artworksBy: "Œuvres de {{name}}",
       noPieces: "Pas encore d'œuvre.",
     },
     notFound: "Artiste introuvable.",
@@ -259,7 +265,7 @@ export const fr: Resources = {
     biometricHint:
       "Demander {{method}} au lancement et à votre retour après un moment.",
     biometricNotEnrolled:
-      "Configurez {{method}} dans les réglages de l'appareil pour l'activer.",
+      "Configurez {{method}} dans les réglages — appuyez pour ouvrir.",
     biometricUnavailable:
       "Le déverrouillage biométrique n'est pas disponible sur cet appareil.",
     signOut: "Se déconnecter",
@@ -346,6 +352,7 @@ export const fr: Resources = {
     appearance: "Choisir le thème de l'application",
     browseView: "Choisir la vue de navigation par défaut",
     biometricToggle: "Activer le déverrouillage biométrique",
+    biometricEnroll: "Configurer {{method}} dans les réglages",
     tagSourceToggle: "Choisir l'ordre des tags suggérés",
     reviewModeToggle: "Choisir le mode de revue des propositions",
     reviewBefore: "Afficher la version actuelle",

@@ -1,7 +1,6 @@
 import { StyleSheet } from "react-native";
 
 import { Text, type TextProps } from "@/shared/ui/text/Text";
-import { SpacingEnum } from "@/theme/enums/scale.enums";
 
 export type SectionTitleProps = TextProps & {
   label: string;
@@ -23,6 +22,5 @@ const styles = StyleSheet.create({
   title: {
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: SpacingEnum.md,
   },
 });

@@ -223,8 +223,14 @@ export const en = {
   artist: {
     tab: "Artists",
     title: {
+      index: "Artists",
       detail: "Artist",
     },
+    // The artists list tab.
+    loading: "Loading artists…",
+    loadError: "Couldn't load artists.",
+    empty: "No artists yet.",
+    retry: "Retry",
     meta: {
       descriptionFallback: "Discover {{name}}'s street art on ArtKeeper.",
     },
@@ -236,7 +242,7 @@ export const en = {
       pieceLabel_other: "pieces",
       followerLabel_one: "follower",
       followerLabel_other: "followers",
-      territory: "Territory",
+      artworksBy: "Artworks from {{name}}",
       noPieces: "No pieces yet.",
     },
     notFound: "Artist not found.",
@@ -270,7 +276,7 @@ export const en = {
     biometricHint:
       "Ask for {{method}} on launch and when you return after a while.",
     biometricNotEnrolled:
-      "Set up {{method}} in your device settings to turn this on.",
+      "Set up {{method}} in your device settings — tap to open.",
     biometricUnavailable: "Biometric unlock isn't available on this device.",
     signOut: "Sign out",
     // One-time post-login offer (Alert).
@@ -359,6 +365,7 @@ export const en = {
     appearance: "Choose the app theme",
     browseView: "Choose the default browse view",
     biometricToggle: "Toggle biometric unlock",
+    biometricEnroll: "Set up {{method}} in device settings",
     tagSourceToggle: "Choose how suggested tags are ordered",
     reviewModeToggle: "Choose how to review proposals",
     reviewBefore: "Show current version",

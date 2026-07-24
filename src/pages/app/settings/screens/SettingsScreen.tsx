@@ -1,7 +1,14 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, Pressable, StyleSheet, Switch, View } from "react-native";
+import {
+  AppState,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Switch,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -11,6 +18,7 @@ import {
   getBiometricAvailability,
   getBiometricKind,
   getBiometricLabelKey,
+  openBiometricEnrollment,
 } from "@/lib/auth/biometrics";
 import { useLocale } from "@/lib/i18n/I18nProvider";
 import { type Language, SUPPORTED_LANGUAGES } from "@/lib/i18n/index";
@@ -27,7 +35,7 @@ import { AuthButton } from "@/shared/ui/auth-button/AuthButton";
 import { Icon } from "@/shared/ui/icon/Icon";
 import { Picker } from "@/shared/ui/picker/Picker";
 import { Text } from "@/shared/ui/text/Text";
-import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
+import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 import {
   ThemeModeEnum,
@@ -36,6 +44,21 @@ import {
 import { useTheme } from "@/theme/ThemeProvider";
 
 export type SettingsScreenProps = Record<string, never>;
+
+type SettingRowConfig = {
+  key: string;
+  label: string;
+  hint: string;
+  control: ReactNode;
+  onHintPress?: () => void;
+  hintActionLabel?: string;
+};
+
+type SettingSection = {
+  key: string;
+  title: string;
+  rows: SettingRowConfig[];
+};
 
 // Language names are rendered as endonyms; the key maps each supported language
 // to its `settings.language*` translation entry.
@@ -114,6 +137,12 @@ export const SettingsScreen = () => {
   useEffect(() => {
     getBiometricAvailability().then(setAvailability);
     getBiometricKind().then(setKind);
+    // Re-check when the app returns to the foreground: the user may have just
+    // enrolled a biometric in system settings, which should enable the toggle.
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") getBiometricAvailability().then(setAvailability);
+    });
+    return () => sub.remove();
   }, []);
 
   const onToggle = async (next: boolean) => {
@@ -126,7 +155,7 @@ export const SettingsScreen = () => {
 
   const method = tr(getBiometricLabelKey(kind));
 
-  const sections = [
+  const sections: SettingSection[] = [
     // Biometrics are a native-only capability — hide the security section on web.
     ...(Platform.OS === "web"
       ? []
@@ -144,6 +173,13 @@ export const SettingsScreen = () => {
                     : "settings.biometricHint",
                   { method },
                 ),
+                // Only the "not-enrolled" case is actionable — tap opens the
+                // native enrollment screen. "no-hardware" has no path to fix.
+                onHintPress:
+                  availability === "not-enrolled"
+                    ? openBiometricEnrollment
+                    : undefined,
+                hintActionLabel: tr("a11y.biometricEnroll", { method }),
                 control: (
                   <Switch
                     value={isBiometricEnabled}
@@ -250,8 +286,14 @@ export const SettingsScreen = () => {
   ];
 
   return (
-    <WrapperView
-      style={[styles.screen, { paddingTop: insets.top + SpacingEnum.xl }]}
+    <WrapperScrollView
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingTop: insets.top + SpacingEnum.xl,
+          paddingBottom: insets.bottom + SpacingEnum.xl,
+        },
+      ]}
     >
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} accessibilityRole="button">
@@ -263,32 +305,44 @@ export const SettingsScreen = () => {
       </View>
 
       <View style={styles.sections}>
-        {sections.map(({ key, title, rows }) => (
+        {sections.map(({ key, title, rows }, i) => (
           <View key={key}>
             <SectionTitle label={title} />
-            {rows.map(({ key: rowKey, label, hint, control }) => (
-              <SettingRow key={rowKey} label={label} hint={hint}>
-                {control}
-              </SettingRow>
-            ))}
+            {rows.map(
+              ({
+                key: rowKey,
+                label,
+                hint,
+                control,
+                onHintPress,
+                hintActionLabel,
+              }) => (
+                <SettingRow
+                  key={rowKey}
+                  label={label}
+                  hint={hint}
+                  onHintPress={onHintPress}
+                  hintActionLabel={hintActionLabel}
+                  hasBottomBorder={i !== sections.length - 1}
+                >
+                  {control}
+                </SettingRow>
+              ),
+            )}
           </View>
         ))}
       </View>
 
-      <View
-        style={[
-          styles.footer,
-          { paddingBottom: insets.bottom + SpacingEnum.xl },
-        ]}
-      >
+      <View style={styles.footer}>
         <AuthButton variant="ghost" />
       </View>
-    </WrapperView>
+    </WrapperScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
+  content: {
+    flexGrow: 1,
     paddingHorizontal: SpacingEnum.xl,
   },
   header: {

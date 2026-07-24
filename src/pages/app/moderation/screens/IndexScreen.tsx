@@ -16,6 +16,7 @@ import { useReviewMode } from "@/pages/app/moderation/hooks/useReviewMode";
 import { buildProposalDiff } from "@/pages/app/moderation/proposal-diff";
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHaptics } from "@/shared/hooks/useHaptics";
+import { useSafeHeight } from "@/shared/hooks/useSafeHeight";
 import { Button } from "@/shared/ui/button/Button";
 import { Centered } from "@/shared/ui/centered/Centered";
 import { Icon } from "@/shared/ui/icon/Icon";
@@ -36,6 +37,7 @@ export const IndexScreen = () => {
   const { wide } = useBreakpoint();
   const styles = useThemeStyles(createStyles);
   const haptic = useHaptics();
+  const { contentPadding } = useSafeHeight();
 
   useDocumentTitle(tr("moderation.title.index"));
 
@@ -287,14 +289,17 @@ export const IndexScreen = () => {
     );
   };
 
-  return <WrapperView style={styles.screen}>{renderBody()}</WrapperView>;
+  return (
+    <WrapperView style={[styles.screen, contentPadding]}>
+      {renderBody()}
+    </WrapperView>
+  );
 };
 
 const createStyles = (c: Palette) =>
   StyleSheet.create({
     screen: {
       paddingHorizontal: SpacingEnum.xl,
-      paddingTop: SpacingEnum.xl,
     },
     state: { gap: SpacingEnum.md },
     empty: { textAlign: "center" },

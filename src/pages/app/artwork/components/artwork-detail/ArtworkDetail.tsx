@@ -9,6 +9,7 @@ import { ArtworkLocationBand } from "@/pages/app/artwork/components/artwork-loca
 import { ArtworkMeta } from "@/pages/app/artwork/components/artwork-meta/ArtworkMeta";
 import { MoreByArtist } from "@/pages/app/artwork/components/more-by-artist/MoreByArtist";
 import { NearbyPanel } from "@/pages/app/artwork/components/nearby-panel/NearbyPanel";
+import { useSafeHeight } from "@/shared/hooks/useSafeHeight";
 import { Article } from "@/shared/ui/seo/article/Article";
 import { SplitRow } from "@/shared/ui/split-row/SplitRow";
 import { WrapperScrollView } from "@/shared/ui/wrapper/wrapper-scroll-view/WrapperScrollView";
@@ -48,6 +49,7 @@ export const ArtworkDetail = ({
 }: ArtworkDetailProps) => {
   const { t: tr } = useTranslation();
   const { wide } = useBreakpoint();
+  const { contentPadding } = useSafeHeight();
 
   // Descriptive alt for the hero — the artwork *is* the page's content, so an
   // empty alt would drop it from screen readers and Google Images. Names the
@@ -57,7 +59,10 @@ export const ArtworkDetail = ({
     : tr("a11y.heroAlt", { title: artwork.title });
 
   return (
-    <WrapperScrollView isMain contentContainerStyle={styles.main}>
+    <WrapperScrollView
+      isMain
+      contentContainerStyle={[styles.main, contentPadding]}
+    >
       <Article>
         {/* Verified only: an unverified piece is noindex, so it gets no
             indexable structured data either (web-only; no-op on native). */}
@@ -68,6 +73,8 @@ export const ArtworkDetail = ({
           </>
         )}
         <SplitRow style={styles.splitRow}>
+          {/* Zoom transition disabled — see ArtworkCard for why. Re-wrap in
+              <Link.AppleZoomTarget> when the expo-router/rn-screens bug is fixed. */}
           <ArtworkHero
             imageUrl={artwork.imageUrl}
             alt={heroAlt}
@@ -89,5 +96,5 @@ export const ArtworkDetail = ({
 
 const styles = StyleSheet.create({
   main: { gap: SpacingEnum.lg },
-  splitRow: { paddingHorizontal: SpacingEnum.lg, gap: SpacingEnum.lg },
+  splitRow: { gap: SpacingEnum.lg },
 });

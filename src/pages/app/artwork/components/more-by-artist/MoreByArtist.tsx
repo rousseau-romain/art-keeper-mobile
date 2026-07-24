@@ -78,9 +78,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
     gap: SpacingEnum.sm,
-    paddingHorizontal: SpacingEnum.lg,
   },
-  heading: { textTransform: "uppercase" },
-  row: { gap: SpacingEnum.md, paddingHorizontal: SpacingEnum.lg },
+  heading: { textTransform: "uppercase", paddingHorizontal: SpacingEnum.lg },
+  row: { gap: SpacingEnum.md },
   cardWrap: { width: CARD_WIDTH },
 });

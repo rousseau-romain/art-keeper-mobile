@@ -61,5 +61,7 @@ const createStyles = (c: Palette) =>
       borderTopColor: c.borderSoft,
       gap: SpacingEnum.md,
       padding: SpacingEnum.sm,
+      flex: 1,
+      justifyContent: "space-evenly",
     },
   });

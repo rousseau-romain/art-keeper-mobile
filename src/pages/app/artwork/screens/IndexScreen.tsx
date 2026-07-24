@@ -1,7 +1,7 @@
 import { useIsFocused, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import {
   type Artwork,
   type ArtworkPage,
@@ -13,17 +13,23 @@ import {
 import { browseTitle } from "@/lib/seo/titles";
 import { getInitialBrowseView } from "@/pages/app/artwork/browse-view-store";
 import { ErrorState } from "@/pages/app/artwork/components/error-state/ErrorState";
+import { FilterPill } from "@/pages/app/artwork/components/filter-pill/FilterPill";
 import { GridView } from "@/pages/app/artwork/components/grid-view/GridView";
 import { LoadingState } from "@/pages/app/artwork/components/loading-state/LoadingState";
+import { MapCarousel } from "@/pages/app/artwork/components/map-carousel/MapCarousel";
 import { MapView } from "@/pages/app/artwork/components/map-view/MapView";
 import { SiteJsonLd } from "@/pages/app/artwork/components/site-json-ld/SiteJsonLd";
-import type { ArtworkView } from "@/pages/app/artwork/components/view-toggle/ViewToggle";
+import {
+  type ArtworkView,
+  ViewToggle,
+} from "@/pages/app/artwork/components/view-toggle/ViewToggle";
 import { useArtworkFilters } from "@/pages/app/artwork/hooks/useArtworkFilters";
 import { useArtworkFiltersUrlSync } from "@/pages/app/artwork/hooks/useArtworkFiltersUrlSync";
 import { useDefaultBrowseView } from "@/pages/app/artwork/hooks/useDefaultBrowseView";
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { useHaptics } from "@/shared/hooks/useHaptics";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
+import { useSafeHeight } from "@/shared/hooks/useSafeHeight";
 import { H1 } from "@/shared/ui/seo/h1/H1";
 import { Text } from "@/shared/ui/text/Text";
 import { WrapperView } from "@/shared/ui/wrapper/wrapper-view/WrapperView";
@@ -91,11 +97,11 @@ export const IndexScreen = ({
   // from the same URL by `useArtworkFiltersUrlSync`, so the values converge.
   const urlFilters = useMemo(
     () => paramsToBrowseFilters(initialQuery, initialScope, initialTags),
-    [initialQuery, initialScope, initialTags],
+    [initialQuery, initialScope, initialTags]
   );
   const storeFilters = useMemo(
     () => paramsToBrowseFilters(search, searchScope, selectedTags),
-    [search, searchScope, selectedTags],
+    [search, searchScope, selectedTags]
   );
   const filters = isHydrated ? storeFilters : urlFilters;
 
@@ -104,7 +110,7 @@ export const IndexScreen = ({
   const urlCount = useMemo(
     () =>
       toTagArray(initialTags).length + ((initialQuery ?? "").trim() ? 1 : 0),
-    [initialTags, initialQuery],
+    [initialTags, initialQuery]
   );
   const filterCount = isHydrated ? storeCount : urlCount;
 
@@ -132,7 +138,7 @@ export const IndexScreen = ({
     filters,
     "",
     "all",
-    isHydrated ? undefined : initialPage,
+    isHydrated ? undefined : initialPage
   );
 
   const onOpenFilters = useCallback(() => {
@@ -162,7 +168,7 @@ export const IndexScreen = ({
       haptic("selection");
       setSelectedId(artwork.id);
     },
-    [haptic],
+    [haptic]
   );
 
   // RefreshControl must reflect ONLY a user-initiated pull, not the background
@@ -184,90 +190,78 @@ export const IndexScreen = ({
   const onEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const { headerHeight, tabBarHeight, contentPadding } = useSafeHeight();
 
-  const body = () => {
-    // Initial load: nothing cached yet.
-    if (isLoading) return <LoadingState />;
+  const gridControls = () => (
+    <View style={[styles.gridControls, { top: headerHeight }]}>
+      <FilterPill count={filterCount} onPress={onOpenFilters} />
+      <ViewToggle view={view} onChange={onChangeView} />
+    </View>
+  );
 
-    // Hard error with no data to show.
-    if (isError && artworks.length === 0)
-      return <ErrorState error={error} onRetry={refetch} />;
-
-    // Map view.
-    if (view === "map")
-      return (
+  if (isLoading) {
+    return <LoadingState />;
+  } else if (isError && artworks.length === 0) {
+    return <ErrorState error={error} onRetry={refetch} />;
+  } else if (view === "map") {
+    return (
+      <WrapperView>
+        {view === "map" && (
+          <View style={[styles.mapCaroussel, { bottom: tabBarHeight }]}>
+            <MapCarousel artworks={artworks} selectedId={selectedId} />
+          </View>
+        )}
         <MapView
           artworks={artworks}
           selectedId={selectedId}
           onSelect={onSelectArtwork}
-          view={view}
-          onChangeView={onChangeView}
-          filterCount={filterCount}
-          onOpenFilters={onOpenFilters}
         />
-      );
-
-    // Grid view.
-    return (
-      <GridView
-        artworks={artworks}
-        view={view}
-        onChangeView={onChangeView}
-        filterCount={filterCount}
-        onOpenFilters={onOpenFilters}
-        onResetFilters={onResetFilters}
-        isRefreshing={isManualRefreshing}
-        onRefresh={onRefresh}
-        onEndReached={onEndReached}
-        isFetchingNextPage={isFetchingNextPage}
-      />
+        {gridControls()}
+      </WrapperView>
     );
-  };
-
-  return (
-    <WrapperView isMain>
-      {/* Site-level Organization + WebSite structured data (web-only; no-op on
-          native). Only on the focused browse — the app's real entry document —
-          never on the seeded background anchor behind a deep-linked sibling, whose
-          canonical is the artwork, not the site. `useIsFocused` derives from the
-          URL, so the branch is hydration-safe. */}
-      {isFocused && <SiteJsonLd />}
-      {/* The listing's page title, above the grid.
-
-          Web + grid only. Native already shows the title in its navigator header,
-          so rendering it again here would just duplicate it; the map is full-bleed
-          and a title bar above it would only eat viewport. Neither branch costs
-          anything in SEO: a crawler carries no `browse-view` cookie, so it always
-          lands on the `grid` default (see `browse-view-store.web.ts`) — the H1 is
-          in the crawled HTML every time.
-
-          It carries the *heading semantics* only when this screen is the focused
-          route: the same screen is also seeded behind a deep-linked sibling
-          (`ssr-loader-anchor.md`), and an unfocused anchor's <h1> would land in
-          that document's outline ahead of the real one — putting "Browse" above
-          the artwork's own title. The text renders either way, so the title never
-          blinks out from under the `filters` sheet (a formsheet overlays the
-          listing, which stays visible); only its role changes, and that URL is not
-          an indexed document anyway.
-
-          Every condition is deterministic on the server and the client's first
-          render — `Platform` is a constant, `view` is cookie-seeded, and
-          `useIsFocused` derives from the URL — so the branch is hydration-safe. */}
-      {Platform.OS === "web" &&
-        view === "grid" &&
-        (isFocused ? (
-          <H1 style={styles.title}>{heading}</H1>
-        ) : (
-          <Text font="display" size="xxl" style={styles.title}>
-            {heading}
-          </Text>
-        ))}
-      {body()}
-    </WrapperView>
-  );
+  } else if (view === "grid") {
+    return (
+      <WrapperView isMain>
+        {isFocused && <SiteJsonLd />}
+        {Platform.OS === "web" &&
+          (isFocused ? (
+            <H1 style={styles.title}>{heading}</H1>
+          ) : (
+            <Text font="display" size="xxl" style={styles.title}>
+              {heading}
+            </Text>
+          ))}
+        <GridView
+          artworks={artworks}
+          filterCount={filterCount}
+          onResetFilters={onResetFilters}
+          isRefreshing={isManualRefreshing}
+          onRefresh={onRefresh}
+          onEndReached={onEndReached}
+          isFetchingNextPage={isFetchingNextPage}
+          contentContainerStyle={contentPadding}
+        />
+        {gridControls()}
+      </WrapperView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
+  gridControls: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: SpacingEnum.sm,
+    position: "absolute",
+    zIndex: 1,
+    width: "100%",
+  },
+  mapCaroussel: {
+    paddingVertical: SpacingEnum.sm,
+    position: "absolute",
+    zIndex: 1,
+    width: "100%",
+  },
   // Uppercase to match the detail page's H1 (`ArtworkMeta`). The bottom padding is
   // the smaller step because `GridView`/`MapView` overlay their controls row at
   // the top of their own container, right under this.

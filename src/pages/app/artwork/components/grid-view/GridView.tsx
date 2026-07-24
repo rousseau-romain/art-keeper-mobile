@@ -1,20 +1,17 @@
+import { useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  type FlatListProps,
+  type ListRenderItem,
   RefreshControl,
   StyleSheet,
   useWindowDimensions,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Artwork } from "@/lib/api/artworks";
 import { ArtworkCard } from "@/pages/app/artwork/components/artwork-card/ArtworkCard";
 import { EmptyState } from "@/pages/app/artwork/components/empty-state/EmptyState";
-import { FilterPill } from "@/pages/app/artwork/components/filter-pill/FilterPill";
-import {
-  type ArtworkView,
-  ViewToggle,
-} from "@/pages/app/artwork/components/view-toggle/ViewToggle";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { SpacingEnum } from "@/theme/enums/scale.enums";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -25,30 +22,25 @@ const MIN_CARD_WIDTH = 360;
 
 export type GridViewProps = {
   artworks: Artwork[];
-  view: ArtworkView;
-  onChangeView: (view: ArtworkView) => void;
   filterCount: number;
-  onOpenFilters: () => void;
   onResetFilters: () => void;
   isRefreshing: boolean;
   onRefresh: () => void;
   onEndReached: () => void;
   isFetchingNextPage: boolean;
+  contentContainerStyle?: FlatListProps<Artwork>["contentContainerStyle"];
 };
 
 export const GridView = ({
   artworks,
-  view,
-  onChangeView,
   filterCount,
-  onOpenFilters,
   onResetFilters,
   isRefreshing,
   onRefresh,
   onEndReached,
   isFetchingNextPage,
+  contentContainerStyle,
 }: GridViewProps) => {
-  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const isHydrated = useIsHydrated();
   const { colors } = useTheme();
@@ -74,71 +66,71 @@ export const GridView = ({
         numColumns
       : undefined;
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.gridControls}>
-        <FilterPill count={filterCount} onPress={onOpenFilters} />
-        <ViewToggle view={view} onChange={onChangeView} />
+  // Stable renderItem so a re-render around navigation doesn't re-create each
+  // card — that would tear down and re-register its Link.AppleZoom source view
+  // under a new id, orphaning the id the push carried and dropping the zoom
+  // transition to a plain push ("No source view found for identifier …").
+  const renderItem = useCallback<ListRenderItem<Artwork>>(
+    ({ item }) => (
+      <View style={{ width: itemWidth }}>
+        <ArtworkCard
+          artwork={item}
+          href={`/artworks/${item.slug}`}
+          hideHorizontalBorder={numColumns === 1}
+        />
       </View>
-      <FlatList
-        data={artworks}
-        keyExtractor={(item) => item.id}
-        // numColumns is fixed at mount, so the list must remount when the
-        // column count changes (fold/unfold, rotate) — hence the key.
-        key={`grid-${numColumns}`}
-        numColumns={numColumns}
-        columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + SpacingEnum.xl },
-        ]}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
+    ),
+    [itemWidth, numColumns]
+  );
+
+  return (
+    <FlatList
+      data={artworks}
+      keyExtractor={(item) => item.id}
+      // numColumns is fixed at mount, so the list must remount when the
+      // column count changes (fold/unfold, rotate) — hence the key.
+      key={`grid-${numColumns}`}
+      numColumns={numColumns}
+      // Native detaches clipped subviews by default (Android), which tears down
+      // the Link.AppleZoom source view — so at push time expo-router logs "No
+      // source view found for identifier …" and falls back to a plain push. Keep
+      // the source views attached so the zoom transition can measure them.
+      removeClippedSubviews={false}
+      columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
+      contentContainerStyle={[styles.listContent, contentContainerStyle]}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.primary}
+        />
+      }
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.5}
+      renderItem={renderItem}
+      // --- Empty: loaded successfully but no rows ---
+      ListEmptyComponent={
+        <EmptyState
+          isFiltered={filterCount > 0}
+          onResetFilters={onResetFilters}
+        />
+      }
+      // --- Load-more spinner ---
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <ActivityIndicator
+            color={colors.primary}
+            style={styles.footerSpinner}
           />
-        }
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
-        renderItem={({ item }) => (
-          <View style={{ width: itemWidth }}>
-            <ArtworkCard artwork={item} href={`/artworks/${item.slug}`} />
-          </View>
-        )}
-        // --- Empty: loaded successfully but no rows ---
-        ListEmptyComponent={
-          <EmptyState
-            isFiltered={filterCount > 0}
-            onResetFilters={onResetFilters}
-          />
-        }
-        // --- Load-more spinner ---
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator
-              color={colors.primary}
-              style={styles.footerSpinner}
-            />
-          ) : null
-        }
-      />
-    </View>
+        ) : null
+      }
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  gridControls: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: SpacingEnum.sm,
-    position: "absolute",
-    zIndex: 1,
-    width: "100%",
-  },
-  listContent: { padding: SpacingEnum.lg, gap: SpacingEnum.lg, flexGrow: 1 },
+  listContent: { gap: SpacingEnum.lg, flexGrow: 1 },
   columnWrapper: { gap: SpacingEnum.lg },
   footerSpinner: { marginVertical: SpacingEnum.md },
 });

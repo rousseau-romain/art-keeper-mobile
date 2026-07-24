@@ -17,15 +17,26 @@ export const WrapperScrollView = ({
   children,
   ...rest
 }: WrapperScrollViewProps) => {
+  // Le `gap` du contentContainer n'espace que ses enfants directs. Sous `isMain`,
+  // le seul enfant direct est le `<Main>`, donc le `gap` serait inerte : on le
+  // déplace sur le `<Main>` pour qu'il espace `<Article>` / sections comme sans
+  // `isMain`. Le reste (padding de dégagement du header) reste sur le conteneur.
+  const { gap, ...containerRest } = isMain
+    ? StyleSheet.flatten(contentContainerStyle) ?? {}
+    : { gap: undefined };
   return (
     <ScrollView
       style={[styles.screen, style]}
-      contentContainerStyle={isMain ? null : contentContainerStyle}
+      contentContainerStyle={isMain ? containerRest : contentContainerStyle}
       showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       {...rest}
     >
       {isMain ? (
-        <Main style={contentContainerStyle}>{children}</Main>
+        // `flexGrow` reste sur le contentContainer (ci-dessus) ET est répercuté
+        // sur le `<Main>` : sans quoi le `<Main>` se dimensionnerait à son contenu
+        // et un enfant en `flex: 1` (ex. la carte territoire) n'aurait pas d'espace
+        // à remplir jusqu'au bas du viewport.
+        <Main style={{ gap, flexGrow: containerRest.flexGrow }}>{children}</Main>
       ) : (
         children
       )}

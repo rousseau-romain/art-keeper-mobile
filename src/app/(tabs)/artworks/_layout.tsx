@@ -55,7 +55,14 @@ export default function ArtworksLayout() {
     >
       <Stack.Screen
         name="index"
-        options={{ title: tr("artwork.title.index") }}
+        options={{
+          title: tr("artwork.title.index"),
+          // Le H1 du corps (IndexScreen) porte le titre sur web ; le header ne
+          // sert que de barre de boutons. Évite le doublon visuel en mobile web
+          // (header + H1) et le double <h1> sémantique (react-navigation force le
+          // titre du header en <h1> sur web).
+          headerTitle: Platform.OS === "web" ? () => null : undefined,
+        }}
       />
       <Stack.Screen
         name="[slug]/index"

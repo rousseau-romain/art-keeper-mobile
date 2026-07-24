@@ -77,7 +77,7 @@ export const ArtworkMeta = ({ artwork, artist, isWide }: ArtworkMetaProps) => {
 };
 
 const styles = StyleSheet.create({
-  meta: { gap: SpacingEnum.md },
+  meta: { gap: SpacingEnum.md, paddingHorizontal: SpacingEnum.lg },
   metaWide: { flex: 1 },
   title: { textTransform: "uppercase" },
   handle: { flexDirection: "row", alignItems: "center", gap: SpacingEnum.xs },
